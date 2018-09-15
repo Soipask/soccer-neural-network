@@ -14,17 +14,29 @@ namespace PredictingSoccer
     class NeuralNetwork
     {
         private List<Match> matches = new List<Match>();
+
         private CsvReader season;
+
+        private CsvReader previousSeasonsData;
+        private List<string[]> previousSeasons;
+
         public Dictionary<int, Team> teams = new Dictionary<int, Team>();
+        
 
         private ActivationNetwork network;
         private ISupervisedLearning teacher;
 
-        public NeuralNetwork(CsvReader reader)
+        private int maxMutualMatches = 5;
+
+        public NeuralNetwork(CsvReader thisSeason, CsvReader previousSeasons)
         {
-            season = reader;
+            season = thisSeason;
+            previousSeasonsData = previousSeasons;
         }
 
+        /// <summary>
+        /// Fills list of matches, match by match, field by field
+        /// </summary>
         public void FillSeason()
         {
             string[] row;
@@ -69,11 +81,12 @@ namespace PredictingSoccer
 
 
             network = new ActivationNetwork(function, 46, new int[] { 25, 10, 2 });
+            
             //46:   home/away - wins/draws/loses/goalsScored/goalsAgainst in season/current form
             //      home team - home wins/draws/loses/goalsScored/goalsAgainst as a home team, the same for away team
-            //      some calculations with form:    Sum(points got in a game * (20 - opponent team table position)
-            //                                      Sum(points got in a game * (point difference right now)
-            //                                      Sum(points got in a game * (point difference when game was played)
+            //      some calculations with form:    Sum(points got in a game * (20 - opponent team table position))
+            //                                      Sum(points got in a game * (point difference right now))
+            //                                      Sum(points got in a game * (point difference when game was played))
             //      + last 5 games between those two teams: thisDayHomeTeam wins/loses/draws/goalsScored/goalsAgainst
             //      + last 3 games between those two teams (home team plays home): home wins/loses/draws/goalsScored/goalsAgainst
 
@@ -81,6 +94,16 @@ namespace PredictingSoccer
             teacher = new ResilientBackpropagationLearning(network);
 
 
+            //Just testing until the end of method
+            previousSeasons = previousSeasonsData.Where(match => 
+                (teams.ContainsKey(int.Parse(match[4])) || teams.ContainsKey(int.Parse(match[5])))).ToList();
+
+            previousSeasonsData.Close();
+
+            var x = FindLastMutualGames(teams.Keys.First(), teams.Keys.Last());
+            var z = FindLastMutualGames(teams.Keys.First(), teams.Keys.Last());
+
+            var y = FindLastMutualHomeGames(teams.Keys.First(), teams.Keys.Last());
         }
 
         public void MakeWinNeuralNetwork()
@@ -92,6 +115,59 @@ namespace PredictingSoccer
 
         }
 
+        /// <summary>
+        /// Finds last games between those two teams regardless of who was playing at home from previous seasons data.
+        /// </summary>
+        /// <param name="homeTeamId"></param>
+        /// <param name="awayTeamId"></param>
+        /// <returns></returns>
+        public MutualMatch[] FindLastMutualGames(int homeTeamId, int awayTeamId)
+        {
+
+            var x = previousSeasons.Where(l => 
+                (l[5] == homeTeamId.ToString() && l[4] == awayTeamId.ToString())|| 
+                (l[5] == awayTeamId.ToString() && l[4] == homeTeamId.ToString()));
+
+            return FillMutualMatches(x, homeTeamId, awayTeamId); ;
+        }
+
+        /// <summary>
+        /// Finds last games between those two teams where home team was playing at home.
+        /// </summary>
+        /// <param name="homeTeamId"></param>
+        /// <param name="awayTeamId"></param>
+        /// <returns></returns>
+        public MutualMatch[] FindLastMutualHomeGames(int homeTeamId, int awayTeamId)
+        {
+            var x = previousSeasons.Where(l => (l[4] == homeTeamId.ToString() && l[5] == awayTeamId.ToString()));
+
+            return FillMutualMatches(x, homeTeamId, awayTeamId); ;
+        }
+
+        private MutualMatch[] FillMutualMatches(IEnumerable<string[]> query, int homeTeamId, int awayTeamId)
+        {
+            var mutual = new MutualMatch[maxMutualMatches];
+            int i = 0;
+            foreach (var b in query)
+            {
+                mutual[i] = new MutualMatch()
+                {
+                    homeTeamId = homeTeamId,
+                    awayTeamId = awayTeamId,
+                    homeGoalsScored = byte.Parse(b[6]),
+                    awayGoalsScored = byte.Parse(b[7])
+                };
+                mutual[i].homePoints = (mutual[i].homeGoalsScored > mutual[i].awayGoalsScored) ? (byte)10 :
+                                (mutual[i].awayGoalsScored > mutual[i].homeGoalsScored) ? (byte)0 : (byte)1;
+                if (i == maxMutualMatches - 1) break;
+                i++;
+            }
+            return mutual;
+        }
+        
+        /// <summary>
+        /// Fills the table with half a season of matches. Right now just to test counting.
+        /// </summary>
         public void HalfSeasonTableFill()
         {
             Match match;
@@ -102,6 +178,7 @@ namespace PredictingSoccer
                 AddPoints(match);
             }
         }
+
         /// <summary>
         /// Adds points and other data from certain match to the teams data
         /// </summary>

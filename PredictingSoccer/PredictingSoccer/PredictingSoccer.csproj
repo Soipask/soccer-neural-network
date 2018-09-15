@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Match.cs" />
     <Compile Include="MatchForm.cs" />
+    <Compile Include="MutualMatch.cs" />
     <Compile Include="NeuralNetwork.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
