@@ -119,59 +119,17 @@ namespace PredictingSoccer
             
             while (i < matches.Count / 2)
             {
-                data = new double[46];
-                result = new double[2];
-
-                teams.TryGetValue(matches[i].homeTeamId, out homeTeam);
-                teams.TryGetValue(matches[i].awayTeamId, out awayTeam);
-
-                data[0] = homeTeam.wins;
-                data[1] = homeTeam.draws;
-                data[2] = homeTeam.loses;
-                data[3] = homeTeam.goalsFor / (double)homeTeam.played;
-                data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
-
-                data[5] = awayTeam.wins;
-                data[6] = awayTeam.draws;
-                data[7] = awayTeam.loses;
-                data[8] = awayTeam.goalsFor / (double)awayTeam.played;
-                data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
-
-                data[10] = homeTeam.homewins;
-                data[11] = homeTeam.homedraws;
-                data[12] = homeTeam.homeloses;
-                data[13] = homeTeam.homeGoalsFor;
-                data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
-                if (data[14] is double.NaN) data[14] = 0;
-
-                data[15] = awayTeam.wins - awayTeam.homewins;
-                data[16] = awayTeam.draws - awayTeam.homedraws;
-                data[17] = awayTeam.loses - awayTeam.homeloses;
-                data[18] = awayTeam.goalsFor - awayTeam.homeGoalsFor;
-                data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
-                if (data[19] is double.NaN) data[19] = 0;
-
-                GetForm(homeTeam, out var homeFormInput);
-                homeFormInput.CopyTo(data, 20);
-
-                GetForm(awayTeam, out var awayFormInput);
-                awayFormInput.CopyTo(data, 27);
-
-                GetMutualGames(homeTeam, awayTeam, out var mutualInput);
-
-                mutualInput.CopyTo(data, 34);
-
-                input.Add(data);
+                FillInputData(matches[i], out data, out result);
+                
                 inputs[i - teams.Count] = data;
 
                 AddPoints(matches[i]);
-
-                result[0] = matches[i].homeTeamGoalsScored;
-                result[1] = matches[i].awayTeamGoalsScored;
+                
                 output[i - teams.Count] = result;
 
                 i++;
             }
+        
 
             // Learning
             double error = double.PositiveInfinity;
@@ -202,55 +160,12 @@ namespace PredictingSoccer
             var realResults = new double[matches.Count / 2][];
             while (i < matches.Count)
             {
-                data = new double[46];
-                result = new double[2];
-
-                teams.TryGetValue(matches[i].homeTeamId, out homeTeam);
-                teams.TryGetValue(matches[i].awayTeamId, out awayTeam);
-
-                data[0] = homeTeam.wins;
-                data[1] = homeTeam.draws;
-                data[2] = homeTeam.loses;
-                data[3] = homeTeam.goalsFor / (double)homeTeam.played;
-                data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
-
-                data[5] = awayTeam.wins;
-                data[6] = awayTeam.draws;
-                data[7] = awayTeam.loses;
-                data[8] = awayTeam.goalsFor / (double)awayTeam.played;
-                data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
-
-                data[10] = homeTeam.homewins;
-                data[11] = homeTeam.homedraws;
-                data[12] = homeTeam.homeloses;
-                data[13] = homeTeam.homeGoalsFor;
-                data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
-                if (data[14] is double.NaN) data[14] = 0;
-
-                data[15] = awayTeam.wins - awayTeam.homewins;
-                data[16] = awayTeam.draws - awayTeam.homedraws;
-                data[17] = awayTeam.loses - awayTeam.homeloses;
-                data[18] = awayTeam.goalsFor - awayTeam.homeGoalsFor;
-                data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
-                if (data[19] is double.NaN) data[19] = 0;
-
-                GetForm(homeTeam, out var homeFormInput);
-                homeFormInput.CopyTo(data, 20);
-
-                GetForm(awayTeam, out var awayFormInput);
-                awayFormInput.CopyTo(data, 27);
-
-                GetMutualGames(homeTeam, awayTeam, out var mutualInput);
-
-                mutualInput.CopyTo(data, 34);
-
-                input.Add(data);
+                FillInputData(matches[i], out data, out result);
+                
                 inputs[i - matches.Count/2] = data;
 
                 AddPoints(matches[i]);
 
-                result[0] = matches[i].homeTeamGoalsScored;
-                result[1] = matches[i].awayTeamGoalsScored;
                 realResults[i - matches.Count/2] = result;
 
                 i++;
@@ -295,6 +210,55 @@ namespace PredictingSoccer
 
             teacher = new ResilientBackpropagationLearning(network);
 
+        }
+
+        private void FillInputData(Match match, out double[] data, out double[] result)
+        {
+
+            data = new double[46];
+            result = new double[2];
+
+            teams.TryGetValue(match.homeTeamId, out Team homeTeam);
+            teams.TryGetValue(match.awayTeamId, out Team awayTeam);
+
+            data[0] = homeTeam.wins;
+            data[1] = homeTeam.draws;
+            data[2] = homeTeam.loses;
+            data[3] = homeTeam.goalsFor / (double)homeTeam.played;
+            data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
+
+            data[5] = awayTeam.wins;
+            data[6] = awayTeam.draws;
+            data[7] = awayTeam.loses;
+            data[8] = awayTeam.goalsFor / (double)awayTeam.played;
+            data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
+
+            data[10] = homeTeam.homewins;
+            data[11] = homeTeam.homedraws;
+            data[12] = homeTeam.homeloses;
+            data[13] = homeTeam.homeGoalsFor;
+            data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
+            if (data[14] is double.NaN) data[14] = 0;
+
+            data[15] = awayTeam.wins - awayTeam.homewins;
+            data[16] = awayTeam.draws - awayTeam.homedraws;
+            data[17] = awayTeam.loses - awayTeam.homeloses;
+            data[18] = awayTeam.goalsFor - awayTeam.homeGoalsFor;
+            data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
+            if (data[19] is double.NaN) data[19] = 0;
+
+            GetForm(homeTeam, out var homeFormInput);
+            homeFormInput.CopyTo(data, 20);
+
+            GetForm(awayTeam, out var awayFormInput);
+            awayFormInput.CopyTo(data, 27);
+
+            GetMutualGames(homeTeam, awayTeam, out var mutualInput);
+
+            mutualInput.CopyTo(data, 34);
+            
+            result[0] = match.homeTeamGoalsScored;
+            result[1] = match.awayTeamGoalsScored;
         }
 
         private void GetForm(Team team, out double[] formInput)
