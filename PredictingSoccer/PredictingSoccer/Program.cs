@@ -21,6 +21,8 @@ namespace PredictingSoccer
             var prevSeasons = new CsvReader(new StreamReader("../../../../Databases/englandupto11.csv"), false, ',');
             NeuralNetwork neuralNetwork = new NeuralNetwork(season, prevSeasons);
             neuralNetwork.FillSeason();
+
+            /*
             neuralNetwork.HalfSeasonTableFill();
 
             List<Team> teams = new List<Team>();
@@ -34,7 +36,7 @@ namespace PredictingSoccer
             foreach (var team in endOfSeason)
             {
                 Console.WriteLine(team);
-            }
+            }*/
 
             neuralNetwork.MakeScoreNeuralNetwork();
         }

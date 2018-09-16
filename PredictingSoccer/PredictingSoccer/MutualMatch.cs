@@ -14,7 +14,7 @@ namespace PredictingSoccer
         public int homeTeamId;
         public int awayTeamId;
         
-        // 10 points for the win, 1 point for draw - easy and quick figuring number of wins and loses in one field
+        // 3 points for the win, 1 point for draw - easy and quick figuring number of wins and loses in one field
         public byte homePoints;
 
         public byte homeGoalsScored;

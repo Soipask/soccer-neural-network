@@ -21,7 +21,8 @@ namespace PredictingSoccer
         private List<string[]> previousSeasons;
 
         public Dictionary<int, Team> teams = new Dictionary<int, Team>();
-        
+
+        public List<Team> table = new List<Team>();
 
         private ActivationNetwork network;
         private ISupervisedLearning teacher;
@@ -63,22 +64,27 @@ namespace PredictingSoccer
                 {
                     Team team = new Team(match.homeTeam, match.homeTeamId);
                     teams.Add(match.homeTeamId, team);
+                    table.Add(team);
                 }
                 if (!teams.ContainsKey(match.awayTeamId))
                 {
                     Team team = new Team(match.awayTeam, match.awayTeamId);
                     teams.Add(match.awayTeamId, team);
+                    table.Add(team);
                 }
 
                 matches.Add(match);
             }
             season.Dispose();
+            
+            previousSeasons = previousSeasonsData.Where(m =>
+                (teams.ContainsKey(int.Parse(m[4])) || teams.ContainsKey(int.Parse(m[5])))).ToList();
+            previousSeasonsData.Close();
         }
 
         public void MakeScoreNeuralNetwork()
         {
             IActivationFunction function = new BipolarSigmoidFunction();
-
 
             network = new ActivationNetwork(function, 46, new int[] { 25, 10, 2 });
             
@@ -93,17 +99,193 @@ namespace PredictingSoccer
 
             teacher = new ResilientBackpropagationLearning(network);
 
+            var data = new double[46];
+            var result = new double[2];
+            List<double[]> input = new List<double[]>();
+            double[][] inputs = new double[matches.Count / 2 - teams.Count][];
+            double[][] output = new double[matches.Count / 2 - teams.Count][];
+            int i = 0;
 
-            //Just testing until the end of method
-            previousSeasons = previousSeasonsData.Where(match => 
-                (teams.ContainsKey(int.Parse(match[4])) || teams.ContainsKey(int.Parse(match[5])))).ToList();
+            //Count at least 2 round, it probably won't help the network
+            while (i < teams.Count) 
+            {
+                AddPoints(matches[i]);
+                i++;
+            }
 
-            previousSeasonsData.Close();
+            table.Sort((a, b) => b.points.CompareTo(a.points));
 
-            var x = FindLastMutualGames(teams.Keys.First(), teams.Keys.Last());
-            var z = FindLastMutualGames(teams.Keys.First(), teams.Keys.Last());
+            Team homeTeam, awayTeam;
+            
+            while (i < matches.Count / 2)
+            {
+                data = new double[46];
+                result = new double[2];
 
-            var y = FindLastMutualHomeGames(teams.Keys.First(), teams.Keys.Last());
+                teams.TryGetValue(matches[i].homeTeamId, out homeTeam);
+                teams.TryGetValue(matches[i].awayTeamId, out awayTeam);
+
+                data[0] = homeTeam.wins;
+                data[1] = homeTeam.draws;
+                data[2] = homeTeam.loses;
+                data[3] = homeTeam.goalsFor / (double)homeTeam.played;
+                data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
+
+                data[5] = awayTeam.wins;
+                data[6] = awayTeam.draws;
+                data[7] = awayTeam.loses;
+                data[8] = awayTeam.goalsFor / (double)awayTeam.played;
+                data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
+
+                data[10] = homeTeam.homewins;
+                data[11] = homeTeam.homedraws;
+                data[12] = homeTeam.homeloses;
+                data[13] = homeTeam.homeGoalsFor;
+                data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
+                if (data[14] is double.NaN) data[14] = 0;
+
+                data[15] = awayTeam.wins - awayTeam.homewins;
+                data[16] = awayTeam.draws - awayTeam.homedraws;
+                data[17] = awayTeam.loses - awayTeam.homeloses;
+                data[18] = awayTeam.goalsFor - awayTeam.homeGoalsFor;
+                data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
+                if (data[19] is double.NaN) data[19] = 0;
+
+                GetForm(homeTeam, out var homeFormInput);
+                homeFormInput.CopyTo(data, 20);
+
+                GetForm(awayTeam, out var awayFormInput);
+                awayFormInput.CopyTo(data, 27);
+
+                GetMutualGames(homeTeam, awayTeam, out var mutualInput);
+
+                mutualInput.CopyTo(data, 34);
+
+                input.Add(data);
+                inputs[i - teams.Count] = data;
+
+                AddPoints(matches[i]);
+
+                result[0] = matches[i].homeTeamGoalsScored;
+                result[1] = matches[i].awayTeamGoalsScored;
+                output[i - teams.Count] = result;
+
+                i++;
+            }
+
+            // Learning
+            double error = double.PositiveInfinity;
+            double previous;
+
+            int epoch = 0;
+            Console.WriteLine("\nStarting training");
+
+            do
+            {
+                previous = error;
+                epoch++;
+                if (epoch % 10 == 0)
+                {
+                    Console.Write("Epoch: " + epoch + "\t");
+                    Console.WriteLine("Error: " + error);
+                }
+
+                error = teacher.RunEpoch(inputs, output);
+
+            } while (epoch < 10);
+
+            Console.Write("Epoch: " + epoch + "\t");
+            Console.WriteLine("Error: " + error);
+
+            // Testing network success
+            inputs = new double[matches.Count / 2][];
+            var realResults = new double[matches.Count / 2][];
+            while (i < matches.Count)
+            {
+                data = new double[46];
+                result = new double[2];
+
+                teams.TryGetValue(matches[i].homeTeamId, out homeTeam);
+                teams.TryGetValue(matches[i].awayTeamId, out awayTeam);
+
+                data[0] = homeTeam.wins;
+                data[1] = homeTeam.draws;
+                data[2] = homeTeam.loses;
+                data[3] = homeTeam.goalsFor / (double)homeTeam.played;
+                data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
+
+                data[5] = awayTeam.wins;
+                data[6] = awayTeam.draws;
+                data[7] = awayTeam.loses;
+                data[8] = awayTeam.goalsFor / (double)awayTeam.played;
+                data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
+
+                data[10] = homeTeam.homewins;
+                data[11] = homeTeam.homedraws;
+                data[12] = homeTeam.homeloses;
+                data[13] = homeTeam.homeGoalsFor;
+                data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
+                if (data[14] is double.NaN) data[14] = 0;
+
+                data[15] = awayTeam.wins - awayTeam.homewins;
+                data[16] = awayTeam.draws - awayTeam.homedraws;
+                data[17] = awayTeam.loses - awayTeam.homeloses;
+                data[18] = awayTeam.goalsFor - awayTeam.homeGoalsFor;
+                data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
+                if (data[19] is double.NaN) data[19] = 0;
+
+                GetForm(homeTeam, out var homeFormInput);
+                homeFormInput.CopyTo(data, 20);
+
+                GetForm(awayTeam, out var awayFormInput);
+                awayFormInput.CopyTo(data, 27);
+
+                GetMutualGames(homeTeam, awayTeam, out var mutualInput);
+
+                mutualInput.CopyTo(data, 34);
+
+                input.Add(data);
+                inputs[i - matches.Count/2] = data;
+
+                AddPoints(matches[i]);
+
+                result[0] = matches[i].homeTeamGoalsScored;
+                result[1] = matches[i].awayTeamGoalsScored;
+                realResults[i - matches.Count/2] = result;
+
+                i++;
+            }
+
+            var guess = new double[inputs.Length][];
+            var intGuess = new int[inputs.Length][];
+            int bothScores, homeScore, awayScore, team;
+            bothScores = homeScore = awayScore = team = 0;
+
+            
+            Console.WriteLine("Real Results \t Won \t Guessed result \t Team guessed");
+            for (int n = 0; n < inputs.Length; n++)
+            {
+                guess[n] = network.Compute(inputs[n]);
+                intGuess[n] = new int[2];
+                intGuess[n][0] = (int)Math.Round(guess[n][0]);
+                intGuess[n][1] = (int)Math.Round(guess[n][1]);
+                char wonby = (realResults[n][0] > realResults[n][1]) ? 'H' : (realResults[n][1] > realResults[n][0]) ? 'A' : 'D';
+                char guessfor = (intGuess[n][0] > intGuess[n][1]) ? 'H' : (intGuess[n][1] > intGuess[n][0]) ? 'A' : 'D';
+                Console.WriteLine($"{realResults[n][0]}:{realResults[n][1]}\tWon by {wonby}\t{intGuess[n][0]}:{intGuess[n][1]}\t {guessfor} was guessed");
+
+                if (realResults[n][0] == intGuess[n][0]) homeScore++;
+                if (realResults[n][1] == intGuess[n][1]) awayScore++;
+                if (realResults[n][0] == intGuess[n][0] && realResults[n][1] == intGuess[n][1]) bothScores++;
+                if (wonby == guessfor) team++;
+            }
+            // Always guesses 1:1...
+
+            Console.WriteLine();
+            Console.WriteLine("Results:");
+            Console.WriteLine($"Home team goals for guessed right: {homeScore}, that's {homeScore * 100 / (double)inputs.Length}%");
+            Console.WriteLine($"Away team goals for guessed right: {awayScore}, that's {awayScore * 100 / (double)inputs.Length}%");
+            Console.WriteLine($"Exact result guessed right: {bothScores}, that's {bothScores * 100 / (double)inputs.Length}%");
+            Console.WriteLine($"Team that won guessed right: {team}, that's {team * 100 / (double)inputs.Length}%");
         }
 
         public void MakeWinNeuralNetwork()
@@ -112,6 +294,87 @@ namespace PredictingSoccer
             network = new ActivationNetwork(function, 46, new int[] { 25, 10, 1 });
 
             teacher = new ResilientBackpropagationLearning(network);
+
+        }
+
+        private void GetForm(Team team, out double[] formInput)
+        {
+            formInput = new double[7];
+
+            int pointsGot = 0;
+            int i = 0;
+            while (i < team.currentForm.Length) 
+            {
+                if (team.currentForm[i] == null) break;
+                switch(team.currentForm[i].finalpoints)
+                {
+                    case MatchForm.GameResult.L: formInput[2]++; break;
+                    case MatchForm.GameResult.D: formInput[1]++; pointsGot = 1; break;
+                    case MatchForm.GameResult.W: formInput[0]++; pointsGot = 3; break;
+                }
+                formInput[3] += team.currentForm[i].goalsFor;
+                formInput[4] += team.currentForm[i].goalsAgainst;
+                formInput[5] += team.currentForm[i].score;
+                formInput[6] += pointsGot * team.currentForm[i].matchAgainst.points;
+                i++;
+            }
+            if (i > 0) 
+            {
+                formInput[3] /= i;
+                formInput[4] /= i;
+            }
+        }
+
+        private void GetMutualGames(Team homeTeam, Team awayTeam, out double[] mutualInput)
+        {
+            var mutual = FindLastMutualGames(homeTeam.id, awayTeam.id);
+
+            mutualInput = new double[10];
+
+            int i = 0;
+            while (i < mutual.Length) 
+            {
+                if (mutual[i] == null) break;
+                
+                switch(mutual[i].homePoints)
+                {
+                    case 3: mutualInput[0]++; break;
+                    case 1: mutualInput[1]++; break;
+                    case 0: mutualInput[2]++; break;
+                }
+            
+                mutualInput[3] += mutual[i].homeGoalsScored;
+                mutualInput[4] += mutual[i].awayGoalsScored;
+
+                i++;
+            }
+            if (i == 0) return;
+
+            mutualInput[3] /= i;
+            mutualInput[4] /= i;
+
+            mutual = FindLastMutualHomeGames(homeTeam.id, awayTeam.id);
+            i = 0;
+            while (i < mutual.Length) 
+            {
+                if (mutual[i] == null) break;
+
+                switch (mutual[i].homePoints)
+                {
+                    case 3: mutualInput[5]++; break;
+                    case 1: mutualInput[6]++; break;
+                    case 0: mutualInput[7]++; break;
+                }
+
+                mutualInput[8] += mutual[i].homeGoalsScored;
+                mutualInput[9] += mutual[i].awayGoalsScored;
+
+                i++;
+            }
+            if (i == 0) return;
+
+            mutualInput[8] /= i;
+            mutualInput[9] /= i;
 
         }
 
@@ -124,11 +387,11 @@ namespace PredictingSoccer
         public MutualMatch[] FindLastMutualGames(int homeTeamId, int awayTeamId)
         {
 
-            var x = previousSeasons.Where(l => 
-                (l[5] == homeTeamId.ToString() && l[4] == awayTeamId.ToString())|| 
-                (l[5] == awayTeamId.ToString() && l[4] == homeTeamId.ToString()));
+            var suitableMatches = previousSeasons.Where(match => 
+                (match[5] == homeTeamId.ToString() && match[4] == awayTeamId.ToString())|| 
+                (match[5] == awayTeamId.ToString() && match[4] == homeTeamId.ToString()));
 
-            return FillMutualMatches(x, homeTeamId, awayTeamId); ;
+            return FillMutualMatches(suitableMatches, homeTeamId, awayTeamId); ;
         }
 
         /// <summary>
@@ -139,16 +402,17 @@ namespace PredictingSoccer
         /// <returns></returns>
         public MutualMatch[] FindLastMutualHomeGames(int homeTeamId, int awayTeamId)
         {
-            var x = previousSeasons.Where(l => (l[4] == homeTeamId.ToString() && l[5] == awayTeamId.ToString()));
+            var suitable = previousSeasons.Where(match => 
+                (match[4] == homeTeamId.ToString() && match[5] == awayTeamId.ToString()));
 
-            return FillMutualMatches(x, homeTeamId, awayTeamId); ;
+            return FillMutualMatches(suitable, homeTeamId, awayTeamId); ;
         }
 
-        private MutualMatch[] FillMutualMatches(IEnumerable<string[]> query, int homeTeamId, int awayTeamId)
+        private MutualMatch[] FillMutualMatches(IEnumerable<string[]> suitableMatches, int homeTeamId, int awayTeamId)
         {
             var mutual = new MutualMatch[maxMutualMatches];
             int i = 0;
-            foreach (var b in query)
+            foreach (var b in suitableMatches)
             {
                 mutual[i] = new MutualMatch()
                 {
@@ -157,7 +421,7 @@ namespace PredictingSoccer
                     homeGoalsScored = byte.Parse(b[6]),
                     awayGoalsScored = byte.Parse(b[7])
                 };
-                mutual[i].homePoints = (mutual[i].homeGoalsScored > mutual[i].awayGoalsScored) ? (byte)10 :
+                mutual[i].homePoints = (mutual[i].homeGoalsScored > mutual[i].awayGoalsScored) ? (byte)3 :
                                 (mutual[i].awayGoalsScored > mutual[i].homeGoalsScored) ? (byte)0 : (byte)1;
                 if (i == maxMutualMatches - 1) break;
                 i++;
@@ -192,6 +456,8 @@ namespace PredictingSoccer
 
             homeTeam.goalsFor += match.homeTeamGoalsScored;
             homeTeam.goalsAgainst += match.awayTeamGoalsScored;
+            homeTeam.homeGoalsFor += match.homeTeamGoalsScored;
+            homeTeam.homeGoalsAgainst += match.awayTeamGoalsScored;
             homeTeam.played++;
             ChangeInForm(match, homeTeam, homePoints);
 
