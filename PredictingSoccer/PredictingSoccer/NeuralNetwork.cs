@@ -101,7 +101,6 @@ namespace PredictingSoccer
 
             var data = new double[46];
             var result = new double[2];
-            List<double[]> input = new List<double[]>();
             double[][] inputs = new double[matches.Count / 2 - teams.Count][];
             double[][] output = new double[matches.Count / 2 - teams.Count][];
             int i = 0;

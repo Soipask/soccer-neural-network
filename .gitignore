@@ -328,6 +328,5 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-/PredictingSoccer/PredictingSoccer/Data.cs
-/PredictingSoccer/PredictingSoccer/Match.cs
-/PredictingSoccer/PredictingSoccer/Team.cs
+/PredictingSoccer/PredictingSoccer/Resources/englandupto11.csv
+/PredictingSoccer/PredictingSoccer/Resources/england11.csv

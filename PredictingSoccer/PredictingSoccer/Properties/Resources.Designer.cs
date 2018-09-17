@@ -59,5 +59,42 @@ namespace PredictingSoccer.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BLB,WOL,2869,1,8655,8602,1,2,2011-08-13 00:00:00
+        ///FUL,AVL,2870,1,9879,10252,0,0,2011-08-13 00:00:00
+        ///LIV,SUN,2871,1,8650,8472,1,1,2011-08-13 00:00:00
+        ///NEW,ARS,2873,1,10261,9825,0,0,2011-08-13 00:00:00
+        ///QPR,BOL,2874,1,10172,8559,0,4,2011-08-13 00:00:00
+        ///WIG,NOR,2878,1,8528,9850,1,1,2011-08-13 00:00:00
+        ///STK,CHE,2875,1,10194,8455,0,0,2011-08-14 00:00:00
+        ///WBA,MUN,2877,1,8659,10260,1,2,2011-08-14 00:00:00
+        ///MCI,SWA,2872,1,8456,10003,4,0,2011-08-15 00:00:00
+        ///ARS,LIV,2979,2,9825,8650,0,2,2011-08-20 00:00:00
+        ///AVL,BL [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string england11 {
+            get {
+                return ResourceManager.GetString("england11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MUN,BLA,2799,38,10260,8483,4,2,2011-05-22 00:00:00
+        ///TOT,BIR,2800,38,8586,8658,2,1,2011-05-22 00:00:00
+        ///WHU,SUN,2801,38,8654,8472,0,3,2011-05-22 00:00:00
+        ///AVL,LIV,2802,38,10252,8650,1,0,2011-05-22 00:00:00
+        ///EVE,CHE,2803,38,8668,8455,1,0,2011-05-22 00:00:00
+        ///NEW,WBA,2804,38,10261,8659,3,3,2011-05-22 00:00:00
+        ///WOL,BLB,2805,38,8602,8655,2,3,2011-05-22 00:00:00
+        ///FUL,ARS,2806,38,9879,9825,2,2,2011-05-22 00:00:00
+        ///BOL,MCI,2807,38,8559,8456,0,2,2011-05-22 00:00:00
+        ///STK,WIG,2808,38,10194,8528,0,1,2011-05-22 00:00:00 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string englandupto11 {
+            get {
+                return ResourceManager.GetString("englandupto11", resourceCulture);
+            }
+        }
     }
 }
