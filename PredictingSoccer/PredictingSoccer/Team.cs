@@ -22,18 +22,21 @@ namespace PredictingSoccer
         public int homeloses;
         public int homeGoalsFor;
         public int homeGoalsAgainst;
-        public MatchForm[] currentForm = new MatchForm[5];
+        public MatchForm[] currentForm = new MatchForm[10];
 
-        public Team(string name, int id, int gf, int ga, int p)
+        private byte maximumFormGamesStored;
+
+        public Team(string name, int id, int gf, int ga, int p, byte maxFormStored)
         {
             shortName = name;
             this.id = id;
             goalsFor = gf;
             goalsAgainst = ga;
             points = p;
+            maximumFormGamesStored = maxFormStored;
         }
 
-        public Team(string name, int id)
+        public Team(string name, int id, byte maxFormStored)
         {
             shortName = name;
             this.id = id;
@@ -41,6 +44,7 @@ namespace PredictingSoccer
             goalsAgainst = 0;
             points = 0;
             played = 0;
+            maximumFormGamesStored = maxFormStored;
         }
 
         public override string ToString()

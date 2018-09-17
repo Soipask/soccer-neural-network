@@ -28,6 +28,7 @@ namespace PredictingSoccer
         private ISupervisedLearning teacher;
 
         private int maxMutualMatches = 5;
+        private byte maxFormMatches = 10;
 
         public NeuralNetwork(CsvReader thisSeason, CsvReader previousSeasons)
         {
@@ -62,13 +63,13 @@ namespace PredictingSoccer
 
                 if (!teams.ContainsKey(match.homeTeamId))
                 {
-                    Team team = new Team(match.homeTeam, match.homeTeamId);
+                    Team team = new Team(match.homeTeam, match.homeTeamId, maxFormMatches);
                     teams.Add(match.homeTeamId, team);
                     table.Add(team);
                 }
                 if (!teams.ContainsKey(match.awayTeamId))
                 {
-                    Team team = new Team(match.awayTeam, match.awayTeamId);
+                    Team team = new Team(match.awayTeam, match.awayTeamId, maxFormMatches);
                     teams.Add(match.awayTeamId, team);
                     table.Add(team);
                 }
@@ -86,12 +87,11 @@ namespace PredictingSoccer
         {
             IActivationFunction function = new BipolarSigmoidFunction();
 
-            network = new ActivationNetwork(function, 46, new int[] { 25, 10, 2 });
+            network = new ActivationNetwork(function, 44, new int[] { 25, 15, 2 });
             
-            //46:   home/away - wins/draws/loses/goalsScored/goalsAgainst in season/current form
+            //44:   home/away - wins/draws/loses/goalsScored/goalsAgainst in season/current form
             //      home team - home wins/draws/loses/goalsScored/goalsAgainst as a home team, the same for away team
-            //      some calculations with form:    Sum(points got in a game * (20 - opponent team table position))
-            //                                      Sum(points got in a game * (point difference right now))
+            //      some calculations with form:    Sum(points got in a game * (point difference right now))
             //                                      Sum(points got in a game * (point difference when game was played))
             //      + last 5 games between those two teams: thisDayHomeTeam wins/loses/draws/goalsScored/goalsAgainst
             //      + last 3 games between those two teams (home team plays home): home wins/loses/draws/goalsScored/goalsAgainst
@@ -99,36 +99,36 @@ namespace PredictingSoccer
 
             teacher = new ResilientBackpropagationLearning(network);
 
-            var data = new double[46];
+            var data = new double[44];
             var result = new double[2];
             double[][] inputs = new double[matches.Count / 2 - teams.Count][];
             double[][] output = new double[matches.Count / 2 - teams.Count][];
             int i = 0;
 
-            //Count at least 2 round, it probably won't help the network
+            // Count at least 2 round, it probably won't help the network
             while (i < teams.Count) 
             {
                 AddPoints(matches[i]);
                 i++;
             }
 
-            table.Sort((a, b) => b.points.CompareTo(a.points));
-
-            Team homeTeam, awayTeam;
-            
+            int back = i;
+            // Fills data for neural network and updates table (teams' data)
             while (i < matches.Count / 2)
             {
                 FillInputData(matches[i], out data, out result);
                 
-                inputs[i - teams.Count] = data;
+                inputs[i - back] = data;
 
                 AddPoints(matches[i]);
-                
-                output[i - teams.Count] = result;
+
+                result[0] = result[0] / 4.0d - 1;
+                result[1] = result[1] / 4.0d - 1;
+
+                output[i - back] = result;
 
                 i++;
             }
-        
 
             // Learning
             double error = double.PositiveInfinity;
@@ -149,12 +149,13 @@ namespace PredictingSoccer
 
                 error = teacher.RunEpoch(inputs, output);
 
-            } while (epoch < 10);
+            } while (epoch < 10000);
 
             Console.Write("Epoch: " + epoch + "\t");
             Console.WriteLine("Error: " + error);
 
             // Testing network success
+            back = i;
             inputs = new double[matches.Count / 2][];
             var realResults = new double[matches.Count / 2][];
             while (i < matches.Count)
@@ -171,7 +172,6 @@ namespace PredictingSoccer
             }
 
             var guess = new double[inputs.Length][];
-            var intGuess = new int[inputs.Length][];
             int bothScores, homeScore, awayScore, team;
             bothScores = homeScore = awayScore = team = 0;
 
@@ -180,19 +180,18 @@ namespace PredictingSoccer
             for (int n = 0; n < inputs.Length; n++)
             {
                 guess[n] = network.Compute(inputs[n]);
-                intGuess[n] = new int[2];
-                intGuess[n][0] = (int)Math.Round(guess[n][0]);
-                intGuess[n][1] = (int)Math.Round(guess[n][1]);
+                int home = (int)Math.Round((guess[n][0] + 1) * 4);
+                int away = (int)Math.Round((guess[n][1] + 1) * 4);
                 char wonby = (realResults[n][0] > realResults[n][1]) ? 'H' : (realResults[n][1] > realResults[n][0]) ? 'A' : 'D';
-                char guessfor = (intGuess[n][0] > intGuess[n][1]) ? 'H' : (intGuess[n][1] > intGuess[n][0]) ? 'A' : 'D';
-                Console.WriteLine($"{realResults[n][0]}:{realResults[n][1]}\tWon by {wonby}\t{intGuess[n][0]}:{intGuess[n][1]}\t {guessfor} was guessed");
+                char guessfor = (home > away) ? 'H' : (away > home) ? 'A' : 'D';
+                char preciseGuess = (guess[n][0] > guess[n][1] + 0.2) ? 'H' : (guess[n][1] > guess[n][0] + 0.2) ? 'A' : 'D';
+                Console.WriteLine($"{realResults[n][0]}:{realResults[n][1]}\tWon by {wonby}\t{home}:{away}\t {guessfor} was guessed or {preciseGuess} ");
 
-                if (realResults[n][0] == intGuess[n][0]) homeScore++;
-                if (realResults[n][1] == intGuess[n][1]) awayScore++;
-                if (realResults[n][0] == intGuess[n][0] && realResults[n][1] == intGuess[n][1]) bothScores++;
+                if (realResults[n][0] == home) homeScore++;
+                if (realResults[n][1] == away) awayScore++;
+                if (realResults[n][0] == home && realResults[n][1] == away) bothScores++;
                 if (wonby == guessfor) team++;
             }
-            // Always guesses 1:1...
 
             Console.WriteLine();
             Console.WriteLine("Results:");
@@ -211,10 +210,16 @@ namespace PredictingSoccer
 
         }
 
+        /// <summary>
+        /// Fills input data for neural network as well as results.
+        /// </summary>
+        /// <param name="match"></param>
+        /// <param name="data"></param>
+        /// <param name="result"></param>
         private void FillInputData(Match match, out double[] data, out double[] result)
         {
 
-            data = new double[46];
+            data = new double[44];
             result = new double[2];
 
             teams.TryGetValue(match.homeTeamId, out Team homeTeam);
@@ -225,12 +230,16 @@ namespace PredictingSoccer
             data[2] = homeTeam.loses;
             data[3] = homeTeam.goalsFor / (double)homeTeam.played;
             data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
+            if (double.IsNaN(data[3])) data[3] = 0;
+            if (double.IsNaN(data[4])) data[4] = 0;
 
             data[5] = awayTeam.wins;
             data[6] = awayTeam.draws;
             data[7] = awayTeam.loses;
             data[8] = awayTeam.goalsFor / (double)awayTeam.played;
             data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
+            if (double.IsNaN(data[8])) data[8] = 0;
+            if (double.IsNaN(data[9])) data[9] = 0;
 
             data[10] = homeTeam.homewins;
             data[11] = homeTeam.homedraws;
