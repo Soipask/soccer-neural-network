@@ -16,7 +16,15 @@ namespace PredictingSoccer
         public int awayTeamId;
         public int homeTeamGoalsScored;
         public int awayTeamGoalsScored;
-        public string date;
+        public string dateString;
+        public DateTime date;
+
+        public void MakeDate()
+        {
+            string[] t = dateString.Split(' ');
+            string[] s = t[0].Split('-');
+            date = new DateTime(int.Parse(s[0]), int.Parse(s[1]), int.Parse(s[2]));
+        }
     }
 
 }

@@ -17,8 +17,8 @@ namespace PredictingSoccer
     {
         static void Main(string[] args)
         {
-            var season = new CsvReader(new StringReader(Properties.Resources.england11), false, ',');
-            var prevSeasons = new CsvReader(new StringReader(Properties.Resources.englandupto11), false, ',');
+            var season = new CsvReader(new StringReader(Properties.Resources.england15), false, ',');
+            var prevSeasons = new CsvReader(new StringReader(Properties.Resources.englandupto15), false, ',');
             NeuralNetwork neuralNetwork = new NeuralNetwork(season, prevSeasons);
             neuralNetwork.FillSeason();
             
