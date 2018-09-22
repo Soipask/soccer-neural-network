@@ -137,7 +137,7 @@ namespace PredictingSoccer
             // Fills data for neural network and updates table (teams' data)
             while (i < matches.Count / 2)
             {
-                FillInputData(matches[i], previousSeasons, out data, out result);
+                FillInputData(matches[i], previousSeasons,teams, out data, out result);
 
                 input.Add(data);
 
@@ -160,8 +160,14 @@ namespace PredictingSoccer
             int epoch = 0;
             Console.WriteLine("\nStarting training");
 
-            var inputsArray = input.ToArray();
-            var outputsArray = output.ToArray();
+            var inputsArray = new double[input.Count + lastSeason.Length][];
+            var outputsArray = new double[output.Count + lastSeasonResults.Length][];
+
+            input.ToArray().CopyTo(inputsArray, 0);
+            lastSeason.CopyTo(inputsArray, input.Count);
+
+            output.ToArray().CopyTo(outputsArray, 0);
+            lastSeasonResults.CopyTo(outputsArray, output.Count);
 
             do
             {
@@ -174,9 +180,8 @@ namespace PredictingSoccer
                 }
 
                 error = teacher.RunEpoch(inputsArray, outputsArray);
-                error += teacher.RunEpoch(lastSeason, lastSeasonResults);
 
-            } while (epoch < 2000);
+            } while (epoch < 5000);
 
             Console.Write("Epoch: " + epoch + "\t");
             Console.WriteLine("Error: " + error);
@@ -188,7 +193,7 @@ namespace PredictingSoccer
 
             while (i < matches.Count)
             {
-                FillInputData(matches[i], previousSeasons, out data, out result);
+                FillInputData(matches[i], previousSeasons,teams, out data, out result);
 
                 input.Add(data);
 
@@ -241,8 +246,8 @@ namespace PredictingSoccer
 
             var thisYearsTeams = new Dictionary<int, Team>();
 
-            var matches = previousSeasons.SkipWhile(m => m[9] != season.ToString() + "/" + (season + 1).ToString()).
-                TakeWhile(m => m[9] != season.ToString() + "/" + (season + 1).ToString()).Reverse();
+            var matches = previousSeasons.SkipWhile(m => m[9] != (season.ToString() + "/" + (season + 1).ToString())).
+                TakeWhile(m => m[9] == season.ToString() + "/" + (season + 1).ToString()).Reverse().ToList();
 
             FillSeason(matches, thisSeason, seasonsTable, thisYearsTeams);
 
@@ -250,18 +255,19 @@ namespace PredictingSoccer
             while (i < thisYearsTeams.Count) 
             {
                 AddPoints(thisSeason[i], thisYearsTeams);
+                i++;
             }
 
             var seasonsBefore = previousSeasons.SkipWhile(m => m[9] != season.ToString() + "/" + (season + 1).ToString()).
-                SkipWhile(m => m[9] != season.ToString() + "/" + (season + 1).ToString()).ToList();
+                SkipWhile(m => m[9] == season.ToString() + "/" + (season + 1).ToString()).ToList();
 
             while (i < thisSeason.Count)
             {
-                FillInputData(thisSeason[i], seasonsBefore, out data, out result);
+                FillInputData(thisSeason[i], seasonsBefore, thisYearsTeams, out data, out result);
 
                 input.Add(data);
 
-                AddPoints(thisSeason[i], teams);
+                AddPoints(thisSeason[i], thisYearsTeams);
 
                 result[0] = result[0] / 4.0d - 1;
                 result[1] = result[1] / 4.0d - 1;
@@ -292,7 +298,7 @@ namespace PredictingSoccer
         /// <param name="match"></param>
         /// <param name="data"></param>
         /// <param name="result"></param>
-        private void FillInputData(Match match, List<string[]> previousSeasons, out double[] data,  out double[] result)
+        private void FillInputData(Match match, List<string[]> previousSeasons, Dictionary<int, Team> teams, out double[] data,  out double[] result)
         {
 
             data = new double[44];
@@ -507,12 +513,12 @@ namespace PredictingSoccer
             homeTeam.homeGoalsFor += match.homeTeamGoalsScored;
             homeTeam.homeGoalsAgainst += match.awayTeamGoalsScored;
             homeTeam.played++;
-            ChangeInForm(match, homeTeam, homePoints);
+            ChangeInForm(match, homeTeam, homePoints, teams);
 
             awayTeam.goalsFor += match.awayTeamGoalsScored;
             awayTeam.goalsAgainst += match.homeTeamGoalsScored;
             awayTeam.played++;
-            ChangeInForm(match, awayTeam, awayPoints);
+            ChangeInForm(match, awayTeam, awayPoints, teams);
         }
 
         /// <summary>
@@ -589,7 +595,7 @@ namespace PredictingSoccer
         /// <param name="match"></param>
         /// <param name="team"></param>
         /// <param name="points"></param>
-        private void ChangeInForm(Match match, Team team, int points)
+        private void ChangeInForm(Match match, Team team, int points, Dictionary<int, Team> teams)
         {
             MatchForm form = new MatchForm
             {
