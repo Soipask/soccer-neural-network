@@ -102,6 +102,11 @@ namespace PredictingSoccer
             return match;
         }
 
+
+        /// <summary>
+        /// Makes neural network, then makes teacher for it, which teaches it one and a half season worth of data.
+        /// Then compares guesses from it for the other half season with real results and writes statistics.
+        /// </summary>
         public void MakeScoreNeuralNetwork()
         {
             IActivationFunction function = new BipolarSigmoidFunction();
@@ -158,7 +163,7 @@ namespace PredictingSoccer
             double previous;
 
             int epoch = 0;
-            Console.WriteLine("\nStarting training");
+            //Console.WriteLine("\nStarting training");
 
             var inputsArray = new double[input.Count + lastSeason.Length][];
             var outputsArray = new double[output.Count + lastSeasonResults.Length][];
@@ -175,16 +180,16 @@ namespace PredictingSoccer
                 epoch++;
                 if (epoch % 10 == 0)
                 {
-                    Console.Write("Epoch: " + epoch + "\t");
-                    Console.WriteLine("Error: " + error);
+                    //Console.Write("Epoch: " + epoch + "\t");
+                    //Console.WriteLine("Error: " + error);
                 }
 
                 error = teacher.RunEpoch(inputsArray, outputsArray);
 
-            } while (epoch < 5000);
+            } while (epoch < 3000);
 
-            Console.Write("Epoch: " + epoch + "\t");
-            Console.WriteLine("Error: " + error);
+            //Console.Write("Epoch: " + epoch + "\t");
+            //Console.WriteLine("Error: " + error);
 
             // Testing network success
             back = i;
@@ -233,7 +238,13 @@ namespace PredictingSoccer
             Console.WriteLine($"Team that won guessed right: {team}, that's {team * 100 / (double)input.Count}%");
         }
 
-        public double[][] OneMoreSeasonAdd(int season, out double[][] seasonResults)
+        /// <summary>
+        /// Gets season, takes this season and makes data from whole season for neural network to learn.
+        /// </summary>
+        /// <param name="season"></param>
+        /// <param name="seasonResults"></param>
+        /// <returns></returns>
+        private double[][] OneMoreSeasonAdd(int season, out double[][] seasonResults)
         {
             double[][] wholeSeason = new double[360][];
             List<Match> thisSeason = new List<Match>();
