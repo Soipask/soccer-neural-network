@@ -17,29 +17,45 @@ namespace PredictingSoccer
     {
         static void Main(string[] args)
         {
-            var season = new CsvReader(new StringReader(Properties.Resources.england15), false, ',');
-            var prevSeasons = new CsvReader(new StringReader(Properties.Resources.englandupto15), false, ',');
-            NeuralNetwork neuralNetwork = new NeuralNetwork(season, prevSeasons);
-            neuralNetwork.FillSeason();
-            
+            double accuracy;
+            double averageAcc = 0;
+            int tries = 20;
 
-            /*
-            neuralNetwork.HalfSeasonTableFill();
-
-            List<Team> teams = new List<Team>();
-            foreach(var m in neuralNetwork.teams)
+            for (int i = 0; i < tries; i++)
             {
-                teams.Add(m.Value);
+                var season = new CsvReader(new StringReader(Properties.Resources.england15), false, ',');
+                var prevSeasons = new CsvReader(new StringReader(Properties.Resources.englandupto15), false, ',');
+                NeuralNetwork neuralNetwork = new NeuralNetwork(season, prevSeasons);
+                neuralNetwork.FillSeason();
+
+                Accord.Math.Random.Generator.Seed = i;
+
+                /*
+                neuralNetwork.HalfSeasonTableFill();
+
+                List<Team> teams = new List<Team>();
+                foreach(var m in neuralNetwork.teams)
+                {
+                    teams.Add(m.Value);
+                }
+                var endOfSeason = teams.OrderByDescending(x => x.points).ThenByDescending(x => x.goalsFor - x.goalsAgainst);
+
+                Console.WriteLine("TEA \t GP \t GF \t GA \t DIFF \t POI \t FORM");
+                foreach (var team in endOfSeason)
+                {
+                    Console.WriteLine(team);
+                }*/
+
+                neuralNetwork.MakeScoreNeuralNetwork();
+
+                accuracy = neuralNetwork.accuracy;
+                averageAcc += accuracy;
             }
-            var endOfSeason = teams.OrderByDescending(x => x.points).ThenByDescending(x => x.goalsFor - x.goalsAgainst);
 
-            Console.WriteLine("TEA \t GP \t GF \t GA \t DIFF \t POI \t FORM");
-            foreach (var team in endOfSeason)
-            {
-                Console.WriteLine(team);
-            }*/
-
-            neuralNetwork.MakeScoreNeuralNetwork();
+            averageAcc /= tries;
+            Console.WriteLine();
+            Console.WriteLine($"Average accuracy: {averageAcc * 100}");
+            Console.ReadLine();
         }
     }
 }
