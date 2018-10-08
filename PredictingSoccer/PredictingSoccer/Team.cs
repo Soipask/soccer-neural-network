@@ -24,6 +24,8 @@ namespace PredictingSoccer
         public int homeGoalsAgainst;
         public MatchForm[] currentForm = new MatchForm[10];
 
+        public int longtimeStrength;
+
         private byte maximumFormGamesStored;
 
         public Team(string name, int id, int gf, int ga, int p, byte maxFormStored)
