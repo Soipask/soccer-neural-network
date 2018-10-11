@@ -19,7 +19,7 @@ namespace PredictingSoccer
         {
             double accuracy;
             double averageAcc = 0;
-            int tries = 20;
+            int tries = 1;
 
             for (int i = 0; i < tries; i++)
             {

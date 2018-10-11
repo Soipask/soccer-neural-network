@@ -55,8 +55,6 @@ namespace PredictingSoccer
             {
                 row = season.ReadLine();
                 match = FillAMatch(row, table, teams);
-
-
                 matches.Add(match);
             }
             season.Dispose();
@@ -137,6 +135,9 @@ namespace PredictingSoccer
             var output = new List<double[]>();
 
             int i = 0;
+
+            FillTeamsLongTimeStrength();
+
 
             // Count at least 2 round, it probably won't help the network
             while (i < teams.Count)
@@ -239,6 +240,79 @@ namespace PredictingSoccer
             Console.WriteLine("Results:");
             Console.WriteLine($"Team that won guessed right: {team}, that's {accuracy * 100}%");
             Console.WriteLine();
+        }
+
+        private void FillTeamsLongTimeStrength()
+        {
+            int firstSeason = 0;
+            int lastSeason = 0;
+
+            for (int i = 0; i < 4; i++)
+            {
+                lastSeason = lastSeason * 10 + previousSeasons[0][9][i] - 48;
+                firstSeason = firstSeason * 10 + previousSeasons[previousSeasons.Count - 1][9][i] - 48;
+            }
+
+            for (int i = lastSeason; i> firstSeason; i-- )
+            {
+                FillTeamsPoints(i);
+            }
+        }
+
+        private void FillTeamsPoints(int seasonStart)
+        {
+            Dictionary<int, int> values = new Dictionary<int, int>();
+            int[] points = new int[20];
+            List<Match> matchesList = new List<Match>();
+            List<Team> teamList = new List<Team>();
+
+            int i = 0;
+
+            var season = previousSeasons
+                .SkipWhile(x => x[9] != (seasonStart + "/" + (seasonStart + 1)))
+                .TakeWhile(x => x[9] == (seasonStart + "/" + (seasonStart + 1)));
+
+            FillSeason(season, matchesList, teamList, teams);
+
+            foreach (var match in matchesList)
+            {
+                teams.TryGetValue(match.homeTeamId, out Team homeTeam);
+                teams.TryGetValue(match.awayTeamId, out Team awayTeam);
+
+                FillPoints(match, homeTeam, awayTeam, out int homePoints, out int awayPoints);
+
+                if (match.stage == 1)
+                {
+                    homeTeam.seasonsIn++;
+                    awayTeam.seasonsIn++;
+                }
+                if (values.TryGetValue(homeTeam.id, out int val))
+                {
+                    points[val] += homePoints;
+                }
+                else
+                {
+                    values.Add(homeTeam.id, i);
+                    i++;
+                }
+                if (values.TryGetValue(awayTeam.id, out val))
+                {
+                    points[val] += awayPoints;
+                }
+                else
+                {
+                    values.Add(awayTeam.id, i);
+                    i++;
+                }
+            }
+
+            foreach (var key in values.Keys)
+            {
+                values.TryGetValue(key, out int val);
+                int point = points[val];
+                teams.TryGetValue(key, out Team team);
+                team.longtimeStrength = (team.longtimeStrength * (team.seasonsIn - 1) + point) / (double)team.seasonsIn;
+            }
         }
 
         /// <summary>
