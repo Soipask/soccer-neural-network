@@ -90,6 +90,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Resources\data.csv" />
     <None Include="Resources\england11.csv" />
     <None Include="Resources\england15.csv" />
     <None Include="Resources\englandupto11.csv" />

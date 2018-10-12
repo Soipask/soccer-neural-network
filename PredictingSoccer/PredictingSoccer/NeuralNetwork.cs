@@ -15,9 +15,8 @@ namespace PredictingSoccer
     {
         private List<Match> matches = new List<Match>();
 
-        private CsvReader season;
-
-        private CsvReader previousSeasonsData;
+        private List<string[]> season;
+        
         private List<string[]> previousSeasons;
 
         public Dictionary<int, Team> teams = new Dictionary<int, Team>();
@@ -35,11 +34,15 @@ namespace PredictingSoccer
         private int inputNeurons = 46;
         private int outputNeurons = 3;
 
+        private int teamsInOneSeason = 20;
 
-        public NeuralNetwork(CsvReader thisSeason, CsvReader previousSeasons)
+        public NeuralNetwork(CsvReader data)
         {
-            season = thisSeason;
-            previousSeasonsData = previousSeasons;
+            var dataList = data.ToList();
+
+            season = dataList.TakeWhile(x => x[9] == dataList[0][9]).Reverse().ToList();
+
+            previousSeasons = dataList.SkipWhile(x => x[9] == dataList[0][9]).ToList();
         }
 
         /// <summary>
@@ -49,18 +52,12 @@ namespace PredictingSoccer
         {
 
             Match match;
-            string[] row;
 
-            while (!season.EndOfStream)
+            foreach(var row in season)
             {
-                row = season.ReadLine();
                 match = FillAMatch(row, table, teams);
                 matches.Add(match);
             }
-            season.Dispose();
-            
-            previousSeasons = previousSeasonsData.ToList();
-            previousSeasonsData.Close();
         }
 
         public void FillSeason(IEnumerable<string[]> stringOfMatches,List<Match> matches, List<Team> table, Dictionary<int, Team> teams)
@@ -140,7 +137,7 @@ namespace PredictingSoccer
 
 
             // Count at least 2 round, it probably won't help the network
-            while (i < teams.Count)
+            while (i < teamsInOneSeason)
             {
                 AddPoints(matches[i],teams);
                 i++;
@@ -211,13 +208,24 @@ namespace PredictingSoccer
 
                 AddPoints(matches[i],teams);
 
-                output.Add(result);
+                double[] resultPlusBet = new double[6];
+                for (int j = 0; j < 3; j++)
+                {
+                    resultPlusBet[j] = result[j];
+                    resultPlusBet[j + 3] = double.Parse(season[i][j + 10], System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                output.Add(resultPlusBet);
 
                 i++;
             }
 
             var guess = new double[outputNeurons];
             int team;
+            double betting;
+            double realBetting;
+            double sumBetting = 0;
+            double SumRealBetting = 0;
             team = 0;
             
             Console.WriteLine();
@@ -230,15 +238,32 @@ namespace PredictingSoccer
 
                 char guessfor = (guess[0] >= guess[1] && guess[0] >= guess[2]) ? 'H' : (guess[2] >= guess[1] && guess[2] >= guess[0]) ? 'A' : 'D';
 
-                Console.WriteLine($"Won by {wonby} and {guessfor} was guessed");
+                betting = -1;
+                realBetting = -1;
 
-                if (wonby == guessfor) team++;
+                if (wonby == guessfor)
+                {
+                    team++;
+                    switch (wonby)
+                    {
+                        case 'H': betting = output[n][3]; break;
+                        case 'D': betting = output[n][4]; break;
+                        case 'A': betting = output[n][5]; break;
+                    }
+                    realBetting = 0.94 * betting;
+                }
+
+                Console.WriteLine($"Won by {wonby} and {guessfor} was guessed, if you bet 1€, you would get {betting} or {realBetting} if you count 6% fee.");
+
+                sumBetting += betting;
+                SumRealBetting += realBetting;
             }
 
             accuracy = team / (double)input.Count;
 
             Console.WriteLine("Results:");
             Console.WriteLine($"Team that won guessed right: {team}, that's {accuracy * 100}%");
+            Console.WriteLine($"If you bet on this network results, one game at a time, you would win {sumBetting} or {SumRealBetting} if you count 6% fees.");
             Console.WriteLine();
         }
 

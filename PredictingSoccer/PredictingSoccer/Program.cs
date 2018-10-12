@@ -19,13 +19,12 @@ namespace PredictingSoccer
         {
             double accuracy;
             double averageAcc = 0;
-            int tries = 1;
+            int tries = 10;
 
             for (int i = 0; i < tries; i++)
             {
-                var season = new CsvReader(new StringReader(Properties.Resources.england15), false, ',');
-                var prevSeasons = new CsvReader(new StringReader(Properties.Resources.englandupto15), false, ',');
-                NeuralNetwork neuralNetwork = new NeuralNetwork(season, prevSeasons);
+                var data = new CsvReader(new StringReader(Properties.Resources.data), false, ',');
+                NeuralNetwork neuralNetwork = new NeuralNetwork(data);
                 neuralNetwork.FillSeason();
 
                 Accord.Math.Random.Generator.Seed = i;
