@@ -66,5 +66,12 @@ namespace PredictingSoccer
             }
             return str;
         }
+
+        public void ResetData()
+        {
+            goalsFor = goalsAgainst = points = played = wins = draws = loses = homewins = 
+                homedraws = homeloses = homeGoalsFor = homeGoalsAgainst = 0;
+            currentForm = new MatchForm[10];
+        }
     }
 }

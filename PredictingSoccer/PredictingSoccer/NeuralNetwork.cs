@@ -102,7 +102,7 @@ namespace PredictingSoccer
             return match;
         }
 
-
+//-------------------------------------------------------------------
         /// <summary>
         /// Makes neural network, then makes teacher for it, which teaches it one and a half season worth of data.
         /// Then compares guesses from it for the other half season with real results and writes statistics.
@@ -134,6 +134,10 @@ namespace PredictingSoccer
             int i = 0;
 
             FillTeamsLongTimeStrength();
+            
+            var lastSeason = OneMoreSeasonAdd(matches[0].date.Year - 1, out var lastSeasonResults);
+
+            ResetSeasonProgress();
 
 
             // Count at least 2 round, it probably won't help the network
@@ -144,8 +148,6 @@ namespace PredictingSoccer
             }
 
             int back = i;
-            
-            var lastSeason = OneMoreSeasonAdd(matches[0].date.Year - 1, out var lastSeasonResults);
 
             // Fills data for neural network and updates table (teams' data)
             while (i < matches.Count / 2)
@@ -266,7 +268,7 @@ namespace PredictingSoccer
             Console.WriteLine($"If you bet on this network results, one game at a time, you would win {sumBetting} or {SumRealBetting} if you count 6% fees.");
             Console.WriteLine();
         }
-
+//-------------------------------------------------------------------
         private void FillTeamsLongTimeStrength()
         {
             int firstSeason = 0;
@@ -278,9 +280,27 @@ namespace PredictingSoccer
                 firstSeason = firstSeason * 10 + previousSeasons[previousSeasons.Count - 1][9][i] - 48;
             }
 
-            for (int i = lastSeason; i> firstSeason; i-- )
+            for (int i = lastSeason; i > firstSeason - 1; i--)
+                //last season doesn't need to be counted, because it is evaluated for data to learn 
+                //and then will be calculated separately
             {
                 FillTeamsPoints(i);
+            }
+        }
+
+        /// <summary>
+        /// Resets every column for every team except longtimeStrenght, which will be adjusted accordingly
+        /// </summary>
+        private void ResetSeasonProgress()
+        {
+            foreach(var pair in teams)
+            {
+                var team = pair.Value;
+
+                team.longtimeStrength = (team.seasonsIn * team.longtimeStrength + team.points) / (double)(team.seasonsIn + 1);
+                team.seasonsIn++;
+
+                team.ResetData();
             }
         }
 
@@ -439,14 +459,14 @@ namespace PredictingSoccer
             data[10] = homeTeam.homewins;
             data[11] = homeTeam.homedraws;
             data[12] = homeTeam.homeloses;
-            data[13] = homeTeam.homeGoalsFor;
+            data[13] = homeTeam.homeGoalsFor / (double)(data[10] + data[11] + data[12]);
             data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
             if (data[14] is double.NaN) data[14] = 0;
 
             data[15] = awayTeam.wins - awayTeam.homewins;
             data[16] = awayTeam.draws - awayTeam.homedraws;
             data[17] = awayTeam.loses - awayTeam.homeloses;
-            data[18] = awayTeam.goalsFor - awayTeam.homeGoalsFor;
+            data[18] = (awayTeam.goalsFor - awayTeam.homeGoalsFor) / (double)(data[15] + data[16] + data[17]);
             data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
             if (data[19] is double.NaN) data[19] = 0;
 
