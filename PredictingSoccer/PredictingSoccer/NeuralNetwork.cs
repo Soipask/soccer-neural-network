@@ -131,10 +131,10 @@ namespace PredictingSoccer
             {
                 previous = error;
                 epoch++;
-                if (epoch % 100 == 0)
+                //if (epoch % 100 == 0)
                 {
-                    Console.Write("Epoch: " + epoch + "\t");
-                    Console.WriteLine("Error: " + error);
+                    //Console.Write("Epoch: " + epoch + "\t");
+                    //Console.WriteLine("Error: " + error);
                 }
 
                 error = teacher.RunEpoch(inputsArray, outputsArray);
