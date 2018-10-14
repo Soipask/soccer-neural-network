@@ -19,7 +19,8 @@ namespace PredictingSoccer
         {
             double accuracy;
             double averageAcc = 0;
-            int tries = 10;
+            double betting = 0, realBetting = 0;
+            int tries = 25;
 
             for (int i = 0; i < tries; i++)
             {
@@ -46,14 +47,20 @@ namespace PredictingSoccer
                 }*/
 
                 neuralNetwork.MakeScoreNeuralNetwork();
+                
+                averageAcc += neuralNetwork.accuracy;
 
-                accuracy = neuralNetwork.accuracy;
-                averageAcc += accuracy;
+                betting += neuralNetwork.sumBetting;
+                realBetting += neuralNetwork.sumRealBetting;
             }
 
             averageAcc /= tries;
+            betting /= tries;
+            realBetting /= tries;
             Console.WriteLine();
             Console.WriteLine($"Average accuracy: {averageAcc * 100}");
+            Console.WriteLine($"Average profit: {betting * 100} Kč.");
+            Console.WriteLine($"Average profit with 6% fees: {realBetting * 100} Kč");
             Console.ReadLine();
         }
     }
