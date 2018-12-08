@@ -90,11 +90,18 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Resources\bel.csv" />
     <None Include="Resources\data.csv" />
+    <None Include="Resources\eng.csv" />
     <None Include="Resources\england11.csv" />
     <None Include="Resources\england15.csv" />
     <None Include="Resources\englandupto11.csv" />
     <None Include="Resources\englandupto15.csv" />
+    <None Include="Resources\fra.csv" />
+    <None Include="Resources\ger.csv" />
+    <None Include="Resources\ned.csv" />
+    <None Include="Resources\por.csv" />
+    <None Include="Resources\spa.csv" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

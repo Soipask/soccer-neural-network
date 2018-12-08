@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,17 +35,25 @@ namespace PredictingSoccer
         public double sumRealBetting = 0;
 
         private int inputNeurons = 46;
+        private int hiddenLayer1 = 25;
+        private int hiddenLayer2 = 15;
         private int outputNeurons = 3;
 
         private int teamsInOneSeason = 20;
 
-        public NeuralNetwork(CsvReader data)
+        private TextWriter log;
+        private bool inputLogged;
+
+        public NeuralNetwork(CsvReader data, TextWriter log, bool logged)
         {
             var dataList = data.ToList();
 
             season = dataList.TakeWhile(x => x[9] == dataList[0][9]).Reverse().ToList();
 
             previousSeasons = dataList.SkipWhile(x => x[9] == dataList[0][9]).ToList();
+
+            this.log = log;
+            inputLogged = logged;
         }
 
         //-------------------------------------------------------------------
@@ -54,10 +63,13 @@ namespace PredictingSoccer
         /// </summary>
         public void MakeScoreNeuralNetwork()
         {
+            if (!inputLogged) WriteLogStart();
+
+
             IActivationFunction function = new BipolarSigmoidFunction();
 
 
-            network = new ActivationNetwork(function, inputNeurons, new int[] { 25, 15, outputNeurons });
+            network = new ActivationNetwork(function, inputNeurons, new int[] { hiddenLayer1, hiddenLayer2, outputNeurons });
 
             //46:   home/away - wins/draws/loses/goalsScored/goalsAgainst in season/current form
             //      home team - home wins/draws/loses/goalsScored/goalsAgainst as a home team, the same for away team
@@ -70,7 +82,7 @@ namespace PredictingSoccer
 
             teacher = new ResilientBackpropagationLearning(network);
 
-            var data = new double[46];
+            var data = new double[inputNeurons];
             var result = new double[outputNeurons];
 
             var input = new List<double[]>();
@@ -96,6 +108,9 @@ namespace PredictingSoccer
 
             int back = i;
 
+
+            if (!inputLogged) log.WriteLine($"Season {matches[0].date.Year - 1}/{matches[0].date.Year} taken into account");
+            if (!inputLogged) log.WriteLine($"Half of season {matches[0].date.Year}/{matches[0].date.Year + 1} taken into account");
             // Fills data for neural network and updates table (teams' data)
             while (i < matches.Count / 2)
             {
@@ -127,22 +142,29 @@ namespace PredictingSoccer
             output.ToArray().CopyTo(outputsArray, 0);
             lastSeasonResults.CopyTo(outputsArray, output.Count);
 
+            previous = error;
+
             do
             {
-                previous = error;
                 epoch++;
-                //if (epoch % 100 == 0)
+                if (epoch % 10 == 0)
                 {
-                    //Console.Write("Epoch: " + epoch + "\t");
-                    //Console.WriteLine("Error: " + error);
+                    Console.Write("Epoch: " + epoch + "\t");
+                    Console.WriteLine("Error: " + error);
+                    if (previous - error < 0.0001 && epoch > 2000) break;
+                    previous = error;
                 }
 
                 error = teacher.RunEpoch(inputsArray, outputsArray);
 
-            } while (epoch < 3000);
+            } while (epoch < 10000);
 
             Console.Write("Epoch: " + epoch + "\t");
             Console.WriteLine("Error: " + error);
+
+            log.WriteLine();
+            log.WriteLine($"Epochs: {epoch}");
+            log.WriteLine($"Error: {error}");
 
             // Testing network success
             back = i;
@@ -174,19 +196,29 @@ namespace PredictingSoccer
             double betting;
             double realBetting;
             team = 0;
+            int gamesBet = 0;
+            bool closeGame = false;
 
             Console.WriteLine();
             Console.WriteLine("Real Results:");
             for (int n = 0; n < input.Count; n++)
             {
+                closeGame = false;
+                if (output[n][3] - output[n][5] < 1 && output[n][5] - output[n][3] < 1)
+                {
+                    gamesBet++;
+                    closeGame = true;
+                }
+
+
                 guess = network.Compute(input[n]);
 
                 char wonby = (output[n][0] == 1) ? 'H' : (output[n][2] == 1) ? 'A' : 'D';
 
                 char guessfor = (guess[0] >= guess[1] && guess[0] >= guess[2]) ? 'H' : (guess[2] >= guess[1] && guess[2] >= guess[0]) ? 'A' : 'D';
 
-                betting = -1;
-                realBetting = -1;
+                betting = 0;
+                realBetting = 0;
 
                 if (wonby == guessfor)
                 {
@@ -197,10 +229,12 @@ namespace PredictingSoccer
                         case 'D': betting = output[n][4]; break;
                         case 'A': betting = output[n][5]; break;
                     }
-                    realBetting = 0.94 * betting;
+                    if (closeGame)
+                    realBetting = betting;
                 }
 
-                Console.WriteLine($"Won by {wonby} and {guessfor} was guessed, if you bet 100Kč, you would get {betting * 100} or {realBetting * 100} if you count 6% fee.");
+                Console.WriteLine($"Won by {wonby} and {guessfor} was guessed, if you bet 100Kč, you would get {betting * 100} " +
+                    $"or {realBetting * 100} for close game.");
 
                 sumBetting += betting;
                 sumRealBetting += realBetting;
@@ -208,14 +242,23 @@ namespace PredictingSoccer
 
             accuracy = team / (double)input.Count;
 
+            sumBetting -= input.Count;
+            sumRealBetting -= gamesBet;
+
             Console.WriteLine("Results:");
             Console.WriteLine($"Team that won guessed right: {team}, that's {accuracy * 100}%");
-            Console.WriteLine($"If you bet on this network results, one game at a time, you would win {sumBetting * 100} or {sumRealBetting * 100} if you count 6% fees.");
+            Console.WriteLine($"If you bet on this network results, one game at a time, you would win " +
+                $"{sumBetting * 100} or {sumRealBetting * 100} for close games only.");
             Console.WriteLine();
         }
         //-------------------------------------------------------------------
 
-
+        private void WriteLogStart()
+        {
+            log.WriteLine($"Program is making Neural Network with these parameters:\n" +
+                $"{inputNeurons} -> {hiddenLayer1} -> {hiddenLayer2} -> {outputNeurons}\n" +
+                $"game winner defined by the highest score within output neurons");
+        }
 
         /// <summary>
         /// Fills list of matches, match by match, field by field
@@ -442,64 +485,71 @@ namespace PredictingSoccer
         /// <param name="result"></param>
         private void FillInputData(Match match, List<string[]> previousSeasons, Dictionary<int, Team> teams, out double[] data,  out double[] result)
         {
-
+            int i = 0;
             data = new double[46];
             result = new double[outputNeurons];
 
             teams.TryGetValue(match.homeTeamId, out Team homeTeam);
             teams.TryGetValue(match.awayTeamId, out Team awayTeam);
 
-            data[0] = homeTeam.wins;
-            data[1] = homeTeam.draws;
-            data[2] = homeTeam.loses;
-            data[3] = homeTeam.goalsFor / (double)homeTeam.played;
-            data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
-            if (double.IsNaN(data[3])) data[3] = 0;
-            if (double.IsNaN(data[4])) data[4] = 0;
+            if (!inputLogged) log.WriteLine("\nThese data are put into input neurons:");
 
-            data[5] = awayTeam.wins;
-            data[6] = awayTeam.draws;
-            data[7] = awayTeam.loses;
-            data[8] = awayTeam.goalsFor / (double)awayTeam.played;
-            data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
-            if (double.IsNaN(data[8])) data[8] = 0;
-            if (double.IsNaN(data[9])) data[9] = 0;
+            data[i] = homeTeam.wins; if (!inputLogged) log.Write("htW, "); i++;
+            data[i] = homeTeam.draws; if (!inputLogged) log.Write("htD, "); i++;
+            data[i] = homeTeam.loses; if (!inputLogged) log.Write("htL, "); i++;
+            data[i] = (homeTeam.played != 0) ? homeTeam.goalsFor / (double)homeTeam.played : 0; if (!inputLogged) log.Write("htGFpG, "); i++;
+            data[i] = (homeTeam.played != 0) ? homeTeam.goalsAgainst / (double)homeTeam.played : 0; if (!inputLogged) log.Write("htGApG, "); i++;
 
-            data[10] = homeTeam.homewins;
-            data[11] = homeTeam.homedraws;
-            data[12] = homeTeam.homeloses;
-            data[13] = homeTeam.homeGoalsFor / (double)(data[10] + data[11] + data[12]);
-            data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
-            if (data[14] is double.NaN) data[14] = 0;
+            data[i] = awayTeam.wins; if (!inputLogged) log.Write("atW, "); i++;
+            data[i] = awayTeam.draws; if (!inputLogged) log.Write("atD, "); i++;
+            data[i] = awayTeam.loses; if (!inputLogged) log.Write("atL, "); i++;
+            data[i] = (awayTeam.played != 0) ? awayTeam.goalsFor / (double)awayTeam.played : 0; if (!inputLogged) log.Write("atGFpG, "); i++;
+            data[i] = (awayTeam.played != 0) ? awayTeam.goalsAgainst / (double)awayTeam.played : 0; if (!inputLogged) log.Write("atGApG, "); i++;
 
-            data[15] = awayTeam.wins - awayTeam.homewins;
-            data[16] = awayTeam.draws - awayTeam.homedraws;
-            data[17] = awayTeam.loses - awayTeam.homeloses;
-            data[18] = (awayTeam.goalsFor - awayTeam.homeGoalsFor) / (double)(data[15] + data[16] + data[17]);
-            data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
-            if (data[19] is double.NaN) data[19] = 0;
+            int homeplayed = homeTeam.homewins + homeTeam.homedraws + homeTeam.homeloses;
+            data[i] = homeTeam.homewins; if (!inputLogged) log.Write("htHW, "); i++;
+            data[i] = homeTeam.homedraws; if (!inputLogged) log.Write("htHD, "); i++;
+            data[i] = homeTeam.homeloses; if (!inputLogged) log.Write("htHL, "); i++;
+            data[i] = (homeplayed != 0) ? homeTeam.homeGoalsFor / (double)(homeplayed) : 0; if (!inputLogged) log.Write("htHGFpG, "); i++;
+            data[i] = (homeplayed != 0) ? homeTeam.homeGoalsAgainst / (double)(homeplayed) : 0; if (!inputLogged) log.Write("htHGApG, "); i++;
+            
 
-            GetForm(homeTeam, out var homeFormInput);
-            homeFormInput.CopyTo(data, 20);
+            int awayplayed = awayTeam.played - (awayTeam.homedraws + awayTeam.homeloses + awayTeam.homewins);
+            data[i] = awayTeam.wins - awayTeam.homewins; if (!inputLogged) log.Write("atAW, "); i++;
+            data[i] = awayTeam.draws - awayTeam.homedraws; if (!inputLogged) log.Write("atAD, "); i++;
+            data[i] = awayTeam.loses - awayTeam.homeloses; if (!inputLogged) log.Write("atAL, "); i++;
+            data[i] = (awayplayed!=0)?(awayTeam.goalsFor - awayTeam.homeGoalsFor) / (double)(awayplayed) : 0;
+            if (!inputLogged) log.Write("atAGFpG, "); i++;
+            data[i] = (awayplayed!=0)?(awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(awayplayed) : 0;
+            if (!inputLogged) log.Write("atAGApG, "); i++;
 
-            GetForm(awayTeam, out var awayFormInput);
-            awayFormInput.CopyTo(data, 27);
+            if (!inputLogged) log.WriteLine();
+            GetForm(homeTeam, out var homeFormInput, "h");
+            homeFormInput.CopyTo(data, i);
+            i += homeFormInput.Length;
+
+            GetForm(awayTeam, out var awayFormInput, "a");
+            awayFormInput.CopyTo(data, i);
+            i += awayFormInput.Length;
 
             GetMutualGames(homeTeam, awayTeam, previousSeasons, out var mutualInput);
+            mutualInput.CopyTo(data, i);
+            i += mutualInput.Length;
 
-            mutualInput.CopyTo(data, 34);
+            //data[i] = homeTeam.longtimeStrength; if (!inputLogged) log.Write("htLTS, "); i++;
+            //data[i] = awayTeam.longtimeStrength; if (!inputLogged) log.Write("atLTS, "); i++;
 
-            //data[44] = homeTeam.longtimeStrength;
-            //data[45] = awayTeam.longtimeStrength;
-            
             if (match.homeTeamGoalsScored > match.awayTeamGoalsScored) result[0] = 1;
             else if (match.homeTeamGoalsScored < match.awayTeamGoalsScored) result[2] = 1;
             else result[1] = 1;
+            if (!inputLogged) log.WriteLine();
+            inputLogged = true;
         }
 
-        private void GetForm(Team team, out double[] formInput)
+        private void GetForm(Team team, out double[] formInput, string logPrefix)
         {
-            formInput = new double[7];
+            var form = new double[7];
+            
 
             int pointsGot = 0;
             int i = 0;
@@ -508,28 +558,41 @@ namespace PredictingSoccer
                 if (team.currentForm[i] == null) break;
                 switch(team.currentForm[i].finalpoints)
                 {
-                    case MatchForm.GameResult.L: formInput[2]++; break;
-                    case MatchForm.GameResult.D: formInput[1]++; pointsGot = 1; break;
-                    case MatchForm.GameResult.W: formInput[0]++; pointsGot = 3; break;
+                    case MatchForm.GameResult.L: form[2]++; break; 
+                    case MatchForm.GameResult.D: form[1]++; pointsGot = 1; break;
+                    case MatchForm.GameResult.W: form[0]++; pointsGot = 3; break;
                 }
-                formInput[3] += team.currentForm[i].goalsFor;
-                formInput[4] += team.currentForm[i].goalsAgainst;
-                formInput[5] += team.currentForm[i].score;
-                formInput[6] += pointsGot * team.currentForm[i].matchAgainst.points;
+                form[3] += team.currentForm[i].goalsFor;
+                form[4] += team.currentForm[i].goalsAgainst;
+                form[5] += team.currentForm[i].score;
+                form[6] += pointsGot * team.currentForm[i].matchAgainst.points;
                 i++;
             }
+
             if (i > 0) 
             {
-                formInput[3] /= i;
-                formInput[4] /= i;
+                form[3] /= i;
+                form[4] /= i;
             }
+            
+            formInput = new double[form.Length];
+            int j = 0;
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FW, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FD, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FL, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FGF, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FGA, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FS, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FCS, ");
+            if (!inputLogged) log.WriteLine();
         }
 
         private void GetMutualGames(Team homeTeam, Team awayTeam, List<string[]> previousSeasons, out double[] mutualInput)
         {
             var mutual = FindLastMutualGames(homeTeam.id, awayTeam.id, previousSeasons);
 
-            mutualInput = new double[10];
+            var mutualPreInput = new double[10];
+            mutualInput = new double[mutualPreInput.Length];
 
             int i = 0;
             while (i < mutual.Length) 
@@ -538,20 +601,20 @@ namespace PredictingSoccer
                 
                 switch(mutual[i].homePoints)
                 {
-                    case 3: mutualInput[0]++; break;
-                    case 1: mutualInput[1]++; break;
-                    case 0: mutualInput[2]++; break;
+                    case 3: mutualPreInput[0]++; break;
+                    case 1: mutualPreInput[1]++; break;
+                    case 0: mutualPreInput[2]++; break;
                 }
-            
-                mutualInput[3] += mutual[i].homeGoalsScored;
-                mutualInput[4] += mutual[i].awayGoalsScored;
+
+                mutualPreInput[3] += mutual[i].homeGoalsScored;
+                mutualPreInput[4] += mutual[i].awayGoalsScored;
 
                 i++;
             }
             if (i == 0) return;
 
-            mutualInput[3] /= i;
-            mutualInput[4] /= i;
+            mutualPreInput[3] /= i;
+            mutualPreInput[4] /= i;
 
             mutual = FindLastMutualHomeGames(homeTeam.id, awayTeam.id, previousSeasons);
             i = 0;
@@ -561,21 +624,33 @@ namespace PredictingSoccer
 
                 switch (mutual[i].homePoints)
                 {
-                    case 3: mutualInput[5]++; break;
-                    case 1: mutualInput[6]++; break;
-                    case 0: mutualInput[7]++; break;
+                    case 3: mutualPreInput[5]++; break;
+                    case 1: mutualPreInput[6]++; break;
+                    case 0: mutualPreInput[7]++; break;
                 }
 
-                mutualInput[8] += mutual[i].homeGoalsScored;
-                mutualInput[9] += mutual[i].awayGoalsScored;
+                mutualPreInput[8] += mutual[i].homeGoalsScored;
+                mutualPreInput[9] += mutual[i].awayGoalsScored;
 
                 i++;
             }
             if (i == 0) return;
 
-            mutualInput[8] /= i;
-            mutualInput[9] /= i;
+            mutualPreInput[8] /= i;
+            mutualPreInput[9] /= i;
 
+            int j = 0;
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MW, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MD, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("ML, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MGF, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MGA, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhW, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhD, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhL, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhGF, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhGA, ");
+            if (!inputLogged) log.WriteLine();
         }
 
         /// <summary>
