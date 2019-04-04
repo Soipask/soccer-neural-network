@@ -24,6 +24,9 @@ namespace PredictingSoccer
         public int homeGoalsAgainst;
         public MatchForm[] currentForm = new MatchForm[10];
 
+        public double longtimeStrength;
+        public int seasonsIn;
+
         private byte maximumFormGamesStored;
 
         public Team(string name, int id, int gf, int ga, int p, byte maxFormStored)
@@ -62,6 +65,13 @@ namespace PredictingSoccer
                 str += currentForm[i];
             }
             return str;
+        }
+
+        public void ResetData()
+        {
+            goalsFor = goalsAgainst = points = played = wins = draws = loses = homewins = 
+                homedraws = homeloses = homeGoalsFor = homeGoalsAgainst = 0;
+            currentForm = new MatchForm[10];
         }
     }
 }

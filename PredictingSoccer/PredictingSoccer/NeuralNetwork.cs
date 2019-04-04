@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +16,8 @@ namespace PredictingSoccer
     {
         private List<Match> matches = new List<Match>();
 
-        private CsvReader season;
-
-        private CsvReader previousSeasonsData;
+        private List<string[]> season;
+        
         private List<string[]> previousSeasons;
 
         public Dictionary<int, Team> teams = new Dictionary<int, Team>();
@@ -30,10 +30,234 @@ namespace PredictingSoccer
         private int maxMutualMatches = 5;
         private byte maxFormMatches = 10;
 
-        public NeuralNetwork(CsvReader thisSeason, CsvReader previousSeasons)
+        public double accuracy;
+        public double sumBetting = 0;
+        public double sumRealBetting = 0;
+
+        private int inputNeurons = 46;
+        private int hiddenLayer1 = 25;
+        private int hiddenLayer2 = 15;
+        private int outputNeurons = 3;
+
+        private int teamsInOneSeason = 20;
+
+        private TextWriter log;
+        private bool inputLogged;
+
+        public NeuralNetwork(CsvReader data, TextWriter log, bool logged)
         {
-            season = thisSeason;
-            previousSeasonsData = previousSeasons;
+            var dataList = data.ToList();
+
+            season = dataList.TakeWhile(x => x[9] == dataList[0][9]).Reverse().ToList();
+
+            previousSeasons = dataList.SkipWhile(x => x[9] == dataList[0][9]).ToList();
+
+            this.log = log;
+            inputLogged = logged;
+        }
+
+        //-------------------------------------------------------------------
+        /// <summary>
+        /// Makes neural network, then makes teacher for it, which teaches it one and a half season worth of data.
+        /// Then compares guesses from it for the other half season with real results and writes statistics.
+        /// </summary>
+        public void MakeScoreNeuralNetwork()
+        {
+            if (!inputLogged) WriteLogStart();
+
+
+            IActivationFunction function = new BipolarSigmoidFunction();
+
+
+            network = new ActivationNetwork(function, inputNeurons, new int[] { hiddenLayer1, hiddenLayer2, outputNeurons });
+
+            //46:   home/away - wins/draws/loses/goalsScored/goalsAgainst in season/current form
+            //      home team - home wins/draws/loses/goalsScored/goalsAgainst as a home team, the same for away team
+            //      some calculations with form:    Sum(points got in a game * (point difference right now))
+            //                                      Sum(points got in a game * (point difference when game was played))
+            //      + last 5 games between those two teams: thisDayHomeTeam wins/loses/draws/goalsScored/goalsAgainst
+            //      + last 3 games between those two teams (home team plays home): home wins/loses/draws/goalsScored/goalsAgainst
+            //      + long-time strenght of teams (average number of points got in seasons before)
+
+
+            teacher = new ResilientBackpropagationLearning(network);
+
+            var data = new double[inputNeurons];
+            var result = new double[outputNeurons];
+
+            var input = new List<double[]>();
+            var output = new List<double[]>();
+
+            int i = 0;
+
+            FillTeamsLongTimeStrength();
+
+            ResetSeasonProgress();
+
+            var lastSeason = OneMoreSeasonAdd(matches[0].date.Year - 1, out var lastSeasonResults);
+
+            ResetSeasonProgress();
+
+
+            // Count at least 2 round, it probably won't help the network
+            while (i < teamsInOneSeason)
+            {
+                AddPoints(matches[i], teams);
+                i++;
+            }
+
+            int back = i;
+
+
+            if (!inputLogged) log.WriteLine($"Season {matches[0].date.Year - 1}/{matches[0].date.Year} taken into account");
+            if (!inputLogged) log.WriteLine($"Half of season {matches[0].date.Year}/{matches[0].date.Year + 1} taken into account");
+            // Fills data for neural network and updates table (teams' data)
+            while (i < matches.Count / 2)
+            {
+                FillInputData(matches[i], previousSeasons, teams, out data, out result);
+
+                input.Add(data);
+
+                AddPoints(matches[i], teams);
+
+                output.Add(result);
+
+                i++;
+            }
+
+
+            // Learning
+            double error = double.PositiveInfinity;
+            double previous;
+
+            int epoch = 0;
+            //Console.WriteLine("\nStarting training");
+
+            var inputsArray = new double[input.Count + lastSeason.Length][];
+            var outputsArray = new double[output.Count + lastSeasonResults.Length][];
+
+            input.ToArray().CopyTo(inputsArray, 0);
+            lastSeason.CopyTo(inputsArray, input.Count);
+
+            output.ToArray().CopyTo(outputsArray, 0);
+            lastSeasonResults.CopyTo(outputsArray, output.Count);
+
+            previous = error;
+
+            do
+            {
+                epoch++;
+                if (epoch % 10 == 0)
+                {
+                    Console.Write("Epoch: " + epoch + "\t");
+                    Console.WriteLine("Error: " + error);
+                    if (previous - error < 0.0001 && epoch > 2000) break;
+                    previous = error;
+                }
+
+                error = teacher.RunEpoch(inputsArray, outputsArray);
+
+            } while (epoch < 10000);
+
+            Console.Write("Epoch: " + epoch + "\t");
+            Console.WriteLine("Error: " + error);
+
+            log.WriteLine();
+            log.WriteLine($"Epochs: {epoch}");
+            log.WriteLine($"Error: {error}");
+
+            // Testing network success
+            back = i;
+            input = new List<double[]>();
+            output = new List<double[]>();
+
+            while (i < matches.Count)
+            {
+                FillInputData(matches[i], previousSeasons, teams, out data, out result);
+
+                input.Add(data);
+
+                AddPoints(matches[i], teams);
+
+                double[] resultPlusBet = new double[6];
+                for (int j = 0; j < 3; j++)
+                {
+                    resultPlusBet[j] = result[j];
+                    resultPlusBet[j + 3] = double.Parse(season[i][j + 10], System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                output.Add(resultPlusBet);
+
+                i++;
+            }
+
+            var guess = new double[outputNeurons];
+            int team;
+            double betting;
+            double realBetting;
+            team = 0;
+            int gamesBet = 0;
+            bool closeGame = false;
+
+            Console.WriteLine();
+            Console.WriteLine("Real Results:");
+            for (int n = 0; n < input.Count; n++)
+            {
+                closeGame = false;
+                if (output[n][3] - output[n][5] < 1 && output[n][5] - output[n][3] < 1)
+                {
+                    gamesBet++;
+                    closeGame = true;
+                }
+
+
+                guess = network.Compute(input[n]);
+
+                char wonby = (output[n][0] == 1) ? 'H' : (output[n][2] == 1) ? 'A' : 'D';
+
+                char guessfor = (guess[0] >= guess[1] && guess[0] >= guess[2]) ? 'H' : (guess[2] >= guess[1] && guess[2] >= guess[0]) ? 'A' : 'D';
+
+                betting = 0;
+                realBetting = 0;
+
+                if (wonby == guessfor)
+                {
+                    team++;
+                    switch (wonby)
+                    {
+                        case 'H': betting = output[n][3]; break;
+                        case 'D': betting = output[n][4]; break;
+                        case 'A': betting = output[n][5]; break;
+                    }
+                    if (closeGame)
+                    realBetting = betting;
+                }
+
+                Console.WriteLine($"Won by {wonby} and {guessfor} was guessed, if you bet 100Kč, you would get {betting * 100} " +
+                    $"or {realBetting * 100} for close game.");
+
+                sumBetting += betting;
+                sumRealBetting += realBetting;
+            }
+
+            accuracy = team / (double)input.Count;
+
+            sumBetting -= input.Count;
+            sumRealBetting -= gamesBet;
+
+            Console.WriteLine("Results:");
+            Console.WriteLine($"Team that won guessed right: {team}, that's {accuracy * 100}%");
+            Console.WriteLine($"If you bet on this network results, one game at a time, you would win " +
+                $"{sumBetting * 100} or {sumRealBetting * 100} for close games only.");
+            Console.WriteLine();
+        }
+        //-------------------------------------------------------------------
+
+        private void WriteLogStart()
+        {
+            log.WriteLine($"Program is making Neural Network with these parameters:\n" +
+                $"{inputNeurons} -> {hiddenLayer1} -> {hiddenLayer2} -> {outputNeurons}\n" +
+                $"game winner defined by the highest score within output neurons");
         }
 
         /// <summary>
@@ -41,174 +265,217 @@ namespace PredictingSoccer
         /// </summary>
         public void FillSeason()
         {
-            string[] row;
+
             Match match;
 
-            while (!season.EndOfStream)
+            foreach(var row in season)
             {
-                row = season.ReadLine();
-
-                match = new Match
-                {
-                    homeTeam = row[0],
-                    awayTeam = row[1],
-                    id = int.Parse(row[2]),
-                    stage = int.Parse(row[3]),
-                    homeTeamId = int.Parse(row[4]),
-                    awayTeamId = int.Parse(row[5]),
-                    homeTeamGoalsScored = int.Parse(row[6]),
-                    awayTeamGoalsScored = int.Parse(row[7]),
-                    date = row[8]
-                };
-
-                if (!teams.ContainsKey(match.homeTeamId))
-                {
-                    Team team = new Team(match.homeTeam, match.homeTeamId, maxFormMatches);
-                    teams.Add(match.homeTeamId, team);
-                    table.Add(team);
-                }
-                if (!teams.ContainsKey(match.awayTeamId))
-                {
-                    Team team = new Team(match.awayTeam, match.awayTeamId, maxFormMatches);
-                    teams.Add(match.awayTeamId, team);
-                    table.Add(team);
-                }
-
+                match = FillAMatch(row, table, teams);
                 matches.Add(match);
             }
-            season.Dispose();
-            
-            previousSeasons = previousSeasonsData.Where(m =>
-                (teams.ContainsKey(int.Parse(m[4])) || teams.ContainsKey(int.Parse(m[5])))).ToList();
-            previousSeasonsData.Close();
         }
 
-        public void MakeScoreNeuralNetwork()
+        public void FillSeason(IEnumerable<string[]> stringOfMatches,List<Match> matches, List<Team> table, Dictionary<int, Team> teams)
         {
-            IActivationFunction function = new BipolarSigmoidFunction();
+            foreach(var row in stringOfMatches)
+            {
+                var match = FillAMatch(row, table,teams);
+                matches.Add(match);
+            }
+        }
 
-            network = new ActivationNetwork(function, 44, new int[] { 25, 15, 2 });
-            
-            //44:   home/away - wins/draws/loses/goalsScored/goalsAgainst in season/current form
-            //      home team - home wins/draws/loses/goalsScored/goalsAgainst as a home team, the same for away team
-            //      some calculations with form:    Sum(points got in a game * (point difference right now))
-            //                                      Sum(points got in a game * (point difference when game was played))
-            //      + last 5 games between those two teams: thisDayHomeTeam wins/loses/draws/goalsScored/goalsAgainst
-            //      + last 3 games between those two teams (home team plays home): home wins/loses/draws/goalsScored/goalsAgainst
+        private Match FillAMatch(string[] row, List<Team> table, Dictionary<int, Team> teams)
+        {
+            var match = new Match
+            {
+                homeTeam = row[0],
+                awayTeam = row[1],
+                id = int.Parse(row[2]),
+                stage = int.Parse(row[3]),
+                homeTeamId = int.Parse(row[4]),
+                awayTeamId = int.Parse(row[5]),
+                homeTeamGoalsScored = int.Parse(row[6]),
+                awayTeamGoalsScored = int.Parse(row[7]),
+                dateString = row[8]
+            };
 
+            match.MakeDate();
 
-            teacher = new ResilientBackpropagationLearning(network);
+            if (!teams.ContainsKey(match.homeTeamId))
+            {
+                Team team = new Team(match.homeTeam, match.homeTeamId, maxFormMatches);
+                teams.Add(match.homeTeamId, team);
+                table.Add(team);
+            }
+            if (!teams.ContainsKey(match.awayTeamId))
+            {
+                Team team = new Team(match.awayTeam, match.awayTeamId, maxFormMatches);
+                teams.Add(match.awayTeamId, team);
+                table.Add(team);
+            }
 
-            var data = new double[44];
-            var result = new double[2];
-            double[][] inputs = new double[matches.Count / 2 - teams.Count][];
-            double[][] output = new double[matches.Count / 2 - teams.Count][];
+            return match;
+        }
+
+        private void FillTeamsLongTimeStrength()
+        {
+            int firstSeason = 0;
+            int lastSeason = 0;
+
+            for (int i = 0; i < 4; i++)
+            {
+                lastSeason = lastSeason * 10 + previousSeasons[0][9][i] - 48;
+                firstSeason = firstSeason * 10 + previousSeasons[previousSeasons.Count - 1][9][i] - 48;
+            }
+
+            for (int i = lastSeason; i > firstSeason - 1; i--)
+                //last season doesn't need to be counted, because it is evaluated for data to learn 
+                //and then will be calculated separately
+            {
+                FillTeamsPoints(i);
+            }
+        }
+
+        /// <summary>
+        /// Resets every column for every team except longtimeStrenght, which will be adjusted accordingly
+        /// </summary>
+        private void ResetSeasonProgress()
+        {
+            foreach(var pair in teams)
+            {
+                var team = pair.Value;
+
+                team.ResetData();
+            }
+        }
+
+        private void RecalculateLongTimeStrength()
+        {
+
+            foreach (var pair in teams)
+            {
+                var team = pair.Value;
+
+                if (team.played == 0) continue;
+                
+                team.longtimeStrength = (team.seasonsIn * team.longtimeStrength + team.points) / (double)(team.seasonsIn + 1);
+                team.seasonsIn++;
+            }
+        }
+
+        private void FillTeamsPoints(int seasonStart)
+        {
+            Dictionary<int, int> values = new Dictionary<int, int>();
+            int[] points = new int[20];
+            List<Match> matchesList = new List<Match>();
+            List<Team> teamList = new List<Team>();
+
             int i = 0;
 
-            // Count at least 2 round, it probably won't help the network
-            while (i < teams.Count) 
+            var season = previousSeasons
+                .SkipWhile(x => x[9] != (seasonStart + "/" + (seasonStart + 1)))
+                .TakeWhile(x => x[9] == (seasonStart + "/" + (seasonStart + 1)));
+
+            FillSeason(season, matchesList, teamList, teams);
+
+            foreach (var match in matchesList)
             {
-                AddPoints(matches[i]);
-                i++;
-            }
+                teams.TryGetValue(match.homeTeamId, out Team homeTeam);
+                teams.TryGetValue(match.awayTeamId, out Team awayTeam);
 
-            int back = i;
-            // Fills data for neural network and updates table (teams' data)
-            while (i < matches.Count / 2)
-            {
-                FillInputData(matches[i], out data, out result);
-                
-                inputs[i - back] = data;
+                FillPoints(match, homeTeam, awayTeam, out int homePoints, out int awayPoints);
 
-                AddPoints(matches[i]);
-
-                result[0] = result[0] / 4.0d - 1;
-                result[1] = result[1] / 4.0d - 1;
-
-                output[i - back] = result;
-
-                i++;
-            }
-
-            // Learning
-            double error = double.PositiveInfinity;
-            double previous;
-
-            int epoch = 0;
-            Console.WriteLine("\nStarting training");
-
-            do
-            {
-                previous = error;
-                epoch++;
-                if (epoch % 10 == 0)
+                if (match.stage == 1)
                 {
-                    Console.Write("Epoch: " + epoch + "\t");
-                    Console.WriteLine("Error: " + error);
+                    homeTeam.seasonsIn++;
+                    awayTeam.seasonsIn++;
                 }
+                if (values.TryGetValue(homeTeam.id, out int val))
+                {
+                    points[val] += homePoints;
+                }
+                else
+                {
+                    values.Add(homeTeam.id, i);
+                    points[i] += homePoints;
+                    i++;
+                }
+                if (values.TryGetValue(awayTeam.id, out val))
+                {
+                    points[val] += awayPoints;
+                }
+                else
+                {
+                    values.Add(awayTeam.id, i);
+                    points[i] += awayPoints;
+                    i++;
+                }
+            }
 
-                error = teacher.RunEpoch(inputs, output);
-
-            } while (epoch < 10000);
-
-            Console.Write("Epoch: " + epoch + "\t");
-            Console.WriteLine("Error: " + error);
-
-            // Testing network success
-            back = i;
-            inputs = new double[matches.Count / 2][];
-            var realResults = new double[matches.Count / 2][];
-            while (i < matches.Count)
+            foreach (var key in values.Keys)
             {
-                FillInputData(matches[i], out data, out result);
-                
-                inputs[i - matches.Count/2] = data;
+                values.TryGetValue(key, out int val);
+                int point = points[val];
+                teams.TryGetValue(key, out Team team);
+                team.longtimeStrength = (team.longtimeStrength * (team.seasonsIn - 1) + point) / (double)team.seasonsIn;
+            }
+        }
 
-                AddPoints(matches[i]);
+        /// <summary>
+        /// Gets season, takes this season and makes data from whole season for neural network to learn.
+        /// </summary>
+        /// <param name="season"></param>
+        /// <param name="seasonResults"></param>
+        /// <returns></returns>
+        private double[][] OneMoreSeasonAdd(int season, out double[][] seasonResults)
+        {
+            double[][] wholeSeason = new double[360][];
+            List<Match> thisSeason = new List<Match>();
+            List<Team> seasonsTable = new List<Team>();
 
-                realResults[i - matches.Count/2] = result;
+            List<double[]> input = new List<double[]>();
+            List<double[]> output = new List<double[]>();
+            double[] data;
+            double[] result;
+
+            var thisYearsTeams = new Dictionary<int, Team>();
+
+            var matches = previousSeasons.SkipWhile(m => m[9] != (season.ToString() + "/" + (season + 1).ToString())).
+                TakeWhile(m => m[9] == season.ToString() + "/" + (season + 1).ToString()).Reverse().ToList();
+
+            FillSeason(matches, thisSeason, seasonsTable, teams);
+
+            int i = 0;
+            while (i < teamsInOneSeason) 
+            {
+                AddPoints(thisSeason[i], teams);
+                i++;
+            }
+
+            var seasonsBefore = previousSeasons.SkipWhile(m => m[9] != season.ToString() + "/" + (season + 1).ToString()).
+                SkipWhile(m => m[9] == season.ToString() + "/" + (season + 1).ToString()).ToList();
+
+            while (i < thisSeason.Count)
+            {
+                FillInputData(thisSeason[i], seasonsBefore, teams, out data, out result);
+
+                input.Add(data);
+
+                AddPoints(thisSeason[i], teams);
+
+                output.Add(result);
 
                 i++;
             }
 
-            var guess = new double[inputs.Length][];
-            int bothScores, homeScore, awayScore, team;
-            bothScores = homeScore = awayScore = team = 0;
+            seasonResults = output.ToArray();
+            wholeSeason = input.ToArray();
 
-            
-            Console.WriteLine("Real Results \t Won \t Guessed result \t Team guessed");
-            for (int n = 0; n < inputs.Length; n++)
-            {
-                guess[n] = network.Compute(inputs[n]);
-                int home = (int)Math.Round((guess[n][0] + 1) * 4);
-                int away = (int)Math.Round((guess[n][1] + 1) * 4);
-                char wonby = (realResults[n][0] > realResults[n][1]) ? 'H' : (realResults[n][1] > realResults[n][0]) ? 'A' : 'D';
-                char guessfor = (home > away) ? 'H' : (away > home) ? 'A' : 'D';
-                char preciseGuess = (guess[n][0] > guess[n][1] + 0.2) ? 'H' : (guess[n][1] > guess[n][0] + 0.2) ? 'A' : 'D';
-                Console.WriteLine($"{realResults[n][0]}:{realResults[n][1]}\tWon by {wonby}\t{home}:{away}\t {guessfor} was guessed or {preciseGuess} ");
+            RecalculateLongTimeStrength();
 
-                if (realResults[n][0] == home) homeScore++;
-                if (realResults[n][1] == away) awayScore++;
-                if (realResults[n][0] == home && realResults[n][1] == away) bothScores++;
-                if (wonby == guessfor) team++;
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("Results:");
-            Console.WriteLine($"Home team goals for guessed right: {homeScore}, that's {homeScore * 100 / (double)inputs.Length}%");
-            Console.WriteLine($"Away team goals for guessed right: {awayScore}, that's {awayScore * 100 / (double)inputs.Length}%");
-            Console.WriteLine($"Exact result guessed right: {bothScores}, that's {bothScores * 100 / (double)inputs.Length}%");
-            Console.WriteLine($"Team that won guessed right: {team}, that's {team * 100 / (double)inputs.Length}%");
+            return wholeSeason;
         }
-
-        public void MakeWinNeuralNetwork()
-        {
-            IActivationFunction function = new BipolarSigmoidFunction();
-            network = new ActivationNetwork(function, 46, new int[] { 25, 10, 1 });
-
-            teacher = new ResilientBackpropagationLearning(network);
-
-        }
+        
 
         /// <summary>
         /// Fills input data for neural network as well as results.
@@ -216,62 +483,73 @@ namespace PredictingSoccer
         /// <param name="match"></param>
         /// <param name="data"></param>
         /// <param name="result"></param>
-        private void FillInputData(Match match, out double[] data, out double[] result)
+        private void FillInputData(Match match, List<string[]> previousSeasons, Dictionary<int, Team> teams, out double[] data,  out double[] result)
         {
-
-            data = new double[44];
-            result = new double[2];
+            int i = 0;
+            data = new double[46];
+            result = new double[outputNeurons];
 
             teams.TryGetValue(match.homeTeamId, out Team homeTeam);
             teams.TryGetValue(match.awayTeamId, out Team awayTeam);
 
-            data[0] = homeTeam.wins;
-            data[1] = homeTeam.draws;
-            data[2] = homeTeam.loses;
-            data[3] = homeTeam.goalsFor / (double)homeTeam.played;
-            data[4] = homeTeam.goalsAgainst / (double)homeTeam.played;
-            if (double.IsNaN(data[3])) data[3] = 0;
-            if (double.IsNaN(data[4])) data[4] = 0;
+            if (!inputLogged) log.WriteLine("\nThese data are put into input neurons:");
 
-            data[5] = awayTeam.wins;
-            data[6] = awayTeam.draws;
-            data[7] = awayTeam.loses;
-            data[8] = awayTeam.goalsFor / (double)awayTeam.played;
-            data[9] = awayTeam.goalsAgainst / (double)awayTeam.played;
-            if (double.IsNaN(data[8])) data[8] = 0;
-            if (double.IsNaN(data[9])) data[9] = 0;
+            data[i] = homeTeam.wins; if (!inputLogged) log.Write("htW, "); i++;
+            data[i] = homeTeam.draws; if (!inputLogged) log.Write("htD, "); i++;
+            data[i] = homeTeam.loses; if (!inputLogged) log.Write("htL, "); i++;
+            data[i] = (homeTeam.played != 0) ? homeTeam.goalsFor / (double)homeTeam.played : 0; if (!inputLogged) log.Write("htGFpG, "); i++;
+            data[i] = (homeTeam.played != 0) ? homeTeam.goalsAgainst / (double)homeTeam.played : 0; if (!inputLogged) log.Write("htGApG, "); i++;
 
-            data[10] = homeTeam.homewins;
-            data[11] = homeTeam.homedraws;
-            data[12] = homeTeam.homeloses;
-            data[13] = homeTeam.homeGoalsFor;
-            data[14] = homeTeam.homeGoalsAgainst / (double)(data[10] + data[11] + data[12]);
-            if (data[14] is double.NaN) data[14] = 0;
+            data[i] = awayTeam.wins; if (!inputLogged) log.Write("atW, "); i++;
+            data[i] = awayTeam.draws; if (!inputLogged) log.Write("atD, "); i++;
+            data[i] = awayTeam.loses; if (!inputLogged) log.Write("atL, "); i++;
+            data[i] = (awayTeam.played != 0) ? awayTeam.goalsFor / (double)awayTeam.played : 0; if (!inputLogged) log.Write("atGFpG, "); i++;
+            data[i] = (awayTeam.played != 0) ? awayTeam.goalsAgainst / (double)awayTeam.played : 0; if (!inputLogged) log.Write("atGApG, "); i++;
 
-            data[15] = awayTeam.wins - awayTeam.homewins;
-            data[16] = awayTeam.draws - awayTeam.homedraws;
-            data[17] = awayTeam.loses - awayTeam.homeloses;
-            data[18] = awayTeam.goalsFor - awayTeam.homeGoalsFor;
-            data[19] = (awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(data[15] + data[16] + data[17]);
-            if (data[19] is double.NaN) data[19] = 0;
-
-            GetForm(homeTeam, out var homeFormInput);
-            homeFormInput.CopyTo(data, 20);
-
-            GetForm(awayTeam, out var awayFormInput);
-            awayFormInput.CopyTo(data, 27);
-
-            GetMutualGames(homeTeam, awayTeam, out var mutualInput);
-
-            mutualInput.CopyTo(data, 34);
+            int homeplayed = homeTeam.homewins + homeTeam.homedraws + homeTeam.homeloses;
+            data[i] = homeTeam.homewins; if (!inputLogged) log.Write("htHW, "); i++;
+            data[i] = homeTeam.homedraws; if (!inputLogged) log.Write("htHD, "); i++;
+            data[i] = homeTeam.homeloses; if (!inputLogged) log.Write("htHL, "); i++;
+            data[i] = (homeplayed != 0) ? homeTeam.homeGoalsFor / (double)(homeplayed) : 0; if (!inputLogged) log.Write("htHGFpG, "); i++;
+            data[i] = (homeplayed != 0) ? homeTeam.homeGoalsAgainst / (double)(homeplayed) : 0; if (!inputLogged) log.Write("htHGApG, "); i++;
             
-            result[0] = match.homeTeamGoalsScored;
-            result[1] = match.awayTeamGoalsScored;
+
+            int awayplayed = awayTeam.played - (awayTeam.homedraws + awayTeam.homeloses + awayTeam.homewins);
+            data[i] = awayTeam.wins - awayTeam.homewins; if (!inputLogged) log.Write("atAW, "); i++;
+            data[i] = awayTeam.draws - awayTeam.homedraws; if (!inputLogged) log.Write("atAD, "); i++;
+            data[i] = awayTeam.loses - awayTeam.homeloses; if (!inputLogged) log.Write("atAL, "); i++;
+            data[i] = (awayplayed!=0)?(awayTeam.goalsFor - awayTeam.homeGoalsFor) / (double)(awayplayed) : 0;
+            if (!inputLogged) log.Write("atAGFpG, "); i++;
+            data[i] = (awayplayed!=0)?(awayTeam.goalsAgainst - awayTeam.homeGoalsAgainst) / (double)(awayplayed) : 0;
+            if (!inputLogged) log.Write("atAGApG, "); i++;
+
+            if (!inputLogged) log.WriteLine();
+            GetForm(homeTeam, out var homeFormInput, "h");
+            homeFormInput.CopyTo(data, i);
+            i += homeFormInput.Length;
+
+            GetForm(awayTeam, out var awayFormInput, "a");
+            awayFormInput.CopyTo(data, i);
+            i += awayFormInput.Length;
+
+            GetMutualGames(homeTeam, awayTeam, previousSeasons, out var mutualInput);
+            mutualInput.CopyTo(data, i);
+            i += mutualInput.Length;
+
+            //data[i] = homeTeam.longtimeStrength; if (!inputLogged) log.Write("htLTS, "); i++;
+            //data[i] = awayTeam.longtimeStrength; if (!inputLogged) log.Write("atLTS, "); i++;
+
+            if (match.homeTeamGoalsScored > match.awayTeamGoalsScored) result[0] = 1;
+            else if (match.homeTeamGoalsScored < match.awayTeamGoalsScored) result[2] = 1;
+            else result[1] = 1;
+            if (!inputLogged) log.WriteLine();
+            inputLogged = true;
         }
 
-        private void GetForm(Team team, out double[] formInput)
+        private void GetForm(Team team, out double[] formInput, string logPrefix)
         {
-            formInput = new double[7];
+            var form = new double[7];
+            
 
             int pointsGot = 0;
             int i = 0;
@@ -280,28 +558,41 @@ namespace PredictingSoccer
                 if (team.currentForm[i] == null) break;
                 switch(team.currentForm[i].finalpoints)
                 {
-                    case MatchForm.GameResult.L: formInput[2]++; break;
-                    case MatchForm.GameResult.D: formInput[1]++; pointsGot = 1; break;
-                    case MatchForm.GameResult.W: formInput[0]++; pointsGot = 3; break;
+                    case MatchForm.GameResult.L: form[2]++; break; 
+                    case MatchForm.GameResult.D: form[1]++; pointsGot = 1; break;
+                    case MatchForm.GameResult.W: form[0]++; pointsGot = 3; break;
                 }
-                formInput[3] += team.currentForm[i].goalsFor;
-                formInput[4] += team.currentForm[i].goalsAgainst;
-                formInput[5] += team.currentForm[i].score;
-                formInput[6] += pointsGot * team.currentForm[i].matchAgainst.points;
+                form[3] += team.currentForm[i].goalsFor;
+                form[4] += team.currentForm[i].goalsAgainst;
+                form[5] += team.currentForm[i].score;
+                form[6] += pointsGot * team.currentForm[i].matchAgainst.points;
                 i++;
             }
+
             if (i > 0) 
             {
-                formInput[3] /= i;
-                formInput[4] /= i;
+                form[3] /= i;
+                form[4] /= i;
             }
+            
+            formInput = new double[form.Length];
+            int j = 0;
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FW, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FD, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FL, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FGF, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FGA, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FS, ");
+            formInput[j] = form[j]; j++; if (!inputLogged) log.Write(logPrefix + "FCS, ");
+            if (!inputLogged) log.WriteLine();
         }
 
-        private void GetMutualGames(Team homeTeam, Team awayTeam, out double[] mutualInput)
+        private void GetMutualGames(Team homeTeam, Team awayTeam, List<string[]> previousSeasons, out double[] mutualInput)
         {
-            var mutual = FindLastMutualGames(homeTeam.id, awayTeam.id);
+            var mutual = FindLastMutualGames(homeTeam.id, awayTeam.id, previousSeasons);
 
-            mutualInput = new double[10];
+            var mutualPreInput = new double[10];
+            mutualInput = new double[mutualPreInput.Length];
 
             int i = 0;
             while (i < mutual.Length) 
@@ -310,22 +601,22 @@ namespace PredictingSoccer
                 
                 switch(mutual[i].homePoints)
                 {
-                    case 3: mutualInput[0]++; break;
-                    case 1: mutualInput[1]++; break;
-                    case 0: mutualInput[2]++; break;
+                    case 3: mutualPreInput[0]++; break;
+                    case 1: mutualPreInput[1]++; break;
+                    case 0: mutualPreInput[2]++; break;
                 }
-            
-                mutualInput[3] += mutual[i].homeGoalsScored;
-                mutualInput[4] += mutual[i].awayGoalsScored;
+
+                mutualPreInput[3] += mutual[i].homeGoalsScored;
+                mutualPreInput[4] += mutual[i].awayGoalsScored;
 
                 i++;
             }
             if (i == 0) return;
 
-            mutualInput[3] /= i;
-            mutualInput[4] /= i;
+            mutualPreInput[3] /= i;
+            mutualPreInput[4] /= i;
 
-            mutual = FindLastMutualHomeGames(homeTeam.id, awayTeam.id);
+            mutual = FindLastMutualHomeGames(homeTeam.id, awayTeam.id, previousSeasons);
             i = 0;
             while (i < mutual.Length) 
             {
@@ -333,21 +624,33 @@ namespace PredictingSoccer
 
                 switch (mutual[i].homePoints)
                 {
-                    case 3: mutualInput[5]++; break;
-                    case 1: mutualInput[6]++; break;
-                    case 0: mutualInput[7]++; break;
+                    case 3: mutualPreInput[5]++; break;
+                    case 1: mutualPreInput[6]++; break;
+                    case 0: mutualPreInput[7]++; break;
                 }
 
-                mutualInput[8] += mutual[i].homeGoalsScored;
-                mutualInput[9] += mutual[i].awayGoalsScored;
+                mutualPreInput[8] += mutual[i].homeGoalsScored;
+                mutualPreInput[9] += mutual[i].awayGoalsScored;
 
                 i++;
             }
             if (i == 0) return;
 
-            mutualInput[8] /= i;
-            mutualInput[9] /= i;
+            mutualPreInput[8] /= i;
+            mutualPreInput[9] /= i;
 
+            int j = 0;
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MW, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MD, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("ML, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MGF, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MGA, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhW, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhD, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhL, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhGF, ");
+            mutualInput[j] = mutualPreInput[j]; j++; if (!inputLogged) log.Write("MhGA, ");
+            if (!inputLogged) log.WriteLine();
         }
 
         /// <summary>
@@ -356,7 +659,7 @@ namespace PredictingSoccer
         /// <param name="homeTeamId"></param>
         /// <param name="awayTeamId"></param>
         /// <returns></returns>
-        public MutualMatch[] FindLastMutualGames(int homeTeamId, int awayTeamId)
+        public MutualMatch[] FindLastMutualGames(int homeTeamId, int awayTeamId, List<string[]> previousSeasons)
         {
 
             var suitableMatches = previousSeasons.Where(match => 
@@ -372,7 +675,7 @@ namespace PredictingSoccer
         /// <param name="homeTeamId"></param>
         /// <param name="awayTeamId"></param>
         /// <returns></returns>
-        public MutualMatch[] FindLastMutualHomeGames(int homeTeamId, int awayTeamId)
+        public MutualMatch[] FindLastMutualHomeGames(int homeTeamId, int awayTeamId, List<string[]> previousSeasons)
         {
             var suitable = previousSeasons.Where(match => 
                 (match[4] == homeTeamId.ToString() && match[5] == awayTeamId.ToString()));
@@ -411,7 +714,7 @@ namespace PredictingSoccer
             {
                 match = matches[i];
 
-                AddPoints(match);
+                AddPoints(match, teams);
             }
         }
 
@@ -419,7 +722,7 @@ namespace PredictingSoccer
         /// Adds points and other data from certain match to the teams data
         /// </summary>
         /// <param name="match"></param>
-        private void AddPoints(Match match)
+        private void AddPoints(Match match, Dictionary<int, Team> teams)
         {
             teams.TryGetValue(match.homeTeamId, out Team homeTeam);
             teams.TryGetValue(match.awayTeamId, out Team awayTeam);
@@ -431,12 +734,12 @@ namespace PredictingSoccer
             homeTeam.homeGoalsFor += match.homeTeamGoalsScored;
             homeTeam.homeGoalsAgainst += match.awayTeamGoalsScored;
             homeTeam.played++;
-            ChangeInForm(match, homeTeam, homePoints);
+            ChangeInForm(match, homeTeam, homePoints, teams);
 
             awayTeam.goalsFor += match.awayTeamGoalsScored;
             awayTeam.goalsAgainst += match.homeTeamGoalsScored;
             awayTeam.played++;
-            ChangeInForm(match, awayTeam, awayPoints);
+            ChangeInForm(match, awayTeam, awayPoints, teams);
         }
 
         /// <summary>
@@ -513,7 +816,7 @@ namespace PredictingSoccer
         /// <param name="match"></param>
         /// <param name="team"></param>
         /// <param name="points"></param>
-        private void ChangeInForm(Match match, Team team, int points)
+        private void ChangeInForm(Match match, Team team, int points, Dictionary<int, Team> teams)
         {
             MatchForm form = new MatchForm
             {
