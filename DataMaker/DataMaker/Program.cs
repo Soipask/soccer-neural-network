@@ -14,6 +14,7 @@ namespace DataMaker
 {
     class Program
     {
+        private int seasonsEvaluated = 5;
 
         private List<Match> matches = new List<Match>();
 
@@ -44,7 +45,7 @@ namespace DataMaker
             string resource;
             string league;
 
-            /**/
+            /*/
             resource = Properties.Resources.eng;
             league = "eng";
             /**/
@@ -52,7 +53,7 @@ namespace DataMaker
             resource = Properties.Resources.fra;
             league = "fra";
             /**/
-            /*/
+            /**/
             resource = Properties.Resources.ger;
             league = "ger";
             /**/
@@ -78,7 +79,7 @@ namespace DataMaker
                 version + 
                 mod + 
                 ".csv");
-            /**/
+            /*/
             resWriter = Console.Out;
             /**/
 
@@ -110,20 +111,20 @@ namespace DataMaker
             ResetSeasonProgress();
 
             
-            var lastSeason = OneMoreSeasonAdd(matches[0].date.Year - 5, out var lastSeasonResults, writer);
-            var lastFive = new double[lastSeason.Length * 5][];
-            var lastFiveResults = new double[lastSeasonResults.Length * 5][];
-            lastSeason.CopyTo(lastFive, 0);
-            lastSeasonResults.CopyTo(lastFiveResults, 0);
+            var lastSeason = OneMoreSeasonAdd(matches[0].date.Year - seasonsEvaluated, out var lastSeasonResults, writer);
+            var lastXSeasons = new double[lastSeason.Length * seasonsEvaluated][];
+            var lastXSeasonsResults = new double[lastSeasonResults.Length * seasonsEvaluated][];
+            lastSeason.CopyTo(lastXSeasons, 0);
+            lastSeasonResults.CopyTo(lastXSeasonsResults, 0);
 
             ResetSeasonProgress();
 
-            for (int k = 4; k > 0; k--)
+            for (int k = seasonsEvaluated - 1; k > 0; k--)
             {
                 lastSeason = OneMoreSeasonAdd(matches[0].date.Year - k, out lastSeasonResults, writer);
 
-                lastSeason.CopyTo(lastFive, (5 - k) * lastSeason.Length);
-                lastSeasonResults.CopyTo(lastFiveResults, (5 - k) * lastSeasonResults.Length);
+                lastSeason.CopyTo(lastXSeasons, (seasonsEvaluated - k) * lastSeason.Length);
+                lastSeasonResults.CopyTo(lastXSeasonsResults, (seasonsEvaluated - k) * lastSeasonResults.Length);
 
                 ResetSeasonProgress();
             }
@@ -154,14 +155,14 @@ namespace DataMaker
             }
 
 
-            var inputsArray = new double[input.Count + lastFive.Length][];
-            var outputsArray = new double[output.Count + lastFiveResults.Length][];
+            var inputsArray = new double[input.Count + lastXSeasons.Length][];
+            var outputsArray = new double[output.Count + lastXSeasonsResults.Length][];
 
             input.ToArray().CopyTo(inputsArray, 0);
-            lastFive.CopyTo(inputsArray, input.Count);
+            lastXSeasons.CopyTo(inputsArray, input.Count);
 
             output.ToArray().CopyTo(outputsArray, 0);
-            lastFiveResults.CopyTo(outputsArray, output.Count);
+            lastXSeasonsResults.CopyTo(outputsArray, output.Count);
         
 
             for(int m = 0; m < inputsArray.Length; m++)
@@ -295,8 +296,8 @@ namespace DataMaker
                 firstSeason = firstSeason * 10 + previousSeasons[previousSeasons.Count - 1][9][i] - 48;
             }
 
-            for (int i = lastSeason; i > firstSeason - 5; i--)
-            //last season doesn't need to be counted, because it is evaluated for data to learn 
+            for (int i = lastSeason; i > firstSeason - seasonsEvaluated; i--)
+            //last seasons doesn't need to be counted, because it is evaluated for data to learn 
             //and then will be calculated separately
             {
                 FillTeamsPoints(i);
