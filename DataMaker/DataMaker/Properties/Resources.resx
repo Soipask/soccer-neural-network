@@ -133,6 +133,9 @@
   <data name="ned" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ned.csv;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1250</value>
   </data>
+  <data name="neweng" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\neweng.csv;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1250</value>
+  </data>
   <data name="por" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\por.csv;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1250</value>
   </data>

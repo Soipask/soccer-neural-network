@@ -136,6 +136,21 @@ namespace DataMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Burnley;Bournemouth;10000;0;0;1;1;2;2018-05-13;2017/2018;2.36;3.46;3.10
+        ///Crystal Palace;West Brom;10001;0;2;3;2;0;2018-05-13;2017/2018;1.77;3.87;4.76
+        ///Huddersfield;Arsenal;10002;0;4;5;0;1;2018-05-13;2017/2018;5.63;4.73;1.55
+        ///Liverpool;Brighton;10003;0;6;7;4;0;2018-05-13;2017/2018;1.23;7.15;13.29
+        ///Manchester Utd;Watford;10004;0;8;9;1;0;2018-05-13;2017/2018;1.53;4.36;6.70
+        ///Newcastle;Chelsea;10005;0;10;11;3;0;2018-05-13;2017/2018;4.65;3.84;1.79
+        ///Southampton;Manchester City;10006;0;12;13;0;1;2018-05-13;2017/201 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string neweng {
+            get {
+                return ResourceManager.GetString("neweng", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MOR,MAR,19634,34,8348,10212,2,1,2016-05-15 00:00:00,2015/2016,2.1,3.5,3.25
         ///BEN,NAC,19638,34,9772,10214,4,1,2016-05-15 00:00:00,2015/2016,1.1,9,21
         ///BRA,SCP,19639,34,10264,9768,0,4,2016-05-15 00:00:00,2015/2016,6.25,4.33,1.5

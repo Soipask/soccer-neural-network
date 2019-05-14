@@ -74,6 +74,7 @@
     <None Include="Resources\fra.csv" />
     <None Include="Resources\ger.csv" />
     <None Include="Resources\ned.csv" />
+    <None Include="Resources\neweng.csv" />
     <None Include="Resources\por.csv" />
     <None Include="Resources\sco.csv" />
     <None Include="Resources\spa.csv" />

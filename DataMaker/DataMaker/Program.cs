@@ -14,7 +14,8 @@ namespace DataMaker
 {
     class Program
     {
-        private int seasonsEvaluated = 5;
+        // private int seasonsEvaluated = 5;
+        private int seasonsEvaluated = 8;
 
         private List<Match> matches = new List<Match>();
 
@@ -45,23 +46,23 @@ namespace DataMaker
             string resource;
             string league;
 
-            /*/
-            resource = Properties.Resources.eng;
+            /**/
+            resource = Properties.Resources.neweng;
             league = "eng";
             /**/
             /*/
             resource = Properties.Resources.fra;
             league = "fra";
             /**/
-            /**/
+            /*/
             resource = Properties.Resources.ger;
             league = "ger";
             /**/
 
-            var data = new CsvReader(new StringReader(resource), false, ',');
+            var data = new CsvReader(new StringReader(resource), false, ';');
             
-            string version = "4";
-            string mod = "dfswofs";
+            string version = "5";
+            string mod = "new8";
 
             var writer = new StreamWriter("..\\..\\..\\..\\Databases\\" + 
                 league + 
@@ -96,6 +97,8 @@ namespace DataMaker
             season = dataList.TakeWhile(x => x[9] == dataList[0][9]).Reverse().ToList();
             previousSeasons = dataList.SkipWhile(x => x[9] == dataList[0][9]).ToList();
 
+            teamsInOneSeason = season.GroupBy(t => t[0]).Count();
+
             FillSeason();
 
             var data = new double[inputNeurons];
@@ -105,6 +108,8 @@ namespace DataMaker
             var output = new List<double[]>();
 
             int i = 0;
+
+            
 
             FillTeamsLongTimeStrength();
 
@@ -136,8 +141,6 @@ namespace DataMaker
                 AddPoints(matches[i], teams);
                 i++;
             }
-
-            int back = i;
 
             while (i < matches.Count / 2)
             {
@@ -289,14 +292,20 @@ namespace DataMaker
         {
             int firstSeason = 0;
             int lastSeason = 0;
+            int gamesInSeason = teamsInOneSeason * (teamsInOneSeason - 1);
 
             for (int i = 0; i < 4; i++)
             {
                 lastSeason = lastSeason * 10 + previousSeasons[0][9][i] - 48;
-                firstSeason = firstSeason * 10 + previousSeasons[previousSeasons.Count - 1][9][i] - 48;
+                firstSeason = firstSeason * 10 + previousSeasons[previousSeasons.Count - gamesInSeason][9][i] - 48;
             }
+            // Note:
+            // if there is not enough data for a full first season 
+            // (e.g. data starts at 24 Feb 2000 and list every game since)
+            // we need to calculate just full seasons, first full season
+            // game of first full season is certainly at gamesInSeason - 1 index
 
-            for (int i = lastSeason; i > firstSeason - seasonsEvaluated; i--)
+            for (int i = lastSeason - seasonsEvaluated; i > firstSeason; i--)
             //last seasons doesn't need to be counted, because it is evaluated for data to learn 
             //and then will be calculated separately
             {
@@ -346,18 +355,14 @@ namespace DataMaker
 
             FillSeason(season, matchesList, teamList, teams);
 
+
+
             foreach (var match in matchesList)
             {
                 teams.TryGetValue(match.homeTeamId, out Team homeTeam);
                 teams.TryGetValue(match.awayTeamId, out Team awayTeam);
 
                 FillPoints(match, homeTeam, awayTeam, out int homePoints, out int awayPoints);
-
-                if (match.stage == 1)
-                {
-                    homeTeam.seasonsIn++;
-                    awayTeam.seasonsIn++;
-                }
                 if (values.TryGetValue(homeTeam.id, out int val))
                 {
                     points[val] += homePoints;
@@ -385,6 +390,7 @@ namespace DataMaker
                 values.TryGetValue(key, out int val);
                 int point = points[val];
                 teams.TryGetValue(key, out Team team);
+                team.seasonsIn++;
                 team.longtimeStrength = (team.longtimeStrength * (team.seasonsIn - 1) + point) / (double)team.seasonsIn;
             }
         }
