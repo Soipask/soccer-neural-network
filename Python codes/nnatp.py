@@ -8,40 +8,22 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 #some constants used for fine-tuning
-MAXITER = 30
+MAXITER = 100
 HIDDEN_1 = 25
 HIDDEN_2 = 15
-OUTPUT = 3
-EPOCHS = 1500
+OUTPUT = 2
+EPOCHS = 100
 OUTMETHOD = 'softmax'
 #OUTMETHOD = 'sigmoid'
 
-'''
-country = 'fra'
-data = 'data2'
-result = 'res'
-path = ''
-extension = '.csv'
-
-'''
-country = 'eng'
-data = 'data4dfswofs'
-result = 'res4dfswofs'
-path = ''
-extension = '.csv' 
-#'''
-
-
-
 logpath = "Logs\\"
-filename = logpath + country + datetime.now().strftime('%Y%m%d%H%M%S') + OUTMETHOD + ".txt"
+filename = logpath + "ATP" + datetime.now().strftime('%Y%m%d%H%M%S') + OUTMETHOD + ".txt"
 file = open(filename,"x");
 
-csv = np.genfromtxt(path + country + data + extension, delimiter=";",dtype=None,encoding=None)
-test = np.genfromtxt(path + country + result + extension, delimiter=";")
+csv = np.loadtxt('atp.csv', delimiter="; ",dtype=np.dtype(str),encoding=None)
+test = np.genfromtxt('atpres.csv', delimiter=";")
 
-file.write('{0} {1}{3}|{2}{3}\n\n'.format(country,data,result,extension))
-
+file.write('Tennis\n\nPredicting season 2018\n\n')
 
 text = csv[0,:]
 csv = csv[1:,:]
@@ -50,34 +32,29 @@ csv = csv.astype(np.float)
 INPUT = len(text) - OUTPUT
 file.write('Neural network, style: {}->{}->{}->{} ending function is {}\n EPOCHS: {}\n\n'.format(INPUT,HIDDEN_1,HIDDEN_2,OUTPUT,OUTMETHOD,EPOCHS))
 
-train_data = csv[:,:-3]
-train_labels = csv[:,-3:]
+train_data = csv[:,:-2]
+train_labels = csv[:,-2:]
 
-test_data = test[:,:-6]
-test_labels = test[:,-6:-3]
-test_bets = test[:,-3:]
+test_data = test[:,:-2]
+test_labels = test[:,-2:]
 
 np.set_printoptions(suppress=True)
 
 file.write(str(text))
 file.write("\n\n")
-#print(test_data[:5,])
-#print(test_labels[:5,])
-#print(test_bets[:5,])
 
-res = []
-train_acc = 0
-acc = []
-test_acc = 0
+test_acc = []
+test_acc_avg = 0
+train_acc = []
+train_acc_avg = 0
 close_acc = 0
 profit_avg = 0
 faith_sorted_avg_best = 0
 
-
-for n in range(MAXITER):
-	seed(n)
-	set_random_seed(n)
-	print("\n\n{}\n".format(n))
+for k in range(MAXITER):
+	seed(k)
+	set_random_seed(k)
+	print("\n\n{}\n".format(k))
 	model = tf.keras.Sequential()
 	model.add(layers.Dense(INPUT, activation='relu'))
 	model.add(layers.Dense(HIDDEN_1, activation='relu'))
@@ -92,14 +69,17 @@ for n in range(MAXITER):
 
 	results = model.evaluate(test_data, test_labels)
 	
+	print(results)
+	
 	file.write('Loss: {}, Accuracy: {}\n'.format(results[0],results[1]))
-	res.append(results[1])
-	train_acc += results[1]
-	acc.append(hist.history['acc'][-1])
-	test_acc += hist.history['acc'][-1]
+	test_acc.append(results[1])
+	test_acc_avg += results[1]
+	train_acc.append(hist.history['acc'][-1])
+	train_acc_avg += hist.history['acc'][-1]
 	raw_prediction = model.predict(test_data)
 	print(raw_prediction)
 	
+	'''
 	pred_acc = 0
 	predictions = []
 	profit_full = 0
@@ -111,7 +91,7 @@ for n in range(MAXITER):
 			predictions[j][i] = 0
 		predictions[j][max] = 1
 		bool = (predictions[j] == test_labels[j]).all()
-		print ("{} {} {}\n".format(predictions[j],test_labels[j],bool))
+		# print ("{} {} {}\n".format(predictions[j],test_labels[j],bool))
 		if bool == True :
 			pred_acc += 1
 			profit_full += test_bets[j][max]
@@ -123,6 +103,7 @@ for n in range(MAXITER):
 	print(pred_acc)
 	print(profit_full)
 	file.write("Expected profit when bet on all games separately: {}\n".format(profit_full))
+	
 	
 	# close games
 	close = 0;
@@ -146,7 +127,7 @@ for n in range(MAXITER):
 	file.write(close_result)
 	file.write("\n")
 	print(close_result)
-		
+	
 
 	# games with the best faith in prediction
 	
@@ -192,13 +173,15 @@ for n in range(MAXITER):
 		faith_sorted_acc.append((n + 1, faith_right / (n + 1), prof))
 	maximum = np.max(faith_sorted_acc[int(len(faith_sorted)/10) : ])
 	where = np.where(faith_sorted_acc == maximum)
-	print("Threshold faith is {} at {} games".format(maximum,where))
+	# print("Threshold faith is {} at {} games".format(maximum,where))
 	prof_sorted = sorted(faith_sorted_acc,reverse = True, key = lambda f: f[2])
 	print("max profit is {}".format(prof_sorted[0][2]))
 	faith_sorted_avg_best += maximum
 	
 	file.write("\n")
-
+	
+	plt.plot([faith_sorted[n][4] for n in range(len(faith_sorted))],[faith_sorted_acc[n][2] for n in range(len(faith_sorted_acc))], label = "Random seed {}".format(k))
+'''
 # accuracy to faith rank
 # plt.plot(range(1,len(faith_sorted)+1),faith_sorted_acc)		
 
@@ -209,20 +192,24 @@ for n in range(MAXITER):
 # plt.plot(range(1,len(faith_sorted)+1),[faith_sorted_acc[n][2] for n in range(len(faith_sorted_acc))])
 
 # profit to faith
-plt.plot([faith_sorted[n][4] for n in range(len(faith_sorted))],[faith_sorted_acc[n][2] for n in range(len(faith_sorted_acc))],"g")
 
-# plt.show()	
+plt.plot(range(MAXITER),test_acc,"r", label = "Test accuracy")
+plt.plot(range(MAXITER),train_acc,"b", label = "Train accuracy")
+
+plt.xlabel("Random seed")
+plt.ylabel("Accuracy")
+plt.legend(loc = "lower right")
+
+plt.show()	
 		
 
-train_acc /= MAXITER
-test_acc /= MAXITER
-close_acc /= MAXITER
-profit_avg /= MAXITER
-faith_sorted_avg_best /= MAXITER
+test_acc_avg /= MAXITER
+train_acc_avg /= MAXITER
+#close_acc /= MAXITER
+#profit_avg /= MAXITER
+#faith_sorted_avg_best /= MAXITER
 
 
-file.write("Average training accuracy is {}\n".format(train_acc))
-file.write("Average test accuracy is {}\n\n".format(test_acc))
-file.write("Average close game accuracy is {} with profit of {}\n\n".format(close_acc,profit_avg))
-
-
+file.write("Average training accuracy is {}\n".format(test_acc_avg))
+file.write("Average test accuracy is {}\n\n".format(train_acc_avg))
+# file.write("Average close game accuracy is {} with profit of {}\n\n".format(close_acc,profit_avg))
