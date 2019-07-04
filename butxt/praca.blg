@@ -1,0 +1,22 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: praca.aux
+A level-1 auxiliary file: titulka.aux
+A level-1 auxiliary file: uvod.aux
+A level-1 auxiliary file: chap01.aux
+A level-1 auxiliary file: chap03.aux
+A level-1 auxiliary file: chap02.aux
+A level-1 auxiliary file: chap04.aux
+A level-1 auxiliary file: zaver.aux
+A level-1 auxiliary file: literatura.aux
+The style file: czplainnat.bst
+Database file #1: literatura.bib
+Warning--entry type for "rnn:colah" isn't style-file defined
+--line 1 of file literatura.bib
+Warning--entry type for "rnn:spol" isn't style-file defined
+--line 20 of file literatura.bib
+Warning--entry type for "odds" isn't style-file defined
+--line 48 of file literatura.bib
+Warning--entry type for "bet:prince" isn't style-file defined
+--line 58 of file literatura.bib
+Warning--entry type for "bet:pres" isn't style-file defined
+--line 68 of file literatura.bib
+(There were 5 warnings)

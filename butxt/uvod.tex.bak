@@ -1,0 +1,41 @@
+\chapter*{Úvod}
+\addcontentsline{toc}{chapter}{Úvod}
+
+\iffalse
+Úlohou tejto práce je vytvoriť čo najpresnejšie neurónové siete a rekurentné neurónové siete určené na predikciu výsledkov futbalových a tenisových zápasov a potom ich porovnať s podobnými prácami. 
+Zároveň budem porovnávať konkrétne predikcie sietí proti stávkovým kanceláriám všeobecne, takže či je možné zo získaných údajov mnou prezentovaným spôsobom urobiť, resp. zaručiť, zisk pri dlhodobom stávkovaní ako je známe v súčasnosti.
+
+Predikovať budem 5 vybraných futbalových líg, konkrétne to bude najvyššia anglická (Premier League), španielska (La Liga), nemecká (Bundesliga), ... a ... liga. 
+Z tenisových zápasov budem predikovať vybrané stretnutia z turnajov typu ATP Masters 500, ATP Masters 1000 a Grand Slam. 
+Kurzy stávkových kancelárií budem brať z portálu OddsPortal.com, ktorý poskytuje archív výsledkov a kurzov na dané výsledky pre jednotlivé športy od viac ako 60 globálnych stávkových kancelárií.
+Do úvahy budeme brať priemerné kurzy na jednotlivé tipy.\\
+
+Zadanie:
+Neuronové sítě představují populární metodu predikce v oblastech pokrývajících lidský život a volný čas, konkrétně sport, není výjimkou. Obecné hádání vítěze v řadě sportů nepřináší přesvědčivé výsledky a literatura postrádá srovnání vícero metod na stejných datech. 
+
+Cílem této práce je vytvořit pomocí plně propojených neuronových sítí model schopný predikce výsledků fotbalových utkání a nahlédnout jeho úspěšnost z hlediska sázek, a to především na zápasy, kde ani jeden ze soupeřů není favoritem.K tomu je třeba efektivně získat potřebná data o zápasech i sázkových kurzech, navrhnout vhodný model a zvolit adekvátní metodiku pro vyhodnocení. Dalšími cíly bude srovnání tohoto modelu s rekurzivní neuronovou sítí a porovnání úspěšnosti s dalším sportem, např. tenisem. \\
+\fi
+
+Šport je súčasťou zábavného priemyslu hlavne pre relatívnu nepredvítateľnosť jeho výsledkov. 
+Stať sa môže v podstate čokoľvek. 
+Vyhrať môže favorit udalosti alebo osoba/tím, od ktorej sa o vôbec neočakávalo.
+Môže začať pršať alebo na ihrisko vbehnúť exhibicionista s kontroverznou myšlienkou.
+
+Táto nepredvídateľnosť podnietila vznik stávkových kancelárií, ktoré na tieto a na rôzne ďalšie udalosti vypisuje kurzy, ktoré v prípade, že tieto udalosti nastanú, zaručia stávkujúcemu výhru.
+Tieto stávkové kancelárie ročne zarábajú milióny tým, ako vypisujú kurzy, aby boli lákavé pre bežných ľudí.
+V podstate sa snažia uhádnuť, s akou pravdepodobnosťou nastane daná udalosť, napríklad predikovať výsledok.
+Stávkové kancelárie určite používajú na tieto odhady nejaké data, ale pravdepodobnosti daných udalostí zvykne predpovedať odborník, bookmaker.
+Je možné nájsť nejakú množinu dát, na základe ktorej vieme naučiť počítač predikovať výsledky jednotlivých športových udalostí s určitou presnosťou?
+
+\input{related}
+\subsubsection{Čím sa táto práca líši}
+V tejto práci budeme predikovať futbal a tenis pomocou popredných a rekurentných neurónových sietí.
+Tenis nie je predikovaný v žiadnej z prác spomínaných v predchádzajúcej sekcii.
+Futbal je síce predikovaný, ale ani raz štýlom, aký bude prezentovaný v tejto práci.
+
+Väčšina prác má oveľa menšiu trénovaciu vzorku pre siete. 
+Pre túto prácu boli použité informácie z viac ako 5000 futbalových zápasov, z toho trénovacia množina tvorila viac ako 3000 vstupov pre každú ligu.
+Pre tenis obsahuje dataset viac ako 6200 riadkov a je vytvorený z informácií z viac ako 55000 zápasov.
+
+Ďalšou vecou, ktorou sa táto práca odlišuje od ostatných je to, aké data sú použité. V tejto práci budú použité výhradne výsledky a prostredie zápasov, z ktorých sú následne kalkulované ostatné informácie.
+Nebudú použité abstraktné data ako sila hráčov alebo tímu ani ohodnotenia žiadnych hráčov ako ani data o počte rohových kopov, žltých kariet, es alebo nevynútených chýb.

@@ -1,0 +1,106 @@
+\begin{thebibliography}{15}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bailey a~kol.(2005)]{related:bailey}
+{\sc Bailey, M.~J. a~kol.} (2005).
+\newblock \emph{Predicting sporting outcomes: A statistical approach}.
+\newblock PhD thesis, Faculty of Life and Social Sciences, Swinburne University
+  of Technology.
+
+\bibitem[Gers a~kol.(2002)Gers, Schraudolph a Schmidhuber]{rnn:gers}
+{\sc Gers, F.~A., Schraudolph, N.~N. {\rm a} Schmidhuber, J.} (2002).
+\newblock Learning precise timing with lstm recurrent networks.
+\newblock \emph{Journal of machine learning research}, {\bf 3}\penalty0 (Aug),
+  \penalty0 115--143.
+
+\bibitem[Hucaljuk a Rakipovi{\'c}(2011)]{related:hucaljuk}
+{\sc Hucaljuk, J. {\rm a} Rakipovi{\'c}, A.} (2011).
+\newblock Predicting football scores using machine learning techniques.
+\newblock In \emph{2011 Proceedings of the 34th International Convention
+  MIPRO}, pages 1623--1627. IEEE.
+
+\bibitem[Igiri a Nwachukwu(2014)]{related:igiri}
+{\sc Igiri, C.~P. {\rm a} Nwachukwu, E.~O.} (2014).
+\newblock An improved prediction system for football a match result.
+\newblock \emph{IOSR Journal of Engineering (IOSRJEN)}, {\bf 4}\penalty0 (12),
+  \penalty0 12--20.
+
+\bibitem[Joseph a~kol.(2006)Joseph, Fenton a Neil]{related:joseph}
+{\sc Joseph, A., Fenton, N.~E. {\rm a} Neil, M.} (2006).
+\newblock Predicting football results using bayesian nets and other machine
+  learning techniques.
+\newblock \emph{Knowledge-Based Systems}, {\bf 19}\penalty0 (7), \penalty0
+  544--553.
+
+\bibitem[Koromh{\'a}zov{\'a}(2008)]{tenis:kor}
+{\sc Koromh{\'a}zov{\'a}, V.} (2008).
+\newblock \emph{Jak dokonale zvl{\'a}dnout tenis}.
+\newblock Grada Publishing as.
+\newblock ISBN 978-80-247-2316-7.
+
+\bibitem[Kvasni{\v{c}}ka a~kol.(2002)Kvasni{\v{c}}ka,
+  Be{\v{n}}u{\v{s}}kov{\'a}, Posp{\'i}chal, Farka{\v{s}}, Ti{\v{n}}o a
+  Kr{\'a}{\v{l}}]{rnn:spol}
+{\sc Kvasni{\v{c}}ka, V., Be{\v{n}}u{\v{s}}kov{\'a}, {\v{L}}., Posp{\'i}chal,
+  J., Farka{\v{s}}, I., Ti{\v{n}}o, P. {\rm a} Kr{\'a}{\v{l}}, A.} (2002).
+\newblock {\'U}vod do te{\'o}rie neur{\'o}nov{\'y}ch siet{\'i}.
+\newblock URL
+  \url{http://ics.upjs.sk/~novotnyr/home/skola/neuronove_siete/nn_kvasnicka/Uvod%20do%20NS.pdf}.
+\newblock [cit. 2019-05-20].
+
+\bibitem[Kyse{\v{l}}(2018)]{bet:pres}
+{\sc Kyse{\v{l}}, T.} (2018).
+\newblock Prezidentsk{\'e} vo{\v{l}}by 2019: St{\'a}vkov{\'e} kancel{\'a}rie
+  veria viac harabinovi ako bug{\'a}rovi.
+\newblock URL
+  \url{https://www.aktuality.sk/clanok/599690/prezidentske-volby-2019-stavkove-kancelarie-veria-viac-harabinovi-ako-bugarovi/}.
+\newblock [cit. 2019-05-09].
+
+\bibitem[Mansaray(2019)]{bet:prince}
+{\sc Mansaray, J.} (2019).
+\newblock Any day now - odds on for \'imminent\' royal baby birth.
+\newblock URL
+  \url{https://www.reuters.com/article/us-britain-royals-baby-betting-idUSKCN1S7418}.
+\newblock [cit. 2019-05-09].
+
+\bibitem[Net{\'i}k(2005)]{odds}
+{\sc Net{\'i}k, M.} (2005).
+\newblock Jak s{\'a}zet s pomoc{\'i} internetu (1.).
+\newblock URL \url{https://www.lupa.cz/clanky/jak-sazet-s-pomoci-internetu-1/}.
+\newblock [cit. 2019-04-28].
+
+\bibitem[Olah(2015)]{rnn:colah}
+{\sc Olah, C.} (2015).
+\newblock Understanding lstm networks.
+\newblock URL \url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}.
+\newblock [cit. 2019-05-20].
+
+\bibitem[Prasetio a~kol.(2016)]{related:prasetio}
+{\sc Prasetio, D. a~kol.} (2016).
+\newblock Predicting football match results with logistic regression.
+\newblock In \emph{2016 International Conference On Advanced Informatics:
+  Concepts, Theory And Application (ICAICTA)}, pages 1--5. IEEE.
+
+\bibitem[Shin a Gasparyan(2014)]{related:shin}
+{\sc Shin, J. {\rm a} Gasparyan, R.} (2014).
+\newblock A novel way to soccer match prediction.
+\newblock \emph{Stanford University: Department of Computer Science}.
+
+\bibitem[T{\'a}borsk{\'y}(2004)]{hry1}
+{\sc T{\'a}borsk{\'y}, F.} (2004).
+\newblock \emph{Sportovn{\'\i} hry}.
+\newblock Grada Publishing as.
+\newblock ISBN 80-247-0875-2.
+
+\bibitem[T{\'a}borsk{\'y}(2005)]{hry2}
+{\sc T{\'a}borsk{\'y}, F.} (2005).
+\newblock \emph{Sportovn{\'\i} hry 2: z{\'a}kladn{\'\i} pravidla, organizace,
+  historie}.
+\newblock Grada Publishing as.
+\newblock ISBN 80-247-1330-6.
+
+\end{thebibliography}

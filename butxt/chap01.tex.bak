@@ -1,0 +1,59 @@
+\chapter{Základné pojmy}
+
+\section{Futbal}
+Futbal je šport, pri ktorom na hracej ploche, futbalovom ihrisku, proti sebe nastúpia dva jedenásťčlenné tímy s cieľom skórovať čo najviac gólov a inkasovať čo najmenej.
+Na ihrisku je vždy najviac jedna lopta, hráči ju ovládajú prevažne nohami. 
+Gól nastáva, keď jeden s tímov pošle loptu celým objemom za bránkovú čiaru do priestoru medzi bránkové tyče, teda do súperovej bránky, vrámci pravidiel. 
+Víťazom sa stáva tím, ktorý strelí viac gólov ako súper. 
+Ak je počet vstrelených gólov pre obe zúčastnené strany rovnaký, nastáva remíza 
+\citep{hry1}.\\
+
+\subsection{Futbalové ligy}
+(football league rules)
+
+\section{Tenis}
+Tenis je šport tímov súperiacich proti sebe, skladajúcich sa z jedného alebo dvoch ľudí, hrajúcich proti sebe na tenisovom kurte.
+Zápasy sa delia na dvojhry, teda zápasy dvoch jednočlenných tímov, a štvorhry, zápasy dvoch dvojčlenných tímov.
+Hlavným cieľom tenisu je použiť tenisovú raketu na zahratie loptičky na súperovu stranu kurtu jedným úderom tak, aby mala súperiaca strana, čo najväčší problém ho vrátiť naspäť \citep{tenis:kor}. 
+Ak sa to jednému z tímov nepodarí v súlade s pravidlami, súper získa bod.
+Tím, ktorý získa 4 body, získa hru. Ak obe tímy získajú po 3 body skôr, ako jeden z nich získa 4, hru získa tím, ktorý získa o 2 body viac ako súper.
+Tím, ktorý skôr získa 6 hier, získa sadu. Ak nastane stav 5:5, hru získa tím, ktorý získa 7 hier.
+Zápas sa hrá na dve alebo tri víťazné sady, toto číslo je vždy určené vopred.
+V tejto práci nás budú hlavne zaujímať dvojhry, teda zápasy jeden proti jednému.
+\citep{hry2}.\\
+
+\subsection{Okruh ATP}
+(ATP rules)
+
+\section{Porovnanie futbalu a tenisu}
+Z predchádzajúcich kapitol je zrejmé, že futbal a tenis majú veľa spoločných a veľa rozdielnych vlastností. 
+Futbal je kontaktný šport, teda protihráči sú často vo fyzickom kontakte medzi sebou, zatiaľ čo pri tenise sú protihráči vždy na opačných stranách tenisového kurtu. 
+Rozdielny je aj počet hráčov v jednom tíme, vo futbale je maximálny počet hráčov hrajúcich v jednom momente za jeden tím 11, v tenise to je buď jeden alebo dvaja.
+Spoločný je napríklad fakt, že sa jedná o loptový šport. 
+Na druhej strane, vo futbale je povolené loptu zasiahnuť ktoroukoľvek časťou tela okrem rúk (s výnimkou brankára), v tenise je zakázané dotknúť sa tenisovej loptičky akoukoľvek časťou tela, loptičku je povolené zahrať len tenisovou raketou.
+Ďalším rozdielom je hrací čas. Vo futbale má každý zápas fixnú dĺžku (2 polčasy po 45 minút s maximálne 15 minútovou prestávkou medzi nimi), rozhodca na konci každého polčasu nadstaví čas, po ktorý sa nehralo kvôli rôznym prerušeniam v hre 
+\citep{hry1}.
+V tenise môže zápas vďaka pravidlám trvať od desiatok minút do niekoľko hodín \citep{tenis:kor}.
+
+
+\section{Kurzy stávkových na kancelárií}
+Kurzové stávky sú stávky na akýkoľvek jav, na ktorý vypíše daná stávková kancelária kurz. 
+Kurzy stanovuje bookmaker podľa toho, aká je pravdepodobnosť, že daný jav nastane, kde platí, že čím nižší kurz, tým je vyššia pravdepodobnosť nastania daného javu. 
+Väčšinou sa tieto javy týkajú nejakej športovej udalosti, napríklad nejaké futbalové zápasy alebo automobilové preteky, ale stávkové kancelárie vypisujú kurzy aj na nešportové udalosti, kde medzi tie známejšie patria prezidentské voľby \citep{bet:pres} alebo ohlásenie mena novorodeného princa v kráľovskej rodine, kde zvyknú byť vypísané kurzy napríklad na pohlavie, meno novorodenca alebo presný dátum narodenia \citep{bet:prince}.
+
+Na javy, na ktoré sú vypísané kurzy môže potom zákazník staviť istú sumu peňazí , vklad, obvykle tak, že vloží tento vklad do stávkovej kancelárie. 
+Ak daný jav nastane, zákazník dostane od tejto stávkovej kancelárie výhru, ktorá predstavuje výsledok vynásobenia daného kurzu vkladom.
+Ak daný jav nenastane, vklad prepadá v prospech stávkovej kancelárie.
+Pre príklad si vezmime tipovanie výsledku futbalového zápasu Slovensko - Česká republika, ktorý sa odohral dňa 13.10.2018. 
+Podľa internetového portálu OddsPortal.com bol priemerný vypísaný kurz na tip domáci (v tomto prípade Slovensko) 2,06, na tip hostia (Česká republika) 3,86 a na tip remíza 3,35.
+Zápas skončil výhrou hostí, čo znamená, že ak by sme boli stavili 100\,\rm korún na tento výsledok, tak by sme si boli odniesli zo stávkovej kancelárie 386\,\rm korún  (3,86 * 100 = 386), čo predstavuje zárobok 286\,\rm korún, pretože 100\,\rm korún predstavuje vklad.
+Ak by sme boli stavili 100\,\rm korún na výhru domácich alebo na remízu, tak by sme boli prehrali celý vklad.
+
+Stávkovanie je hazardná hra, obľúbená práve preto, že každý hráč môže vyhrať a vie aj ovplyvniť svoju pravdepodobnosť úspechu tým, že danú udalosť pozná \citep{odds}.
+
+
+
+
+
+
+
