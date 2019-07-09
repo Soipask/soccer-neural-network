@@ -43,29 +43,34 @@ namespace DataMaker
 
         static void Main(string[] args)
         {
-            string resource;
+            // string resource;
             string league;
+            string path;
 
-            /**/
-            resource = Properties.Resources.neweng;
-            league = "eng";
-            /**/
-            /*/
-            resource = Properties.Resources.fra;
-            league = "fra";
-            /**/
-            /*/
-            resource = Properties.Resources.ger;
-            league = "ger";
-            /**/
+            path = args[0] + ".csv";
+            league = args[0];
 
-            var data = new CsvReader(new StringReader(resource), false, ';');
-            
-            string version = "5";
-            string mod = "new8";
 
-            var writer = new StreamWriter("..\\..\\..\\..\\Databases\\" + 
-                league + 
+             /*/
+             resource = Properties.Resources.neweng;
+             league = "eng";
+             /**/
+             /*/
+             resource = Properties.Resources.fra;
+             league = "fra";
+             /**/
+             /*/
+             resource = Properties.Resources.ger;
+             league = "ger";
+             /**/
+
+             // var data = new CsvReader(new StringReader(resource), false, ';');
+             var data = new CsvReader(new StreamReader(path), false, ';');
+
+            string version = "6f";
+            string mod = "new9";
+
+            var writer = new StreamWriter(league + 
                 "data" +
                 version +
                 mod + 
@@ -74,8 +79,7 @@ namespace DataMaker
             TextWriter resWriter;
 
             /**/
-            resWriter = new StreamWriter("..\\..\\..\\..\\Databases\\" + 
-                league + 
+            resWriter = new StreamWriter(league + 
                 "res" + 
                 version + 
                 mod + 
@@ -84,7 +88,9 @@ namespace DataMaker
             resWriter = Console.Out;
             /**/
 
-            var x = new Program();
+            var x = new Program() { seasonsEvaluated = 3 };
+            if (league == "BUL" || league == "QAT")
+                x.seasonsEvaluated = 3;
             x.MakeData(data, writer, resWriter);
             writer.Close();
             resWriter.Close();
@@ -93,6 +99,7 @@ namespace DataMaker
         void MakeData(CsvReader res, TextWriter writer, TextWriter resWriter)
         {
             var dataList = res.ToList();
+            string midseasonDate;
 
             season = dataList.TakeWhile(x => x[9] == dataList[0][9]).Reverse().ToList();
             previousSeasons = dataList.SkipWhile(x => x[9] == dataList[0][9]).ToList();
@@ -133,16 +140,25 @@ namespace DataMaker
 
                 ResetSeasonProgress();
             }
-
-
-            // Count at least 2 rounds, it probably won't help the network
-            while (i < teamsInOneSeason)
-            {
-                AddPoints(matches[i], teams);
-                i++;
-            }
+            
 
             while (i < matches.Count / 2)
+            {
+                var gamesBefore = TakeGamesBeforeDate(season, matches[i].dateString);
+
+                FillInputData(matches[i], previousSeasons, gamesBefore, teams, out data, out result, writer);
+
+                input.Add(data);
+
+                AddPoints(matches[i], teams);
+
+                output.Add(result);
+
+                i++;
+            }
+            midseasonDate = matches[i - 1].dateString;
+
+            while (matches[i].dateString == midseasonDate)
             {
                 var gamesBefore = TakeGamesBeforeDate(season, matches[i].dateString);
 
@@ -421,11 +437,6 @@ namespace DataMaker
             FillSeason(matches, thisSeason, seasonsTable, teams);
 
             int i = 0;
-            while (i < teamsInOneSeason)
-            {
-                AddPoints(thisSeason[i], teams);
-                i++;
-            }
 
             var seasonsBefore = previousSeasons.SkipWhile(m => m[9] != season.ToString() + "/" + (season + 1).ToString()).
                 SkipWhile(m => m[9] == season.ToString() + "/" + (season + 1).ToString()).ToList();
@@ -597,7 +608,7 @@ namespace DataMaker
             mutualInput = new double[mutualPreInput.Length];
             
             int j = 0;
-            while (thisYearsMutual[j] != null && j < maxMutualMatches)
+            while (j < maxMutualMatches && thisYearsMutual[j] != null)
             {
                 mutual[maxMutualMatches - j - 1] = thisYearsMutual[j];
                 j++;

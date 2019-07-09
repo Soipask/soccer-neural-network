@@ -18,27 +18,48 @@ kde L1=VI je vstupná vrstva (obsahuje len vstupné neuróny), L2, L3,..., Lt–
 
 \fi
 
-%\iffalse
+\iffalse
 Neural networks are composed of nodes or units (see Figure 18.19) connected by directed links. 
 A link from unit i to unit j serves to propagate the activation $a_i$ from i to j.
 Each link also has a numeric weight $w_{i,j}$ associated with it, which determines the strength and sign of the connection. 
 Just as in linear regression models, each unit has a dummy input $a_0=1$ with an associated weight $w_{0,j}$. 
 Each unit j first computes a weighted sum of its inputs: $$in_j=\sum^n_{i=0}w_{i,j}a_i$$
-Then it applies anactivation function g to this sum to derive the output: 
+Then it applies an activation function g to this sum to derive the output: 
+$$a_j=g(in_j)=g\left(\sum^n_{i=0}w_{i,j}a_i\right)$$
+\fi
+
+Neurónová sieť je založená na orientovanom grafe (ako je možné vidieť na obrázku ?.?), je teda zložená z uzlov, ktoré sú spojené orientovanými hranami \citep{rnn:spol}.
+Spojenie uzlu $i$ do uzlu $j$ slúži na propagáciu aktivácie $a_i$ z $i$ do $j$.
+Každé takéto spojenie má priradenú váhu $w_{i,j}$, ktorá rozhoduje o sile a znamienku spojenia.
+Každý uzol má naviac falošný vstup $a_0=1$ s priradenou váhou $w_{0,j}$.
+Všetky uzly si potom vypočítajú váženú hodnotu vstupov, pre uzol $j$ je táto hodnota:
+$$in_j=\sum^n_{i=0}w_{i,j}a_i$$
+Potom sa na výsledok aplikuje aktivačná funkcia g, tým získame výstup z uzlu:
 $$a_j=g(in_j)=g\left(\sum^n_{i=0}w_{i,j}a_i\right)$$
 
-The activation function $g$ is typically either a hard threshold (Figure 18.17(a)), in which case the unit is called a perceptron, or a logistic function (Figure 18.17(b)), in which case the term sigmoid perceptron is sometimes used.  Both of these nonlinear activation function ensure the important property that the entire network of units can represent a nonlinear function (seeExercise 18.22). As mentioned in the discussion of logistic regression (page 725), the logistic activation function has the added advantage of being differentiable. Having decided on the mathematical model for individual “neurons,”  the next task is to connect them together to form a network.  There are two fundamentally distinct ways to do this.  
+Aktivačná funkcia $g$ je typicky buď pevná hranica (obrázok ?.?) alebo logistická funkcia (?.?).
+V prvom prípade sa uzly volajú perceptrony, v druhom prípade sa niekedy používa pojem sigmoid perceptron.
+Obe tieto typy nelineárnych aktivačných funkcií zaručujú dôležitú vlastnosť neurónovej siete, a to, že celá sieť uzlov môže reprezentovať aj nelineárnu funkciu.
 
-A feed-forward network has connections only in one direction—that is, it forms a directed acyclic graph. Every node receives input from “upstream” nodes and delivers output to “downstream” nodes; there are no loops. A feed-forward network represents a function of its current input; thus, it has no internal state other than the weights themselves. 
+Takto teda vyzerá matematický model jedného uzlu (v tomto prípade zvaného neurón) v sieti.
+Spájanie týchto neurónov vytvorí sieť.
+Existujú dva rozdielne prístupy, akými sa dajú tieto neuróny spojiť do siete. 
+Obe nás zaujímajú pre túto prácu, pretože obe použijeme v praxi a budeme ich porovnávať medzi sebou.
 
-A recurrent network,  on  the  other  hand,  feeds  its  outputs  back  into  its  own  inputs.   This  means  that the activation levels of the network form a dynamical system that may reach a stable state or exhibit oscillations or even chaotic behavior. Moreover, the response of the network to a given input depends on its initial  state,  which may depend on previous inputs.  Hence,  recurrent networks (unlike feed-forward networks) can support short-term memory.  This makes them more interesting as models of the brain, but also more difficult to understand.
+Neurónové siete sú obvykle zoradené do vstiev tak, že každý neurón dostane vstup len z neurónov z predošlej vrstvy.
+Podľa počtu vrstiev sa siete delia na jednovrstvové a viacvrstvové, kde jednovrstvové siete spájajú vstpné neuróny priamo s výstupnými.
+Viacvrstvové siete majú medzi vstupom do siete a výstupom z nej ešte jednu alebo viac vrstiev tzv. skrytých (hidden) neurónov (obrázok ?.?) \citep{aima}.
 
-Feed-forward networks are usually arranged in layers, such that each unit receives input only from units in the immediately preceding layer. In the next two subsections, we will look at single-layer networks, in which every unit connects directly from the network’s inputs to its outputs, and multilayer networks, which have one or more layers of hidden units that are not connected to the outputs of the network. 
-
-
-%\fi
-
-\section{Popredné neurónové siete}
+\section{Dopredné neurónové siete}
+Dopredná neurónová sieť (feed-forward neural network) má spojenia len v jednom smere, takže tvorí orientovaný acyklický graf.
+Ak si graf topologicky usporiadame, tak každý uzol dostane vstup z niektorých z predchádzajúcich uzlov a predá výstup niektorým z nasledujúcich vrcholov.
+Dopredná neurónová sieť teda predstavuje funkciu jej momentálneho vstupu, teda neuchováva žiaden stav, ak nepočítame váhy samotné \citep{aima}.
 
 \section{Rekurentné neurónové siete}
-Vo  všeobecnosti  možno  za  rekurentnú  sieť  považovať akúkoľvek  neurónovú  sieť,  v  ktorej  istá  podmnožina  neurónov  (rekurentné  neuróny)  jes chopná  uchovať  informáciu  o  svojich  aktiváciách  v  predošlých  časoch  pre  výpočet aktivácií  neurónov  v  čase t+1.  “Odpamätané”  hodnoty  sa  objavia  v  čase t+1  ako  aktivácie tzv. kontextových   neurónov \citep{rnn:spol}
+Na druhej strane je rekurentná neurónová sieť (recurrent neural network).
+Tento typ siete posúva svoj výstup naspäť do svojho vlastného vstupu. 
+Z toho vyplýva, že aktivačné úrovne siete tvoria dynamický systém, ktorý môže dosiahnuť stabilný stav alebo oscilovať či sa dokonca správať chaoticky.
+
+Výstup siete závisí na vstupe. 
+Pri tomto type siete môže výstup závisieť aj na predchádzajúcich výstupoch, tranzitívne teda aj na predchádzajúcich vstupoch.
+Z toho vyplýva, že si rekurentná neurónová sieť môže vypracovať krátkodobú pamäť \citep{aima}.

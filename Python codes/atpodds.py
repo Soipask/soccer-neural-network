@@ -6,6 +6,7 @@ from lxml.etree import tostring
 import os.path
 import numpy as np
 import pandas as pd
+import re
 
 def pre_scrape(link):
 
@@ -13,10 +14,30 @@ def pre_scrape(link):
 	browser.get(url)
 	innerHTML = "<html><body>"
 	innerHTML += browser.execute_script("return document.getElementById(\"col-content\").innerHTML")
+	inn = html.fromstring(innerHTML)
 	innerHTML += "</body></html>"
 	
-	season = html.fromstring(innerHTML)
-	return season
+	try:
+		innerHTML = "<html><body>"
+		innerHTML += "<table>"
+		# innerHTML += browser.execute_script('return document.getElementById("tournamentTable").firstChild.lastChild.innerHTML')
+		
+		for i in range(2,7):
+			time.sleep(SCROLL_PAUSE_TIME)
+			url = URL_START + link + "#/page/" + str(i) + "/"
+			browser.get(url)
+			innerHTML += browser.execute_script("return document.getElementById(\"tournamentTable\").firstChild.lastChild.innerHTML")
+			
+		innerHTML += "</table>"
+		innerHTML += "</body></html>"
+		
+		season = html.fromstring(innerHTML)
+	except:
+		innerHTML += "</table>"
+		innerHTML += "</body></html>"
+		
+		season = html.fromstring(innerHTML)
+	return (inn,season)
 	
 def link_maker(link,year):
 	split = link.split("/")
@@ -33,10 +54,22 @@ def scrape(html):
 		final = children[2].text_content()
 		odds = [children[n].text_content() for n in range(3,5)]
 		teams = match.split(" - ")
-		teams = [teams[n].split(" ") for n in range(2)]
+		teams = [re.split(" |-",teams[n]) for n in range(2)]
 		for n in range(2):
+			if (len(teams[n][-2]) == 1) or (teams[n][-2][-1] == "."):
+				teams[n][-2] = ""
 			if teams[n][-1][-1] == ".":
+				ini = teams[n][-1][-2]
 				teams[n][-1] = ""
+			if teams[n][0] == "Zverev":
+				teams[n][1] = "Zverev"
+				if ini == "A":
+					teams[n][0] = "Alexander"
+				else:
+					teams[n][0] = "Mischa"
+			if (teams[n][0] == "Garcia") & (teams[n][1] == "Lopez"):
+				teams[n][0] = "Garcia"
+				teams[n][1] = "Lop"
 		teams = [" ".join(teams[n]) for n in range(2)]
 		teams = [teams[n].strip() for n in range(2)]
 		final = final.split(":")
@@ -52,8 +85,7 @@ def scrape(html):
 			a = odds[0]
 			odds[0] = odds[1]
 			odds[1] = a 
-		
-		print('{}\t{}\t{}'.format(teams, final, odds))
+			
 		odds_table.append([event[0],year,teams[0],teams[1],odds[0],odds[1]])
 
 	
@@ -64,7 +96,7 @@ URL_SITE = "/tennis/results/"
 
 venues = np.loadtxt('atpvenues.csv', delimiter=";",dtype=np.dtype(str)).tolist()
 game_results = np.loadtxt("atpresults.csv", delimiter=",", dtype=np.dtype(str),  encoding="utf-8")
-print(game_results[:5])
+game_results = game_results.tolist()
 
 odds_table = []
 
@@ -83,17 +115,17 @@ try:
 	season = html.fromstring(innerHTML)
 	
 	for i in range(len(venues)):
-		str = "ATP " + venues[i][1]
-		venue = season.xpath('.//a[contains(text(),"{}")]'.format(str))
+		s = "ATP " + venues[i][1]
+		venue = season.xpath('.//a[contains(text(),"{}")]'.format(s))
 		link = venue[0].attrib['href']
 		venues[i].append(link)
 	
-	for event in [venues[0]]:
+	for event in venues:
 		link = event[2]
 		time.sleep(SCROLL_PAUSE_TIME)
-		season = pre_scrape(link)
+		(inn,season) = pre_scrape(link)
 		
-		this_season = season.xpath('.//span[@class="active"]')
+		this_season = inn.xpath('.//span[@class="active"]')
 		data = [this_season[i].text_content() for i in range(len(this_season))]
 		
 		year = data[1]
@@ -103,34 +135,36 @@ try:
 			time.sleep(SCROLL_PAUSE_TIME)
 			year = "2018"
 			link = link_maker(event[2],year)
-			season = pre_scrape(link)
+			(inn,season) = pre_scrape(link)
 			scrape(season)
 		
 		year = "2017"
 		time.sleep(SCROLL_PAUSE_TIME)
 		link = link_maker(event[2],year)
-		season = pre_scrape(link)
+		(inn,season) = pre_scrape(link)
 		scrape(season)
 	gr_df = pd.DataFrame(game_results)
 	gr_df.head()
 	
-	years = ["2017", "2018"]
-	points = ["500","1000","2000"]
-	table = gr_df.loc[(~gr_df[2].isin(years) & ~gr_df[1].isin(points))]
-	
-	print(table.head())
+	# years = ["2017", "2018"]
+	# points = ["500","1000","2000"]
+	# table = gr_df.loc[(~gr_df[2].isin(years) & ~gr_df[1].isin(points))]
 	for row in odds_table:
-		print(row)
-		print(table.loc[lambda df: df[2] == '2018'].head())
-		game = table.loc[(table[2] == row[1]) & (table[0] == row[0]) & (row[3] in table[5])]
-		print(game)
+		# game = table.loc[(table[2] == row[1]) & (table[0] == row[0]) & (table[5].str.contains(row[3]))]
+		# print(game)
+		game = gr_df.loc[(gr_df[2] == row[1]) & (gr_df[0] == row[0]) & (gr_df[4].str.lower().str.contains(" ".join(row[2].lower().strip().split("-")))) & (gr_df[5].str.lower().str.contains(" ".join(row[3].lower().strip().split("-"))))]
 		if game.empty:
 			continue
+		if len(game.index) > 1:
+			print(game)
+		game = game.iloc[0].tolist()
 		game.append(str(row[4]))
 		game.append(str(row[5]))
+		# game.append(str(row[4]))
+		# game.append(str(row[5]))
+		# print(game)
 		id = game[7]
 		games[id] = game
-		print(game)
 	
 	for game in game_results:
 		if game[7] in games:
@@ -140,7 +174,7 @@ try:
 			game.append("0")
 			game.append("0")
 	
-	new_game_results = open("atpresults3.csv","w")
+	new_game_results = open("atpresults3.csv","w", encoding='utf-8')
 	for row in game_results:
 		new_game_results.write(";".join(row))
 		new_game_results.write('\n')

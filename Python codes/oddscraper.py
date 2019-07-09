@@ -3,7 +3,8 @@ from selenium import webdriver
 import time
 from lxml import html
 import os.path
-
+import sys
+import re
 
 def get_date(date):
 	list = date.split(" ")
@@ -38,7 +39,34 @@ def get_date(date):
 	
 	ret_val = year + '-' + month + '-' + day
 	return ret_val
-
+def get_league(cou):
+	url_backup = ""
+	if cou.upper() == "ENG":
+		url_league = "/soccer/england/premier-league"
+		country = "ENGLAND"
+		cou = "eng"
+	elif cou.upper() == "GER":
+		url_league = "/soccer/germany/bundesliga"
+		country = "GERMANY"
+		cou = "ger"	
+	elif cou.upper() == "SPA":
+		url_league = "/soccer/spain/laliga"
+		url_backup = "/soccer/spain/primera-division"
+		country = "SPAIN"
+		cou = "spa"
+	elif cou.upper() == "BUL":
+		url_league = "/soccer/bulgaria/parva-liga"
+		country = "BULGARIA"
+		url_backup = "/soccer/bulgaria/a-pfg"
+		cou = "bul"
+	elif cou.upper() == "QAT":
+		url_league = "/soccer/qatar/premier-league"
+		country = "QATAR"
+		cou = "qat"
+	else:
+		raise ValueError('Bad command line argument.')
+	
+	return (url_league,url_backup,country,cou)
 
 SCROLL_PAUSE_TIME = 5
 
@@ -57,27 +85,8 @@ if os.path.isfile("teamdatabase.csv"):
 
 	id_file.close()
 # The scraping
-#'''
-URL_LEAGUE = "/soccer/england/premier-league"
-COUNTRY = "ENGLAND"
-COU = "eng"
-'''
-URL_LEAGUE = "/soccer/germany/bundesliga"
-COUNTRY = "GERMANY"
-COU = "ger"
-#'''
-'''
-URL_LEAGUE = "/soccer/spain/laliga"
-URL_BACKUP = "/soccer/spain/primera-division"
-COUNTRY = "SPAIN"
-COU = "spa"
-#'''
-'''
-URL_LEAGUE = "/soccer/gibraltar/premier-division"
-COUNTRY = "GIBRALTAR"
-COU = "gib"
-'''
 
+(URL_LEAGUE,URL_BACKUP,COUNTRY,COU) = get_league(sys.argv[1])
 
 URL_SITE = "https://www.oddsportal.com"
 URL_END = "/results/"
@@ -95,19 +104,27 @@ innerHTML_seasons += "</body></html>"
 doc_season = html.fromstring(innerHTML_seasons)
 row_seasons = doc_season.xpath("//ul[contains(@class,\"main-filter\")]")
 row_seasons = row_seasons[1].getchildren()
-seasons = [row_seasons[n].text_content() for n in range(1,len(row_seasons))] #first season is not interesting YET
+seasons = [row_seasons[n].text_content() for n in range(len(row_seasons))] 
 
-game_results = open("new" + COU + ".csv",'a')
+game_results = open("new2" + COU + ".csv",'a')
 
 
 # season scraping
 league = URL_LEAGUE
 gamenr = 10000
+add = True
+if seasons[0] == "2018/2019":		# sometimes new season already has a new page allocated, sometimes not and it affects url
+	add = False
 for season in seasons:
-	urlseason = '-'+'-'.join(season.split('/'))
+	urlseason = ""
+	if add:									
+		urlseason = '-'+'-'.join(season.split('/'))
+	else:
+		add = True
+	if int(season.split('/')[1]) > 2019:
+		continue
 	
-	
-	if (int(season.split("/")[0]) < 2016 ) & (COUNTRY == "SPAIN"):
+	if (int(season.split("/")[0]) < 2016 ) & ((COUNTRY == "SPAIN")|(COUNTRY == "BULGARIA")):
 		league = URL_BACKUP
 	
 	url = URL_SITE + league + urlseason + URL_END
@@ -153,12 +170,19 @@ for season in seasons:
 			match = children[1].text_content()
 			final = children[2].text_content()
 			odds = [children[n].text_content() for n in range(3,6)]
-			teams = match.split("-")
+			teams = match.split(" - ")
 			teams = [teams[n].strip() for n in range(2)]
 			final = final.split(":")
 			id = [0,0]
 			if(len(final) != 2):
 				continue
+			if re.search('[a-zA-Z]', final[1]):
+				if(int(final[0][0]) > int(final[1][0])):
+					final[0] = str(int(final[0][0])-1)
+					final[1] = final[1][0]
+				else:
+					final[1] = str(int(final[1][0])-1)
+				print(final)
 			for n in range(2):	
 				if teams[n] in team_dict:
 					id[n] = team_dict.index(teams[n])
@@ -182,7 +206,7 @@ if len(team_dict) > len(team_ids) - 1:
 	
 game_results.close()
 
-
+browser.close()
 	
 	
 # assign dictionary number:
