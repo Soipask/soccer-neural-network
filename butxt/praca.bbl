@@ -1,9 +1,18 @@
-\begin{thebibliography}{15}
+\begin{thebibliography}{18}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Arabzad a~kol.(2014)Arabzad, Tayebi~Araghi, Sadi-Nezhad a
+  Ghofrani]{related:iran}
+{\sc Arabzad, S.~M., Tayebi~Araghi, M., Sadi-Nezhad, S. {\rm a} Ghofrani, N.}
+  (2014).
+\newblock Football match results prediction using artificial neural networks;
+  the case of {Iran} {Pro} {League}.
+\newblock \emph{Journal of Applied Research on Industrial Engineering}, {\bf
+  1}\penalty0 (3), \penalty0 159--179.
 
 \bibitem[Bailey a~kol.(2005)]{related:bailey}
 {\sc Bailey, M.~J. a~kol.} (2005).
@@ -11,11 +20,20 @@
 \newblock PhD thesis, Faculty of Life and Social Sciences, Swinburne University
   of Technology.
 
-\bibitem[Gers a~kol.(2002)Gers, Schraudolph a Schmidhuber]{rnn:gers}
-{\sc Gers, F.~A., Schraudolph, N.~N. {\rm a} Schmidhuber, J.} (2002).
-\newblock Learning precise timing with lstm recurrent networks.
-\newblock \emph{Journal of machine learning research}, {\bf 3}\penalty0 (Aug),
-  \penalty0 115--143.
+\bibitem[Bielikov{\'a}(2019)]{bet:pres}
+{\sc Bielikov{\'a}, J.} (2019).
+\newblock St{\'a}vkovanie na vo{\v{l}}by: Bookmakeri najviac veria
+  Šef{\v{c}}ovi{\v{c}}ovi a Čaputovej.
+\newblock URL
+  \url{https://plus7dni.pluska.sk/domov/stavkovanie-volby-bookmakeri-najviac-veria-sefcovicovi-caputovej}.
+\newblock [cit. 2019-07-09].
+
+\bibitem[Gandhi(2018)]{gitgud}
+{\sc Gandhi, R.} (2018).
+\newblock Improving the {Performance} of a {Neural} {Network}.
+\newblock URL
+  \url{https://towardsdatascience.com/how-to-increase-the-accuracy-of-a-neural-network-9f5d1c6f407d}.
+\newblock [cit. 2019-07-09].
 
 \bibitem[Hucaljuk a Rakipovi{\'c}(2011)]{related:hucaljuk}
 {\sc Hucaljuk, J. {\rm a} Rakipovi{\'c}, A.} (2011).
@@ -31,7 +49,7 @@
 
 \bibitem[Joseph a~kol.(2006)Joseph, Fenton a Neil]{related:joseph}
 {\sc Joseph, A., Fenton, N.~E. {\rm a} Neil, M.} (2006).
-\newblock Predicting football results using bayesian nets and other machine
+\newblock Predicting football results using {Bayesian} nets and other machine
   learning techniques.
 \newblock \emph{Knowledge-Based Systems}, {\bf 19}\penalty0 (7), \penalty0
   544--553.
@@ -52,13 +70,19 @@
   \url{http://ics.upjs.sk/~novotnyr/home/skola/neuronove_siete/nn_kvasnicka/Uvod%20do%20NS.pdf}.
 \newblock [cit. 2019-05-20].
 
-\bibitem[Kyse{\v{l}}(2018)]{bet:pres}
-{\sc Kyse{\v{l}}, T.} (2018).
-\newblock Prezidentsk{\'e} vo{\v{l}}by 2019: St{\'a}vkov{\'e} kancel{\'a}rie
-  veria viac harabinovi ako bug{\'a}rovi.
+\bibitem[Ligue 1.com()]{awarded}
+Ligue 1.com (2017).
+\newblock Bastia forfeit abandoned {OL} clash.
 \newblock URL
-  \url{https://www.aktuality.sk/clanok/599690/prezidentske-volby-2019-stavkove-kancelarie-veria-viac-harabinovi-ako-bugarovi/}.
-\newblock [cit. 2019-05-09].
+  \url{https://www.ligue1.com/ligue1/article/bastia-forfeit-abandoned-ol-clash.htm}.
+\newblock [cit. 2019-07-10].
+
+\bibitem[Macek a Vojta{\v{s}}{\v{s}}{\'a}k(2006)]{scandal}
+{\sc Macek, {\v{L}}. {\rm a} Vojta{\v{s}}{\v{s}}{\'a}k, P.} (2006).
+\newblock Korupčný škandál položil {Juventus} {Turín}.
+\newblock URL
+  \url{https://hnonline.sk/sport/115486-korupcny-skandal-polozil-juventus-turin}.
+\newblock [cit. 2019-07-10].
 
 \bibitem[Mansaray(2019)]{bet:prince}
 {\sc Mansaray, J.} (2019).
@@ -73,17 +97,16 @@
 \newblock URL \url{https://www.lupa.cz/clanky/jak-sazet-s-pomoci-internetu-1/}.
 \newblock [cit. 2019-04-28].
 
-\bibitem[Olah(2015)]{rnn:colah}
-{\sc Olah, C.} (2015).
-\newblock Understanding lstm networks.
-\newblock URL \url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}.
-\newblock [cit. 2019-05-20].
-
 \bibitem[Prasetio a~kol.(2016)]{related:prasetio}
 {\sc Prasetio, D. a~kol.} (2016).
 \newblock Predicting football match results with logistic regression.
 \newblock In \emph{2016 International Conference On Advanced Informatics:
   Concepts, Theory And Application (ICAICTA)}, pages 1--5. IEEE.
+
+\bibitem[Russell a Norvig(2016)]{aima}
+{\sc Russell, S.~J. {\rm a} Norvig, P.} (2016).
+\newblock \emph{Artificial Intelligence: A Modern Approach}.
+\newblock Malaysia; Pearson Education Limited,.
 
 \bibitem[Shin a Gasparyan(2014)]{related:shin}
 {\sc Shin, J. {\rm a} Gasparyan, R.} (2014).

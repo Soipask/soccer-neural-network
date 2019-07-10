@@ -1,12 +1,15 @@
-\chapter{Dokumentácia}
+\chapter{Dokumentácia} \label{docu}
 
 Z programátorského hľadiska je práca rozdelená na tri časti. 
 Prvú časť predstavuje získavanie výsledkov a kurzov jednotlivých zápasov. 
 Druhú časť programu predstavuje transformácia dat na údaje priamo vložiteľné do vstupných neurónov daných neurónových sietí.
 Poslednú časť tvorí stavba daného typu neurónovej siete pre daný šport.
 
-Transformačná časť rozdelí data na 3 časti, trénovacie data, trénovacie data (pre optimalizovanie siete používané ako testovacie) a testovacie data.
-Je teda zaručené, že žiadna sieť neuvidí testovacie data vopred pred finálnym vyhodnocovaním.
+Transformačná časť v prípade tenisu rozdelí data na 3 časti, trénovacie data, testovacie data (pre optimalizovanie siete) a vyhodnocovacie data.
+Je teda zaručené, že žiadna sieť neuvidí vyhodnocovacie data vopred pred finálnym vyhodnocovaním.
+V prípade futbalu data rozdelí na 2 časti, trénovacie a vyhodnocovacie data.
+Program v poslednej časti si trénovacie data rozdelí podľa potreby.
+Vyhodnocovacie data sú použité až pre získavanie výsledkov použitých v tejto práci, a teda použili sa až v poslednej fáze.
 
 Údaje, ktoré sa objavia vo výstupe sú celková úspešnosť a celkový zisk, úspešnosť a zisk siete pri vyrovnaných zápasoch (a vyrovnaný zápas považujem zápas, kde kurzy na výhru jedného alebo druhého tímu sa líšia najviac o 1) a úspešnosť a zisk siete pri výhradnom tipovaní zápasov, na ktoré máme istú dôveru (od hodnoty, ktorá je počítaná ako rozdiel dvoch najvyšších čísel, ktoré sieť vydá na výstup, jednoducho povedané, rozdiel najpravdepodobnejšej a druhej najpravdepodobnejšej možnosti výsledku zápasu z hľadiska siete).
 Táto hodnota dôvery bola tiež vyoptimalizovaná pre každú sieť/program osobitne.
@@ -15,48 +18,43 @@ Táto hodnota dôvery bola tiež vyoptimalizovaná pre každú sieť/program oso
 
 Podmienkou pre futbal je získať všetky zápasy sezóny pre danú ligu. 
 Musia byť všetky, pretože v ďalšej časti sa počíta na základe už odohraných zápasov a jeden zápas by mohol skresliť výsledky. 
-Jednotlivé ligy boli teda vyberané nielen na základe kvality, ale aj na základe toho, že v pár posledných sezónach sa ani raz nestalo, že zápas musel byť z nejakého hľadiska udelený kontumačne (awarded) jednému z tímov (ako sa napríklad stalo vo francúzskej lige - nejaký zdroj) alebo celá sezóna bola poznačená korupčným škandálom ako v prípade talianskej ligy v sezóne xxxx (zdroj).
+Jednotlivé ligy boli teda vyberané nielen na základe kvality, ale aj na základe toho, že v pár posledných sezónach sa ani raz nestalo, že zápas musel byť z nejakého hľadiska udelený kontumačne jednému z tímov (ako sa napríklad stalo vo francúzskej lige v roku 2007 pre problémy s divákmi \citep{awarded}) alebo celá sezóna bola poznačená korupčným škandálom ako v prípade talianskej ligy v sezóne 2006 (\citep{scandal}).
 Takéto výsledky by nemuseli skresliť stavbu neurónovej siete, ale všeobecne je lepšie, ak sa takýmto situáciám vyhneme.
 
-Údaje o týchto zápasoch sa dajú stiahnuť jednoducho, spustením programu oddscaper.py a zadaním skratky danej ligy pre futbal. (TODO!)
+Údaje o týchto zápasoch sa dajú stiahnuť jednoducho, spustením programu oddscaper.py a zadaním skratky danej ligy pre futbal ako parameter.
 Skratky sú:
 \begin{enumerate}
 \item ENG - najvyššia anglická liga (Premier League)
 \item GER - najvyššia nemecká liga (Bundesliga)
 \item SPA - najvyššia španielska liga (La Liga)
-\item BUL -
-\item QAT -
 \end{enumerate}
 
 Program stiahne všetky výsledky a kurzy pre všetky zápasy všetkých kompletných sezón tej-ktorej ligy zo stránky www.oddsportal.com.
 
 Výstup tohto programu predáme programu \textit{DataMaker.exe} (teda ako prvý parameter programu DataMaker.exe je potrebné predať cestu k súboru, ktorý je výstupom súboru oddscraper.py, tento súbor sa volá rovnako ako skratka danej ligy s príponou \textit{.csv}), ktorý je písaný v jazyku C\# a pretransformuje tieto data na vstupné neuróny pre neurónovú sieť. 
 Všetkých vstupných neurónov je 44. 
-Presné poradie aj popis sa dá nájsť v sekcii Prílohy (Príloha A1).
+Presné poradie aj popis sa dá nájsť v sekcii Prílohy (Príloha \ref{in:foot}).
 Tieto údaje boli vybrané špecificky aj s pomocou súvisiacich prác ako údaje, ktoré popisujú stav oboch tímov, ktoré hrajú proti sebe zápas. 
 Bonus predstavujú vstupy označené ako skóre, tieto boli vytvorené mnou ako pokus o jednoduchý a presnejší popis formy pomocou jedného údaju namiesto 10.
 Ak bude mať teda jeden z týchto neurónov (alebo obe spoločne) úspech, tak bude možné skrátiť počet vstupných neurónov o 10.
 Pre upresnenie, výstupom súboru je opäť tabuľka formátu csv, názov je zložený zo skratky pre názov danej ligy a slova \textit{input}.
 
-Cestu na dané súbory potom ako prvé tri parametre (v poradí, v akom sú uvedené v úvode sekcie) predáme programu \textit{ffnnfootball.py} alebo \textit{rnnfootball.py} podľa toho, či chceme, aby dané údaje vyhodnocovala popredná rekurentná neurónová sieť.
-Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorý pozostáva z názvu ligy a časovej známky vo formáte \textit{txt}.
+Cestu na dané súbory potom ako prvé dva parametre (v poradí, v akom sú uvedené v úvode kapitoly) predáme programu \textit{ffnnfootball.py} alebo \textit{rnnfootball.py} podľa toho, či chceme, aby dané údaje vyhodnocovala popredná rekurentná neurónová sieť.
+Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorý pozostáva z typu siete, názvu ligy a časovej známky vo formáte \textit{txt}.
 
-Hodnoty dôvery pre ffnnfootball.py a rnnfootball.py sú 
-
-TODO!!!
-
-resp.
-
-TODO!!!
+Hodnoty dôvery pre ffnnfootball.py a rnnfootball.py sú \\\\
+TODO!!!\\\\
+resp.\\\\
+TODO!!!\\\\
 
 \section{Tenis}
 Údaje o tenisových zápasoch sú predpripravené v súbore atpresults.csv.
 
 Podmienkou pre tenis je získať všetky zápasy každého turnaja ATP typu 500, 1000 a Grand Slam, kde hraje aspoň jeden hráč z Top 100 rebríčka ATP pre danú sezónu.
-Dôvodom je fakt, že predikujeme zápasy týchto turnajov medzi hráčmi z Top 100 rebríčka ATP, ale pre týchto hráčov počítame ich momentálnu formu, takže sú pre nás dôležité aj zápasy, ktoré odohrajú proti hráčom mimo Top 100.
-Vzhľadom na relatívnu kvalitu turnajov ATP 250 a fakt, že množstvo hráčov z Top 100 sa pravidelne zúčastňuje aj týchto turnajov. 
+Dôvodom je fakt, že predikujeme zápasy týchto turnajov medzi hráčmi z Top 100 rebríčka ATP, ale pre týchto hráčov počítame ich momentálnu formu, takže sú pre nás dôležité aj zápasy, ktoré odohrajú proti hráčom, ktorí sa nenachádzajú v Top 100.
+Vzhľadom na relatívnu kvalitu turnajov ATP 250 a fakt, že množstvo hráčov z Top 100 sa ich pravidelne zúčastňuje.
 Čo teda logicky znamená, že niekedy nastúpia dvaja takíto hráči aj proti sebe. 
-Takže zoberieme do úvahy aj tieto turnaje (vzájomné zápasy medzi jednotlivými hráčmi na takto ohodnotených turnajoch tiež patria medzi údaje, z ktorých sa stávajú vstupné neuróny (odkaz na prílohu s tenisom (A2?))). 
+Takže zoberieme do úvahy aj tieto turnaje (vzájomné zápasy medzi jednotlivými hráčmi na takto ohodnotených turnajoch tiež patria medzi údaje, z ktorých sa stávajú vstupné neuróny (\ref{in:ten})). 
 
 V tenise sa nemôžeme vyhnúť zápasom, ktoré boli nejakým spôsobom udelené jednému z hráčov, či už bez boja alebo po skreči súpera v priebehu zápasu, pretože zranenia sú súčasťou profesionálneho športu.
 Vo futbale sa to obvykle rieši prestriedaním zraneného hráča, v tenise to, prirodzene, nie je možné.
@@ -68,11 +66,18 @@ Predpovedať zranenie nie je cieľom tejto práce.
 Ďalšou výhodou je spravodlivosť oblastí vstupu ako forma a vzájomné zápasy, pretože sa tam berú len zápasy, ktoré sa dohrali dokonca, takže tieto čísla sa v žiadnom okamihu nenafukujú. Napríklad ak hráč natrafí počas turnaja na dvoch/troch súperov, ktorí sa vzdajú, tak by sa mu vo forme ukázali tieto víťazstvá, aj keď to neboli plnohodnotné výhry.
 Nevýhodou je, že výsledky nemusia ukazovať reálne výsledky v praxi (pred zápasom nevieme určiť, či sa hráč zraní, ale sieť aj tak vydá svoju predpoveď, aj keď nebola na tieto údaje trénovaná).
 
-Pre tabuľku \textit{atpresults.csv} je postup podobný. 
+Pre tabuľku \textit{atpresults.csv} je postup podobný ako pre túto časť futbalovej predikcie.
 Túto tabuľku je potrebné predať programu \textit{ATPDataMaker.exe} (opäť ako prvý parameter je potrebené predať cestu k tejto tabuľke).
 Program je opäť písaný v jazyku C\# a opäť pretransformuje data na vstupné neuróny pre neurónovú sieť.
 Všetkých vstupných údajov (počet stĺpcov tabuľky) je 37.
 Ich presné poradie a popis sa dá nájsť v sekcii Prílohy (Príloha A2).
+Z popisu datasetu je vidieť, že hráči v zápasoch sú zoradení tak, že najprv je napísaný víťaz a po ňom porazený. To by nám očividne zamiešalo výsledkami a ak by to sieť zistila, tak by okamžite vypisovala úspešnosť 100\,\%.
+Presne z tohto dôvodu robí program \textit{ATPDataMaker.exe} aj randomizovanú výmenu poradia hráčov a v ďalšom priebehu sú hráči rozlišovaní ako hráč 1 a hráč 2.
 
 Cestu na dané súbory potom ako prvé tri parametre (v poradí, v akom sú uvedené v úvode sekcie) predáme programu \textit{ffnnatp.py} alebo \textit{rnnatp.py} podľa toho, či chceme, aby dané údaje vyhodnocovala popredná rekurentná neurónová sieť.
-Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorý je vo formáte \textit{txt} a ktorého
+Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorý je vo formáte \textit{txt} a ktorého názov pozostáva z typu siete, slova \textit{atp} a časovej známky.
+
+Hodnoty dôvery pre ffnnatp.py a rnnatp.py sú \\\\
+TODO!!\\\\
+resp.\\\\
+TODO!!\\\\

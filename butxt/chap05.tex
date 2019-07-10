@@ -1,4 +1,4 @@
-\chapter{Dokumentácia}
+\chapter{Dokumentácia} \label{docu}
 
 Z programátorského hľadiska je práca rozdelená na tri časti. 
 Prvú časť predstavuje získavanie výsledkov a kurzov jednotlivých zápasov. 
@@ -18,7 +18,7 @@ Táto hodnota dôvery bola tiež vyoptimalizovaná pre každú sieť/program oso
 
 Podmienkou pre futbal je získať všetky zápasy sezóny pre danú ligu. 
 Musia byť všetky, pretože v ďalšej časti sa počíta na základe už odohraných zápasov a jeden zápas by mohol skresliť výsledky. 
-Jednotlivé ligy boli teda vyberané nielen na základe kvality, ale aj na základe toho, že v pár posledných sezónach sa ani raz nestalo, že zápas musel byť z nejakého hľadiska udelený kontumačne (awarded) jednému z tímov (ako sa napríklad stalo vo francúzskej lige - nejaký zdroj) alebo celá sezóna bola poznačená korupčným škandálom ako v prípade talianskej ligy v sezóne xxxx (zdroj).
+Jednotlivé ligy boli teda vyberané nielen na základe kvality, ale aj na základe toho, že v pár posledných sezónach sa ani raz nestalo, že zápas musel byť z nejakého hľadiska udelený kontumačne jednému z tímov (ako sa napríklad stalo vo francúzskej lige v roku 2007 pre problémy s divákmi \citep{awarded}) alebo celá sezóna bola poznačená korupčným škandálom ako v prípade talianskej ligy v sezóne 2006 (\citep{scandal}).
 Takéto výsledky by nemuseli skresliť stavbu neurónovej siete, ale všeobecne je lepšie, ak sa takýmto situáciám vyhneme.
 
 Údaje o týchto zápasoch sa dajú stiahnuť jednoducho, spustením programu oddscaper.py a zadaním skratky danej ligy pre futbal ako parameter.
@@ -27,15 +27,13 @@ Skratky sú:
 \item ENG - najvyššia anglická liga (Premier League)
 \item GER - najvyššia nemecká liga (Bundesliga)
 \item SPA - najvyššia španielska liga (La Liga)
-\item BUL - najvyššia bulharská liga (Parva Liga)
-\item QAT - najvyššia katarská liga (Premier League)
 \end{enumerate}
 
 Program stiahne všetky výsledky a kurzy pre všetky zápasy všetkých kompletných sezón tej-ktorej ligy zo stránky www.oddsportal.com.
 
 Výstup tohto programu predáme programu \textit{DataMaker.exe} (teda ako prvý parameter programu DataMaker.exe je potrebné predať cestu k súboru, ktorý je výstupom súboru oddscraper.py, tento súbor sa volá rovnako ako skratka danej ligy s príponou \textit{.csv}), ktorý je písaný v jazyku C\# a pretransformuje tieto data na vstupné neuróny pre neurónovú sieť. 
 Všetkých vstupných neurónov je 44. 
-Presné poradie aj popis sa dá nájsť v sekcii Prílohy (\ref{in:foot}).
+Presné poradie aj popis sa dá nájsť v sekcii Prílohy (Príloha \ref{in:foot}).
 Tieto údaje boli vybrané špecificky aj s pomocou súvisiacich prác ako údaje, ktoré popisujú stav oboch tímov, ktoré hrajú proti sebe zápas. 
 Bonus predstavujú vstupy označené ako skóre, tieto boli vytvorené mnou ako pokus o jednoduchý a presnejší popis formy pomocou jedného údaju namiesto 10.
 Ak bude mať teda jeden z týchto neurónov (alebo obe spoločne) úspech, tak bude možné skrátiť počet vstupných neurónov o 10.

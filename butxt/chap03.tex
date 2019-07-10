@@ -18,17 +18,7 @@ kde L1=VI je vstupná vrstva (obsahuje len vstupné neuróny), L2, L3,..., Lt–
 
 \fi
 
-\iffalse
-Neural networks are composed of nodes or units (see Figure 18.19) connected by directed links. 
-A link from unit i to unit j serves to propagate the activation $a_i$ from i to j.
-Each link also has a numeric weight $w_{i,j}$ associated with it, which determines the strength and sign of the connection. 
-Just as in linear regression models, each unit has a dummy input $a_0=1$ with an associated weight $w_{0,j}$. 
-Each unit j first computes a weighted sum of its inputs: $$in_j=\sum^n_{i=0}w_{i,j}a_i$$
-Then it applies an activation function g to this sum to derive the output: 
-$$a_j=g(in_j)=g\left(\sum^n_{i=0}w_{i,j}a_i\right)$$
-\fi
-
-Neurónová sieť je založená na orientovanom grafe (ako je možné vidieť na obrázku ?.?), je teda zložená z uzlov, ktoré sú spojené orientovanými hranami \citep{rnn:spol}.
+Neurónová sieť je založená na orientovanom grafe (ako je možné vidieť na obrázku \ref{fig:nn}), je teda zložená z uzlov, ktoré sú spojené orientovanými hranami \citep{rnn:spol}.
 Spojenie uzlu $i$ do uzlu $j$ slúži na propagáciu aktivácie $a_i$ z $i$ do $j$.
 Každé takéto spojenie má priradenú váhu $w_{i,j}$, ktorá rozhoduje o sile a znamienku spojenia.
 Každý uzol má naviac falošný vstup $a_0=1$ s priradenou váhou $w_{0,j}$.
@@ -37,9 +27,19 @@ $$in_j=\sum^n_{i=0}w_{i,j}a_i$$
 Potom sa na výsledok aplikuje aktivačná funkcia g, tým získame výstup z uzlu:
 $$a_j=g(in_j)=g\left(\sum^n_{i=0}w_{i,j}a_i\right)$$
 
-Aktivačná funkcia $g$ je typicky buď pevná hranica (obrázok ?.?) alebo logistická funkcia (?.?).
+\begin{figure} \label{fig:nn}
+\includegraphics[width=\textwidth]{../img/nn.png}
+\caption{Na obrázku je ukážka jednej z neurónových sietí. Konkrétne to je sieť, ktorú použili v roku 2014 iránski výskumníci pri predikcii výsledkov najvyššej iránskej ligy \citep{related:iran}.}
+\end{figure}
+
+Aktivačná funkcia $g$ je typicky buď pevná hranica alebo logistická funkcia.
 V prvom prípade sa uzly volajú perceptrony, v druhom prípade sa niekedy používa pojem sigmoid perceptron.
 Obe tieto typy nelineárnych aktivačných funkcií zaručujú dôležitú vlastnosť neurónovej siete, a to, že celá sieť uzlov môže reprezentovať aj nelineárnu funkciu.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{../img/nn_aima_neuron.png}
+\caption{Takto vyzerá jeden uzol siete (neurón) \citep{aima}.}
+\end{figure}
 
 Takto teda vyzerá matematický model jedného uzlu (v tomto prípade zvaného neurón) v sieti.
 Spájanie týchto neurónov vytvorí sieť.
@@ -48,7 +48,12 @@ Obe nás zaujímajú pre túto prácu, pretože obe použijeme v praxi a budeme 
 
 Neurónové siete sú obvykle zoradené do vstiev tak, že každý neurón dostane vstup len z neurónov z predošlej vrstvy.
 Podľa počtu vrstiev sa siete delia na jednovrstvové a viacvrstvové, kde jednovrstvové siete spájajú vstpné neuróny priamo s výstupnými.
-Viacvrstvové siete majú medzi vstupom do siete a výstupom z nej ešte jednu alebo viac vrstiev tzv. skrytých (hidden) neurónov (obrázok ?.?) \citep{aima}.
+Viacvrstvové siete majú medzi vstupom do siete a výstupom z nej ešte jednu alebo viac vrstiev tzv. skrytých (hidden) neurónov (Obrázok \ref{img:single}) \citep{aima}.
+
+\begin{figure} \label{img:single}
+\includegraphics[width=\textwidth]{../img/nn_aima_single_multi.png}
+\caption{Ukážka rozdielu medzi jednovrstvou sieťou (a) a viacvrstvovou (b). Obe majú 2 vstupné a 2 výstupné neuróny, viacvrstvová má ešte medzi nimi ďalšie vrstvy skrytých neurónov (v tomto prípade jednu vrstvu s 2 skrytými neurónmi) \citep{aima}.}
+\end{figure}
 
 \section{Dopredné neurónové siete}
 Dopredná neurónová sieť (feed-forward neural network) má spojenia len v jednom smere, takže tvorí orientovaný acyklický graf.

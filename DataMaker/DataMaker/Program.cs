@@ -66,31 +66,23 @@ namespace DataMaker
 
              // var data = new CsvReader(new StringReader(resource), false, ';');
              var data = new CsvReader(new StreamReader(path), false, ';');
-
-            string version = "6f";
-            string mod = "new9";
+            
 
             var writer = new StreamWriter(league + 
-                "data" +
-                version +
-                mod + 
+                "input" +
                 ".csv");
 
             TextWriter resWriter;
 
             /**/
             resWriter = new StreamWriter(league + 
-                "res" + 
-                version + 
-                mod + 
+                "resinput" +
                 ".csv");
             /*/
             resWriter = Console.Out;
             /**/
 
-            var x = new Program() { seasonsEvaluated = 3 };
-            if (league == "BUL" || league == "QAT")
-                x.seasonsEvaluated = 3;
+            var x = new Program();
             x.MakeData(data, writer, resWriter);
             writer.Close();
             resWriter.Close();
@@ -206,6 +198,7 @@ namespace DataMaker
                 writer.WriteLine(str);
             }
 
+            // end of season
             input = new List<double[]>();
             output = new List<double[]>();
 

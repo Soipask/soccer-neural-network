@@ -1,6 +1,6 @@
-@online{rnn:colah,
+@misc{rnn:colah,
 	author = {Christopher Olah},
-	title = {Understanding LSTM Networks},
+	title = {Understanding {LSTM Networks},
 	year = 	{2015},
 	url = {https://colah.github.io/posts/2015-08-Understanding-LSTMs/},
 	month = {August},
@@ -8,7 +8,7 @@
 }
 
 
-@online{rnn:karp,
+@misc{rnn:karp,
 	author = {Andrej Karpathy},
 	title = {The Unreasonable Effectiveness of Recurrent Neural Networks},
 	year = 	{2015},
@@ -17,7 +17,7 @@
 	note = {[cit. 2019-05-20]}
 }
 
-@online{rnn:spol,
+@misc{rnn:spol,
 	author = {Vladim{\'i}r Kvasni{\v{c}}ka and {\v{L}}ubica Be{\v{n}}u{\v{s}}kov{\'a} and Ji{\v{r}}{\'i} Posp{\'i}chal and Igor Farka{\v{s}} and Peter Ti{\v{n}}o and Andrej Kr{\'a}{\v{l}}},
 	title = {{\'U}vod do te{\'o}rie neur{\'o}nov{\'y}ch siet{\'i}},
 	year = 	{2002},
@@ -26,9 +26,9 @@
 	note = {[cit. 2019-05-20]}
 }
 
-@online{rnn:making,
-	author = {Will Koehrsen},
-	title ={Recurrent Neural Networks by Example in Python},
+@misc{rnn:making,
+	author = {Koehrsen, Will},
+	title ={Recurrent {Neural} {Networks} by {Example} in {Python}},
 	year ={2018},
 	url ={https://towardsdatascience.com/recurrent-neural-networks-by-example-in-python-ffd204f99470},
 	month ={Nov},
@@ -36,7 +36,7 @@
 }
 
 @article{rnn:gers,
-  title={Learning precise timing with LSTM recurrent networks},
+  title={Learning precise timing with {LSTM} recurrent networks},
   author={Gers, Felix A and Schraudolph, Nicol N and Schmidhuber, J{\"u}rgen},
   journal={Journal of machine learning research},
   volume={3},
@@ -45,8 +45,8 @@
   year={2002}
 }
 
-@online{odds,
-	author = {Martin Net{\'i}k},
+@misc{odds,
+	author = {Net{\'i}k, Martin},
 	title = {Jak s{\'a}zet s pomoc{\'i} Internetu (1.)},
 	year = {2005},
 	url = {https://www.lupa.cz/clanky/jak-sazet-s-pomoci-internetu-1/},
@@ -55,8 +55,8 @@
 	publisher = {Lupa.cz}
 }
 
-@online{bet:prince,
-	author = {Jayson Mansaray},
+@misc{bet:prince,
+	author = {Mansaray, Jayson},
 	title = {Any day now - odds on for \'imminent\' royal baby birth},
 	year = {2019},
 	month = {May},
@@ -65,14 +65,23 @@
 	publisher = {Reuters}
 }
 
-@online{bet:pres,
-	author = {Tom{\'a}{\v{s}} Kyse{\v{l}}},
-	title = {Prezidentsk{\'e} vo{\v{l}}by 2019: St{\'a}vkov{\'e} kancel{\'a}rie veria viac Harabinovi ako Bug{\'a}rovi},
+@misc{bet:pres,
+	author = {Bielikov{\'a}, Juli{\'a}na},
+	title = {St{\'a}vkovanie na vo{\v{l}}by: Bookmakeri najviac veria Šef{\v{c}}ovi{\v{c}}ovi a Čaputovej},
+	year = {2019},
+	month = {February},
+	url = {https://plus7dni.pluska.sk/domov/stavkovanie-volby-bookmakeri-najviac-veria-sefcovicovi-caputovej},
+	note = {[cit. 2019-07-09]},
+	publisher = {Plus7Dni.sk}
+}
+
+@misc{gitgud,
+	author = {Gandhi, Rohith},
+	title = {Improving the {Performance} of a {Neural} {Network}},
 	year = {2018},
-	month = {June},
-	url = {https://www.aktuality.sk/clanok/599690/prezidentske-volby-2019-stavkove-kancelarie-veria-viac-harabinovi-ako-bugarovi/},
-	note = {[cit. 2019-05-09]},
-	publisher = {Aktuality.sk}
+	month = {May},
+	url = {https://towardsdatascience.com/how-to-increase-the-accuracy-of-a-neural-network-9f5d1c6f407d},
+	note = {[cit. 2019-07-09]}
 }
 
 @book{futbal:van,
@@ -148,7 +157,7 @@
   year={2014}
 }
 @article{related:joseph,
-  title={Predicting football results using Bayesian nets and other machine learning techniques},
+  title={Predicting football results using {Bayesian} nets and other machine learning techniques},
   author={Joseph, Anito and Fenton, Norman E and Neil, Martin},
   journal={Knowledge-Based Systems},
   volume={19},
@@ -158,94 +167,41 @@
   publisher={Elsevier}
 }
 
-@book{russell2016artificial,
+@book{aima,
   title={Artificial Intelligence: A Modern Approach},
   author={Russell, Stuart J and Norvig, Peter},
   year={2016},
   publisher={Malaysia; Pearson Education Limited,}
 }
-%%-----------------------------------------------
 
-@book{LinearAlgebra,
-	author = {Harry Dym},
-	year = {2013},
-	title = {Linear algebra in action},
-	series = {{S}econd {E}dition},
-	publisher = {American Mathematical Society}
+@article{related:iran,
+  title={Football match results prediction using artificial neural networks; the case of {Iran} {Pro} {League}},
+  author={Arabzad, S Mohammad and Tayebi Araghi, ME and Sadi-Nezhad, S and Ghofrani, Nooshin},
+  journal={Journal of Applied Research on Industrial Engineering},
+  volume={1},
+  number={3},
+  pages={159--179},
+  year={2014},
+  publisher={Ayandegan Institute of Higher Education, Iran}
 }
 
-@book{Visualization,
-	title = {Handbook of Data Visualization},
-	author = {Chen, C. and Härdle, W. and Unwin, A.},
-	year = {2008},
-	publisher = {Springer-Verlag Berlin Heidelberg}
+@misc{awarded,
+	key = {Ligue 1.com},
+	title = {Bastia forfeit abandoned {OL} clash},
+	year = {2017},
+	month={May},
+	url={https://www.ligue1.com/ligue1/article/bastia-forfeit-abandoned-ol-clash.htm},
+	note={[cit. 2019-07-10]},
+	publisher = {Ligue 1}
 }
 
-@incollection{vis:mds,
-	author      = "Cox, M. and Cox, T.",
-	title       = "Multidimensional scaling",
-	booktitle   = "Handbook of Data Visialization",
-	editor      = "Chen, C. and Härdle, W. and Unwin, A.",
-	publisher   = "Springer-Verlag Berlin Heidelberg",
-	year        = 2008,
-	pages       = "315-347",
-	chapter     = III-3
+@misc{scandal,
+	author = {Macek, {\v{L}}ubom{\'i}r  and Vojta{\v{s}}{\v{s}}{\'a}k, Peter},
+	title = {Korupčný škandál položil {Juventus} {Turín}},
+	year = {2006},
+	month = {July},
+	url = {https://hnonline.sk/sport/115486-korupcny-skandal-polozil-juventus-turin},
+	note = {[cit. 2019-07-10]},
+	publisher = {HNOnline.sk}
 }
 
-@inbook{ vis:clus,
-	chapter = {Cluster analysis: Basic Concepts and Algorithms},
-	pages = {487-568},
-	crossref = {datamining}
-}
-
-@book{ datamining,
-	author = {Tan, P. and Steinbach, M. and Karpatne, A. and Kumar, V.}, 
-	title      = {Introduction to Data Mining},
-	publisher = {Pearson},
-	year = 2018,
-	series = {{S}econd {E}dition},
-}
-
-@online{ gpu,
-	author = {Weiss, Stewart},
-	title = {GPUs and {GPU} programming},
-	year = {2014},
-	url = {http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/csci360/lecture_notes/gpus.pdf}
-}
-
-@book{ opengl,
-	author = {Shreiner, D. and Sellers, G. and Kessenich, J. and Licea-Kane, B.}, 
-	title      = {OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3},
-	publisher = {Addison-Wesley Professional},
-	year = 2013,
-	series = {8th {E}dition},
-}
-
-@online {khronos,
-	title = {Khronos {O}pen{GL} {W}iki},
-	author = {{Khronos}},
-	url = {https://www.khronos.org/opengl/wiki}
-}
-
-
-@book { statistic,
-	title = {An {I}ntroduction to {S}tatistical {L}earning},
-	author = {James, G. and Witten, D. and Hastie, T. and Tibshirani, R.},
-	year = {2013}
-}
-
-@online { ccpd,
-	url= {https://kops.uni-konstanz.de/bitstream/handle/123456789/5934/Balzer_etal_2009_CCPDAVoLM.pdf},
-	title = {Capacity-constraint point distributions: A Variant of Lloyd's method},
-	author= {Balzer, M. and Schlomer, T. and Deussen, O.},
-	year = {2009}
-}
-
-@online { lloyd,
-	
-	url= {http://www.tqmp.org/RegularArticles/vol09-1/p015/p015.pdf},
-	author = {Morissette, L. and Chartier, S.},
-	title = {The k-means clustering technique: General considerations and implementation in Mathematica},
-	year = {2013}
-
-}
