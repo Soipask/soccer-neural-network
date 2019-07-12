@@ -81,8 +81,8 @@ namespace ATPDataMaker
             prevSeasons = allGames.TakeWhile(x => int.Parse(x[2]) != lastYear - seasonsEvaluated).ToList();
             List<double[]> input = new List<double[]>();
 
-            PreparePlayers(lastYear - seasonsEvaluated - 1);
-            for (int i = lastYear - seasonsEvaluated - 1; i < lastYear - 1; i++)
+            PreparePlayers(lastYear - seasonsEvaluated - 2);
+            for (int i = lastYear - seasonsEvaluated - 1; i < lastYear - 2; i++)
             {
                 season = allGames.SkipWhile(x => int.Parse(x[2]) != i).TakeWhile(x => int.Parse(x[2]) == i).ToList();
                 var seasonInTour = ReverseTournaments(season);
@@ -102,6 +102,8 @@ namespace ATPDataMaker
                     else { loser = new Player("not", -1) { rank = 130 }; valuable = false; }
 
                     if (winner.rank > 100 || loser.rank > 100) valuable = false;
+
+                    if (!match.havePoints || match.pointsForTournament < 500) valuable = false;
 
                     if (valuable) { input.Add(FillInputData(winner, loser, match)); }
 
@@ -143,6 +145,8 @@ namespace ATPDataMaker
 
                 if (winner.rank > 100 || loser.rank > 100) valuable = false;
 
+                if (!match.havePoints || match.pointsForTournament < 500) valuable = false;
+
                 if (valuable) {
                     var theInput = FillInputData(winner, loser, match);
 
@@ -152,12 +156,15 @@ namespace ATPDataMaker
                     inputBets[inputBets.Length - 2] = double.Parse(m[m.Length - 2]);
                     inputBets[inputBets.Length - 1] = double.Parse(m[m.Length - 1]);
 
+                    if (inputBets[inputBets.Length - 2] < 1) Console.WriteLine("{0} {6} {7} \t {1} {5} {8} \t {2} {3} {4}", winner.name, loser.name, match.tournament, match.year, match.pointsForTournament, loser.rank, winner.rank, winner.id, loser.id);
                     trainInput.Add(inputBets);
                 };
 
                 UpdatePlayersProfile(winner, loser, match);
                 prevSeasons.Add(m);
             }
+
+            ResetSeason(lastYear - 1);
 
             var shuffledTestInput = ShuffleGames(trainInput,seed);
             foreach (var datapoint in shuffledTestInput)
@@ -190,7 +197,9 @@ namespace ATPDataMaker
                 else { loser = new Player("not", -1); valuable = false; }
 
                 if (winner.rank > 100 || loser.rank > 100) valuable = false;
-                
+
+                if (!match.havePoints || match.pointsForTournament < 500) valuable = false;
+
                 if (valuable)
                 {
                     var theInput = FillInputData(winner, loser, match);
@@ -201,12 +210,15 @@ namespace ATPDataMaker
                     inputBets[inputBets.Length - 2] = double.Parse(m[m.Length - 2]);
                     inputBets[inputBets.Length - 1] = double.Parse(m[m.Length - 1]);
 
+                    if (inputBets[inputBets.Length - 2] < 1) Console.WriteLine("{0} {6} {7} \t {1} {5} {8} \t {2} {3} {4}", winner.name, loser.name, match.tournament, match.year, match.pointsForTournament, loser.rank, winner.rank, winner.id, loser.id);
+
                     testInput.Add(inputBets);
                 };
 
                 UpdatePlayersProfile(winner, loser, match);
                 prevSeasons.Add(m);
             }
+            
 
             shuffledTestInput = ShuffleGames(testInput, seed);
             foreach (var datapoint in shuffledTestInput)
@@ -395,7 +407,7 @@ namespace ATPDataMaker
         {
             foreach(Player p in allPlayers.Values)
             {
-                if (!int.TryParse(playerRankTable[p.id][season - firstRankedYear], out p.rank)) p.rank = 130;
+                if (!int.TryParse(playerRankTable[p.id][season - firstRankedYear + 1], out p.rank)) p.rank = 130;
                 p.EndSeason();
             }
         }
