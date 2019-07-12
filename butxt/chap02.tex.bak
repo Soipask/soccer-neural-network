@@ -3,8 +3,13 @@
 Data, s ktorými budeme pracovať, sú výhradne len výsledky a konečné stavy jednotlivých zápasov. 
 
 \section{Futbal} \label{foot}
-Pre futbal data predstavujú pre každú ligu dataset všetkých zápasov odohraných len vrámci ligy za pár posledných sezón. 
-Nebudeme používať žiadne data informujúce o hráčoch, ktorí sú v oficiálnej súpiske na zápas ani data priamo len o základnej zostave na daný zápas. 
+Pre futbal je získame všetky zápasy sezóny pre danú ligu. 
+Musia byť všetky, pretože v ďalšej časti sa počíta na základe už odohraných zápasov a jeden zápas by mohol skresliť výsledky. 
+Jednotlivé ligy boli teda vyberané nielen na základe kvality, ale aj na základe toho, že v pár posledných sezónach sa ani raz nestalo, že zápas musel byť z nejakého hľadiska udelený kontumačne jednému z tímov (ako sa napríklad stalo vo francúzskej lige v roku 2007 pre problémy s divákmi \citep{awarded}) alebo celá sezóna bola poznačená korupčným škandálom ako v prípade talianskej ligy v sezóne 2006 \citep{scandal}.
+Takéto výsledky by nemuseli skresliť stavbu neurónovej siete, ale všeobecne je lepšie, ak sa takýmto situáciám vyhneme.
+
+Data pre každú ligu predstavujú výsledky všetkých zápasov odohraných len vrámci ligy za pár posledných sezón. 
+Nebudeme používať žiadne data informujúce o hráčoch, ktorí sú v oficiálnej súpiske na zápas ani data o základnej zostave na daný zápas a ani ďalšie informácie o priebehu zápasu ako percentuálne držanie lopty alebo počet striel, či rohových kopov.
 Taktiež vzhľadom na to, že tímy v jednotlivých ligách hrajú zápasy aj mimo ligy, prinajmenšom zápasy v ligovom pohári, tak nebudú použité ani informácie o oddychu pred daným zápasom, teda koľko dní pred zápasom mali zúčastnené tímy voľno.
 
 Dataset pre každú ligu je tabuľka, kde riadky predstavujú jednotlivé zápasy zoradené podľa dátumu, v ktorom bol zápas odohraný, zostupne.
@@ -12,10 +17,10 @@ Stĺpce sú v poradí:
 \begin{enumerate}
   \item Jednoznačný názov domáceho tímu (nemusí byť celý názov, stačí skrátený, ale jednoznačný a, pokiaľ možno, v celom datasete konzistentný),
   \item Jednoznačný názov hosťujúceho tímu,
-  \item Id zápasu,
+  \item Identifikátor zápasu,
   \item Ligové kolo, v ktorom sa zápas odohral (0, ak sa nevie),
-  \item Id domáceho tímu,
-  \item Id hosťujúceho tímu,
+  \item Identifikátor domáceho tímu,
+  \item Identifikátor hosťujúceho tímu,
   \item Počet gólov strelených domácim tímom v zápase,
   \item Počet gólov strelených hosťujúcim tímom v zápase,
   \item Dátum zápasu,
@@ -25,91 +30,67 @@ Stĺpce sú v poradí:
   \item Kurz na výhru hostí.
 \end{enumerate}
 
+Posledné 3 stĺpce teda predstavujú kurzy na dané výsledky. Tieto ale nie sú pri trénovaní siete využívané, a teda pre data, ktoré sú vždy použité len pre trénovanie ani nie sú vyžadujúce.
+
 \noindent
-\begin{figure}
+\begin{figure}[b]
 \includegraphics[width=\textwidth]{../img/eng.png}
 \caption{Ukážka prvých 10 riadkov z tabuľky všetkých zápasov anglickej Premier League ilustrujúcich členenie tabuľky}
 \end{figure}
+Data v trénovacom súbore obsahuje prvú polovicu sezóny 2018/2019 a 7 jej celých predchádzajúcich sezón. Prvá polovica sezóny predstavuje všetky odohrané zápasy od začiatku sezóny až po odohratie posledného zápasu pred začiatkom kola, ktoré je numericky už v druhej polovici sezóny. 
+Napríklad najvyššia anglická futbalová liga, Premier League, má 38 kôl každú sezónu, do úvahy sa bude brať posledných 7 sezón pred sezónou 2018/2019 a všetky zápasy odohrané pred prvým zápasom 20. kola sezóny 2018/2019 (s výnimkou predohrávok, teda zápasov, ktoré boli preložené na dátum pred dátumom, v ktorom daný zápas figuroval v predsezónnom rozpise zápasov).
 
-Tento dataset potom predáme programu \textit{DataMaker.exe} (TODO!) písanom v jazyku C\#, ktorý pretransformuje tieto data na vstupné neuróny pre neurónovú sieť. Všetkých vstupných neurónov je 44, ich význam a poradie je popísané v sekcii Prílohy (\ref{in:foot}). 
 
-\iffalse
-\begin{multicols}{2}
-\begin{enumerate}
- \item htW,
- \item htD,
- \item htL,
- \item htGFpG,	 
- \item htGApG,	 
- \item atW,	 
- \item atD,	 
- \item atL,	 
- \item atGFpG,	 
- \item atGApG,	 
- \item htHW,	 
- \item htHD,	
- \item htHL,	 
- \item htHGFpG,	 
- \item htHGApG,	 
- \item atAW,	 
- \item atAD,	 
- \item atAL,	 
- \item atAGFpG,	 
- \item atAGApG,	 
- \item hFW,	 
- \item hFD,	 
- \item hFL,	 
- \item hFGF,	 
- \item hFGA,	 
- \item aFW,	 
- \item aFD,	 
- \item aFL,	 
- \item aFGF,	 
- \item aFGA,	 
- \item MW,	 
- \item MD,	 
- \item ML,	 
- \item MGF,	 
- \item MGA,	 
- \item MhW,	 
- \item MhD,	 
- \item MhL,	 
- \item MhGF,	 
- \item MhGA,	 
- \item htLTS,	 
- \item atLTS,	 
- \item dFS,	 
- \item dFCS.
-\end{enumerate}
-\end{multicols}
-Vysvetlivky: Prefixy: h[t] -- domáci tím, a[t] -- hosťujúci tím, F -- forma (posledných 5 zápasov), M -- posledných 5 vzájomných zápasov oboch daných tímov, Mh -- posledných 5 vzájomných zápasov oboch tímov hrané na ihrisku domáceho tímu.
-Sufixy: W -- počet výher, D -- počet remíz, L -- počet prehier, GF[pG] -- počet strelených gólov prepočítaných na zápas, GA[pG] -- počet inkasovaných gólov prepočítaných na zápas, LTS -- dlhodobá sila tímu (priemerný počet bodov tímu v posledných sezónach v lige).
-Ďalšie: dFS -- rozdiel v skóre formy oboch tímov, dFCS -- rozdiel v momentálnom skóre formy oboch tímov. 
-Skóre formy oboch tímov je vypočítané ako počet bodov súpera v posledných 5 zápasov pre tím vynásobený počtom bodov získaných z daného zápasu. 
-Momentálne skóre formy funguje podobne s výnimkou toho, že to je prepočítavané pred momentálnym zápasom, zatiaľ čo skóre sa počíta v momente ukončenia zápasu.
-\fi
+\subsection{Motivácia pre výber daných príznakov}
+Vybrané príznaky presne popísané v sekcii Prílohy (Príloha \ref{in:foot}) sa dajú rozdeliť viacerými spôsobmi do skupín.
+Medzi danými príznakmi sa ešte budú selektovať tie najdôležitejšie v jednej z nasledujúcich sekcii (konkrétne sekcia \ref{stavba}).
 
-Skóre je pokus čo najlepšie ohodnotiť formu tímu jedným údajom. 
-V sekcii (Vylepšovanie siete) (TODO!) sa budeme snažiť znížiť počet vstupných neurónov a ponechať len tie, ktoré sú dôležité. Čím väčší počet vstupných neurónov, tým väčšia je šanca, že sieť sa pokúsi medzi datami nájsť nejakú súvislosť, ktorá tam nie je, čo môže pri testovacích datach vyústiť v nesprávne výsledky (pretrénovanie dat) (TODO! cit).\\
+Prvým spôsobom je rozdeliť tieto príznaky tak, ako za sebou nasledujú do skupiny po desiatich. To nám vytvorí 5 skupín, môžeme ich po poradí nazvať príznaky sezóny, rol
+Prvá skupina obsahuje data o celom doterajšom priebehu sezóny pre obe tímy. Tieto data sú z môjho pohľadu dôležité. Mohlo by byť dôležité vedieť, ako daný tím vystupuje v celej sezóne.
 
-Posledné 3 stĺpce tohto súboru predstavujú kurzy na dané výsledky. Tieto ale nie sú pri trénovaní siete využívané.
+Druhá skupina obsahuje data o výsledkoch daných tímov v role, v akej sa predstavia v predikovanom zápase (domáci alebo hostia) počas celej sezóny. To by mohlo byť dôležité, pretože je rozdiel v zápasoch, kde tímy hrajú doma a v zápasoch, kde hrajú vonku. Tento rozdiel je individuálny. Tím môže vyhrávať napríklad len na domácom ihrisku a mimo neho sa im nemusí až tak dariť, v tom prípade by v role hostí nemuseli byť favoritom na víťazstvo, aj keď by to mohla predchádzajú skupina očakávať.
 
-Program tiež vytvorí ďalší súbor, ktorý obsahuje testovacie data, teda data, ktoré sa nevyužívajú pri trénovaní siete, ale len pri vyhodnocovaní výsledkov. 
-Tieto data sú v rovnakom poradí a musia obsahovať kurzy na dané výsledky a aj výsledok zápasu vo forme troch stĺpcov v poradí domáci, remíza, hostia, kde výsledok, ktorý nastal je ohodnotený 1, zvyšné sú 0. 
-Je to potrebné pre vyhodnocovanie, pretože neurónová sieť bude mať 3 výstupné neuróny v rovnakom poradí a predikciu ohodnotí na 1.
+Tretia skupina je forma, hodnotených je posledných 5 zápasov, tradične to v predikovaných ligách predstavuje obdobie 4 -- 5 týždňov, viac už by nemuselo toľko hovoriť o forme daného tímu, je dosť času stratiť, respektíve znovu získať psychickú pohodu. Forma by mala byť dôležitá, pretože určuje, ako sa tímu darilo v lige v posledných zápasoch, teda niečo ako psychickú pohodu tímu, s ktorou vstupuje do zápasu.
 
-Data v jednom súbore predstavujú pár posledných sezón a prvú polovicu sezóny 2018/2019, ktorá predstavuje všetky odohrané zápasy od začiatku sezóny až po odohratie posledného zápasu pred začiatkom kola, ktoré je numericky už v druhej polovici sezóny. 
-Napríklad najvyššia anglická futbalová liga, Premier League, má 38 kôl každú sezónu, do úvahy sa bude brať posledných pár sezón pred sezónou 2018/2019 a všetky zápasy odohrané pred prvým zápasom 20. kola sezóny 2018/2019 (s výnimkou predohrávok, teda zápasov, ktoré boli preložené na dátum pred dátumom, v ktorom daný zápas figuroval v predsezónnom rozpise zápasov). 
-Túto hranicu pre každú predikovanú ligu uvediem ručne do zdrojového kódu programu DataMaker.exe, pretože neviem o nejakom reálnom funkčnom algoritme, ktorý by to vedel s absolútnou istotou určiť a predstavuje to len jednu sezónu pre 5 líg.
+Štrvtá skupina predstavuje vzájomné zápasy. Určuje posledných 5 vzájomných zápasov, ktoré dané tímy odohrali pred predikovaným zápasom. Prvých 5 príznakov sa týka celkových 5 vzájomných zápasov, ďalších 5 sa týka vzájomných zápasov odohraných na ihrisku domáceho v predikovanom zápase. Každý tím hrá iný štýl hry a každý štýl funguje lepšie proti nejakému štýlu a horšie zas proti inému štýlu (to bol jeden z výsledkov vo vyššie spomínanom článku \citep{related:shin}). Tímy svoje štýly nezvyknú meniť veľmi často, pretože obvykle by na to potrebovali aj výmenu hráčov. Cieľom týchto príznakov je ohodnotiť, ako sa darí daným tímom, keď sa stretnú medzi sebou.
 
-Tento súbor je potom predaný programu v0.py (TODO!), ktorý data pripraví, vytvorí neurónovú sieť s danými parametrami (bližšie o presných parametroch v kapitole Príprava siete) a naučí ju dané data, ktoré nakoniec vyhodnotí podľa rôznych kritérií ako dôvera v daný tip alebo kurzovo vyrovnané zápasy, teda zápasy, kde na výhru domácich a vyhru hostí je dostatočne podobný kurz.
+Poslednou skupinou sú zvyšné príznaky určené na trénovanie, a to je dlhodobá sila domáceho a hosťujúceho mužstva. 
+Niekedy sa môže stať, že tím mal ťažký úvod do sezóny, ale z minulých sezón vieme, že sa im v lige darí obvykle oveľa lepšie a môžeme očakávať, že v nasledujúcich zápasoch začnú uhrávať lepšie výsledky. 
+To je dôvodom výberu dlhodobej sily mužstva do skupiny príznakov.
+Je to najbližšie ako sa môžeme dostať ku abstraktnému ohodnoteniu kvality mužstva, ktoré používali moji predchodcovia \citep{related:shin} z reálnych dat.
+Zaujímavosťou pre tieto neuróny je, že majú najvyššiu koreláciu s finálnym výsledkom (korelačná tabuľka \ref{corr}).
 
-\section{Tenis}
-Pre tenis budeme používať data pre najlepších 100 hráčov na začiatku každého roka v rebríčku ATP. Data v tomto prípade predstavujú zápasy z turnajov typu ATP 250, ATP 500, ATP Masters 1000, Grandslam, Finals a záverečných finálových turnajov.
+Skóre je pokus ohodnotiť formu tímu jedným údajom čo najlepšie.
+Čím väčší počet vstupných neurónov, tým viac dimenzií dodávame neurónovej sieti.
+S väčším počtom dimenzií rastie objem celkového priestoru, a to znamená, že sa jednotlivé body dat od seba oddeľujú a samotné data sa stávajú redšie.
+Tomuto fenoménu hovoria vedci kliatba dimenzionality (\citep{curse}).
+Práve kvôli tomu som sa pokúsil vytvoriť umelé príznaky, ktoré by mohli ohodnotiť rozdiel formy oboch tímov v jednom údaji, na rozdiel od desiatich (popísané sú v Prílohe \ref{in:foot} 44 a 45, detailnejšie pod zoznamom).
+
+Ďalším spôsobom, ako môžeme zoskupiť príznaky je zobrať každý piaty príznak do jednej skupiny (z prvých 40, ostatné sme vysvetlili), čím dostaneme päť skupín príznakov, a to víťazstvá, remízy, prehry, priemerný počet strelených gólov a priemerný počet inkasovaných gólov.
+
+Prvé tri tieto skupiny hovoria samé za seba, snažíme sa predikovať výsledok zápasu, ktorý je buď výhry, remíza alebo prehra z hľadiska oboch tímov. Zvyšné dve skupiny sa snažia z daných dat simulovať niečo ako ofenzívnu a defenzívnu silu mužstva, podobne ako robili moji predchodcovia (napríklad \citep{related:igiri}).
+
+
+
+
+\section{Tenis} \label{ten}
+Pre tenis získame všetky zápasy každého turnaja ATP typu 500, 1000 a Grand Slam, kde hraje aspoň jeden hráč z Top 100 rebríčka ATP pre danú sezónu.
+Dôvodom je fakt, že predikujeme zápasy týchto turnajov medzi hráčmi z Top 100 rebríčka ATP, ale pre týchto hráčov počítame ich momentálnu formu, takže sú pre nás dôležité aj zápasy, ktoré odohrajú proti hráčom, ktorí sa nenachádzajú v Top 100.
+Fakt, že množstvo hráčov z Top 100 sa pravidelne zúčastňuje turnajov typu ATP 250, určuje, že niekedy nastúpia dvaja takíto hráči aj proti sebe na takomto turnaji. Vďaka tomu a aj relatívnej kvalite týchto turnajov som sa rozdodol, že tieto turnaje zoberieme do úvahy (vzájomné zápasy medzi jednotlivými hráčmi na takto ohodnotených turnajoch tiež patria medzi údaje, z ktorých sa stávajú vstupné neuróny (ako vidieť v Prílohe \ref{in:ten})). 
+
+V tenise sa nemôžeme vyhnúť zápasom, ktoré boli nejakým spôsobom udelené jednému z hráčov, či už bez boja alebo po skreči súpera v priebehu zápasu, pretože zranenia sú súčasťou profesionálneho športu.
+Vo futbale sa to obvykle rieši prestriedaním zraneného hráča, v tenise to, prirodzene, nie je možné.
+Pre potreby tejto práce máme dve možnosti, buď môžeme tieto zápasy úplne ignorovať alebo ich môžeme započítavať do niektorých oblastí vstupu (ako napríklad forma alebo vzájomné zápasy) a ignorovať inde (predpovedať takéto výsledky je možno nápad pre inú prácu). 
+Pre potreby tejto práce budeme tieto zápasy úplne ignorovať, čo znamená, že sa nevyskytnú v trénovacích ani testovacích datach.
+Samozrejme, má to svoje výhody aj nevýhody.
+Výhodou je, že výsledky budú reálne odzrkadľovať presnosť siete na zápasoch, ktoré sa odohrali a skončili.
+Predpovedať zranenie totiž nepatrí medzi ciele tejto práce.
+Ďalšou výhodou je spravodlivosť oblastí vstupu ako forma a vzájomné zápasy, pretože sa tam berú len zápasy, ktoré sa dohrali do konca, takže tieto čísla sa v žiadnom okamihu nenafukujú. Ak by napríklad hráč natrafil počas turnaja na dvoch/troch súperov, ktorí sa vzdajú, tak by sa mu vo forme ukázali tieto víťazstvá, aj keď to neboli plnohodnotné výhry.
+Nevýhodou je, že výsledky nemusia ukazovať reálne výsledky v praxi (pred zápasom nevieme určiť, či sa hráč zraní, ale sieť aj tak vydá svoju predpoveď, aj keď nebola na tieto údaje trénovaná).
+
 
 Dataset je tabuľka, každý zápas predstavuje jeden riadok tabuľky, zápasy sú zoradené do turnajov od najskôr odohraných turnajov po tie najbližšie súčasnosti (ak sa obe turnaje začali a končili hrať v rovnaký deň, tak sú v ľubovoľnom poradí, nie je možné, aby poradie zmenilo nejaké data, pretože nie je možné hrať na dvoch turnajoch takéhoto typu zároveň). 
-Zápasy v turnajoch sú zoradené od finále po prvé kolo, teda intuitívne opačne. 
-V tomto prípade na poradí nezáleží, dôležité je, že je v tom systém. Program na spracovanie dat (ATPDataMaker.exe) si tie poradie dat upraví tak, aby mu vyhovovali. 
+Zápasy v turnajoch sú zoradené od finále po prvé kolo, teda intuitívne opačne. Program v transformačnej časti si už to poradie upraví, aby zápasy nasledovali chronologicky. 
 Stĺpce tabuľky sú v poradí:
 \begin{enumerate}
   \item Názov turnaja,
@@ -120,8 +101,8 @@ Stĺpce tabuľky sú v poradí:
   \item Meno hráča, ktorý zápas prehral,
   \item Kolo turnaja, v ktorom sa zápas odohral od najdôležitejšieho (1 značí finále, 2 semifinále, apod.),
   \item ID zápasu,
-  \item ID víťaza (ak ID hráča je NULL, znamená to, že hráč sa doposiaľ ani raz neumiestnil v Top 100 rebríčka ATP),
-  \item ID porazeného hráča,
+  \item ID víťaza*,
+  \item ID porazeného hráča*,
   \item Počet setov, ktoré v zápase získal víťaz,
   \item Počet setov, ktoré v zápase získal porazený hráč,
   \item Počet hier, ktoré v zápase získal víťaz v jednotlivých setoch oddelené znakom |,
@@ -129,6 +110,9 @@ Stĺpce tabuľky sú v poradí:
   \item Predzápasový kurz na výhru víťaza zápasu,
   \item Predzápasový kurz na výhru porazeného hráča v zápase.
 \end{enumerate}
+* - ak je ID hráča NULL, znamená to, že hráč sa doposiaľ ani raz neumiestnil v Top 100 rebríčka ATP
+
+Postavenia hráčov v rebríčku ATP sú získané z pomocného súboru (ukážku z tohto súboru je možné vidieť na obrázku \ref{rank}). Tam sú uchovávané, súbor v transformačnej vrstve práce si pospája hráčov s ich id a ich umiestnením v práve vyhodnocovanom roku.
 
 \noindent
 \begin{figure}
@@ -136,69 +120,44 @@ Stĺpce tabuľky sú v poradí:
 \caption{Ukážka vybraných pár riadkov z tabuľky zápasov v okruhu ATP ilustrujúcich stĺpce a riadky.}
 \end{figure}
 
-ID hráčov sa nachádzajú v ďalšom súbore (\textit{atpranking.csv}), ktorý sa predáva aplikácii na tvorbu vstupných neurónov do neurónovej siete.
-Tento súbor obsahuje ID jednotlivých hráčov, ich mená a ich poradie v koncoročných rebríčkoch hodnotenia ATP za roky 1999--2018.
-Poradie berieme len ak sa hráč umiestnil na miestach 1--100.
-Predzápasové kurzy môžu byť prázdne (vyplnené kurzom 0.0), ale len, ak nás na daný zápas nezaujímajú kurzy (zaujímajú nás len pre posledné dva sezóny, prvá je testovacia a druhá vyhodnocovacia sezóna).
+\noindent
+\begin{figure}
+\label{rank}
+\includegraphics[width=\textwidth]{../img/rank.png}
+\caption{Ukážka prvých 10 riadkov spolu aj s hlavičkou z pomocného súboru udržiavajúceho postavenie hráčov v rebríčku ATP.}
+\end{figure}
 
-Zápasy obsiahnuté v súbore \textit{atpresults.csv} sú len zápasy, v ktorých aspoň jeden hráč bol na konci aspoň raz v daných rokoch na miestach 1--100 v hodnotení ATP.
-Predikovať sa budú len zápasy medzi takýmito hráčmi, ale kvôli rôznym výpočtom je potrebné mať všetky data o takýchto hráčoch z turnajov, ktoré sú obsiahnuté v súbore.
+\subsection{Motivácia pre výber daných príznakov}
+Podobne ako pri futbale si môžeme jednotlivé príznaky zhrnúť do skupín a jednotlivé skupiny predstaviť. Význam jednotlivých príznakov je vypísaný v Prílohe (Príloha \ref{in:ten}.
 
-Tieto datasety sa potom predajú súboru \textit{ATPDataMaker.exe}, ktorý ich pretransformuje na data pre vstupné neuróny neurónových sietí. Všetkých vstupných neurónov je 37, súbor ku každému vstupnému neurónu vydá aj očakávaný výstup (1?, 2?) a pre predikovanú časť dodá aj kurzy stávkových kancelárií na daný výsledok (1B, 2B).
-Poradie a význam stĺpcov je popísaný v sekcii Prílohy (\ref{in:ten}).
+Najprv si môžeme tieto príznaky rozdeliť na skupinové (prvých 30) a jednotlivé.
+Na skupinové sa môžeme najprv pozrieť ako na skupiny po 6, a to príznaky roku, formy, povrchu, formy na povrchu a vzájomných zápasov.
 
-\iffalse
-\begin{multicols}{2}
-\begin{enumerate}
- \item 1W
- \item 1L
- \item 1GDpS
- \item 2W
- \item 2L
- \item 2GDpS
- \item 1FW
- \item 1FL
- \item 1FGDpS
- \item 2FW
- \item 2FL
- \item 2FGDpS
- \item 1SW
- \item 1SL
- \item 1SGDpS
- \item 2SW
- \item 2SL
- \item 2SGDpS
- \item 1SFW
- \item 1SFL
- \item 1SFGDpS
- \item 2SFW
- \item 2SFL
- \item 2SFGDpS
- \item 1MW
- \item 1ML
- \item 1MGDpS
- \item 1MSW
- \item 1MSL
- \item 1MSGDpS
- \item 1R
- \item 2R
- \item H
- \item C
- \item G
- \item dSc
- \item dSSc
- \item 1?
- \item 2?
-\end{enumerate}
-\end{multicols}
-Vysvetlivky: Prefixy: {1,2} -- hráči, M -- vzájomné zápasy (z pohľadu hráča 1), S -- povrch (zápasy hráča na tomto povrchu), F -- forma (posledných 10 zápasov).
-Suffixy: W -- počet výhier*, L -- počet prehier*, GDpS -- priemerný rozdiel v počte získaných hier v sete v prospech daného hráča, R -- poradie v rebríčku, ? -- výsledok (ak hráč vyhral - 1, inak 0)
-Zvyšné: H -- tvrdý povrch, C -- antuka, G -- trávnatý povrch, dSc - rozdiel v skóre** medzi hráčmi (z pohľadu hráča 1), dSSc - rozdiel v povrchovom skóre** (z pohľadu hráča 1)\\
-* - v danej sezóne, s výnimkou, ak predchádza prefix SF - povrch si uchováva formu hráča aj z minulej sezóny, ak bola braná do úvahy
-** - skóre je pokus ohodnotiť silu víťazstva, berie do úvahy formu, teda posledných 10 zápasov a počíta sa ako $(150 - rank)\cdot point$, kde rank je poradie súpera v poslednom koncoročnom rebríčku ATP a point je 1, ak hráč vyhral, 0, ak vyhral súper. 
-Ak súper nebol v Top 100 rebríčka ATP na konci predchádzajúceho roka, tak za jeho rank je dosadené číslo 130.
-To je len preto, lebo teoreticky má dané víťazstvo hodnotu, musí byť teda nejak ohodnotené lepšie ako ľubovoľná prehra, ktorá je ohodnotená hodnotou 0.
-\fi
+Príznaky roku určujú, ako sa danému hráčovi darilo v danom kalendárnom roku.
+Táto kategória má zväčša najvyššie hodnoty zo všetkých skupín. Tieto údaje je dôležitejšie v neskorších fázach roka, ukazujú všeobecný obraz o celom ročníku.
 
-Skóre je pokus výraznejšie ohodnotiť formu hráča ako len počtom výhier a prehier. Pri pokusoch a vylaďovaní siete budeme v sekcii (Vylepšovanie siete) (TODO!) selektovať dané vstupné neuróny podľa rôznych kritérií a vyskúšame tiež aj ako sa bude sieť správať, ak nahradíme všetky stĺpce obsahujúce data o forme rozdielom v skóre.
-Teoreticky tým ušetríme 6 vstupných neurónov, príliš veľa vstupných neurónov môže viesť k rýchlejšiemu pretrénovaniu siete (TODO! cit), čomu sa budeme snažiť zabrániť selektovaním len tých dôležitých neurónov.
+Príznaky formy ukazujú, ako sa hráčovi darilo v posledných 10 zápasoch. Na rozdiel od futbalu sa tieto data prenášajú z roka na rok, takže ak hráč ukončil rok dvakrát po sebe v Top 100 rebríčka ATP počas sledovaných sezón, tak na začiatku druhého roku sa mu ukáže forma aj z minulého roku. Je to tak vyriešené preto, lebo tenis sa hraje v podstate celý rok narozdiel od futbalu, kde liga zvykne končiť v máji a začínať v auguste a počas tejto doby sa môžu udiať zmeny v tíme.
+Dôležité z podobného dôvodu ako pri futbale, ukazujú momentálnu výkonnosť a psychickú pohodu hráča, s ktorou prišiel do zápasu.
+
+Príznaky povrchu ukazujú, ako hral hráč na povrchu, na ktorom odohrá predikovaný zápas, počas roka. V tenise majú rôzne povrchy rôzne vlastnosti. Každý hráč má svoj preferovaný povrch, kde sa mu hrá najlepšie alebo dosahuje najlepšie výsledky. Tieto príznaky celkovú výkonnosť daného hráča na tomto povrchu v doterajšom priebehu sezóny.
+
+Príznaky formy na povrchu predstavujú kombináciu oboch predošlých skupín, formy a povrchu. Uchováva údaje o posledných 10 zápasov odohraných na danom povrchu, data sa prenášajú cez rok. Dôvody sú dva, prvým je, že obvykle sa rok začína a aj končí na tvrdom povrchu a druhým dôvodom je psychika hráča. Aj keď hráč nehral skoro celý rok na danom povrchu, jeho podvedomie si určite pamätá, ako sa mu tam darilo naposledy, aj na základe toho sa môže tešiť alebo netešiť na zápasy na danom povrchu.
+
+Poslednú skupinu v tomto pohľade predstavujú príznaky vzájomných zápasov, tie sa ešte delia na dve skupiny, všetky vzájomné zápasy a vzájomné zápasy odohrané na povrchu, na ktorom sa bude hrať predikovaný zápas. 
+Tieto príznaky by som považoval možno aj za tie najdôležitejšie, ak majú hráči dostatočnú históriu vzájomných zápasov.
+Každý hráč má vlastný štýl a proti niektorým štýlom sa mu hraje lepšie ako proti iným. Naviac, narozdiel od futbalu, tenisti za celú svoju kariéru nezvyknú radikálne meniť svoje štýly hry, takže tieto údaje sú relevantné aj po rokoch.
+Tieto údaje sú uvedené z pohľadu hráča 1.
+
+Každá táto skupina má údaje o hráčovi 1 a hráčovi 2 v zápase a obsahuje 3 údaje pre každého hráča, počet výhier, prehier a priemerný rozdiel v počte vyhraných a prehraných hier za set. Prítomnosť prvých dvoch je zjavná, snažíme sa predikovať buď výhru alebo prehru. 
+Prítomnosť poslednej je tu ako pokus o ukážku sily hráča. 
+Teória za tým je taká, že sa môže stať, že hráč narážal počas turnaja na hráčov, s ktorými v zápase vyhrával jednoznačne a potom prišiel zápas, kde prehral, ale bol to vyrovnaný zápas. 
+Takýto hráč sa potom môže stretnúť s hráčom, ktorý má podobné výsledky, ale ak vyhral, tak to bol tesný zápas a ak prehral, tak prehral jednoznačne.
+Pri predikcii výsledku tohto zápasu by bol pravdepodobne favorizovaný prvý hráč, ale ak by sme tento údaj nemali a ostatné údaje by boli dostatočne podobné, tak by mohla mať sieť problémy s rozhodovaním.
+
+Jednotlivé príznaky sú umiestnenia oboch hráčov v poslednom koncoročnom rebríčku ATP, kategorizácia povrchu a skóre.
+Postavenie hráča v poslednom koncoročnom rebríčku ATP ukazuje, ako sa darilo hráčovi v poslednom roku (keďže rebríček uchováva body z posledného roka). Niečo, na čo sa môžeme odvolávať hlavne na začiatku ročníka, keď je ešte málo údajov v tohto roka.
+
+Kategorizácia povrchu je skupina príznakov, ktorá je prítomná hlavne z dôvodu, že pre rôzne povrchy môže fungovať iné ohodnotenie. Napríklad na tvrdom povrchu by sa kládol dôraz na iné aspekty ako na trávnatom povrchu.
+
+Skóre je pokus ohodnotiť formu hráča výraznejšie ako len počtom výhier a prehier. Pri pokusoch a vylaďovaní siete budeme v kapitole Stavba siete (kapitola \ref{stavba}) selektovať dané vstupné neuróny podľa rôznych kritérií a vyskúšame tiež aj ako sa bude sieť správať, ak nahradíme všetky stĺpce obsahujúce data o forme rozdielom v skóre.
+Teoreticky by sme tým mohli ušetriť 4 vstupné neuróny (forma obsahuje 6 príznakov, ale skóre sa delí na dva príznaky, obe presne popísané v Prílohe \ref{in:ten}).

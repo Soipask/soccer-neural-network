@@ -55,7 +55,7 @@ namespace ATPDataMaker
             // reading file
             while ((line = data.ReadLine()) != null)
             {
-                allGames.Add(line.Split(','));
+                allGames.Add(line.Split(';'));
             }
 
             // getting rankings info
@@ -143,7 +143,17 @@ namespace ATPDataMaker
 
                 if (winner.rank > 100 || loser.rank > 100) valuable = false;
 
-                if (valuable) trainInput.Add(FillInputData(winner, loser, match));
+                if (valuable) {
+                    var theInput = FillInputData(winner, loser, match);
+
+                    // add bets
+                    double[] inputBets = new double[theInput.Length + 2];
+                    theInput.CopyTo(inputBets, 0);
+                    inputBets[inputBets.Length - 2] = double.Parse(m[m.Length - 2]);
+                    inputBets[inputBets.Length - 1] = double.Parse(m[m.Length - 1]);
+
+                    trainInput.Add(inputBets);
+                };
 
                 UpdatePlayersProfile(winner, loser, match);
                 prevSeasons.Add(m);
@@ -180,8 +190,19 @@ namespace ATPDataMaker
                 else { loser = new Player("not", -1); valuable = false; }
 
                 if (winner.rank > 100 || loser.rank > 100) valuable = false;
+                
+                if (valuable)
+                {
+                    var theInput = FillInputData(winner, loser, match);
 
-                if (valuable) testInput.Add(FillInputData(winner, loser, match));
+                    // add bets
+                    double[] inputBets = new double[theInput.Length + 2];
+                    theInput.CopyTo(inputBets, 0);
+                    inputBets[inputBets.Length - 2] = double.Parse(m[m.Length - 2]);
+                    inputBets[inputBets.Length - 1] = double.Parse(m[m.Length - 1]);
+
+                    testInput.Add(inputBets);
+                };
 
                 UpdatePlayersProfile(winner, loser, match);
                 prevSeasons.Add(m);
@@ -543,19 +564,19 @@ namespace ATPDataMaker
             n = 24;
             for (int i = 0; i < 2; i++) //MM, MSM
             {
-                shuffled[3 * i + n] = match[3 * i + n + 1];
-                shuffled[3 * i + n + 1] = match[3 * i + n];
-                shuffled[3 * i + n + 2] = -match[3 * i + n + 2];
+                shuffled[3 * i + n] = match[3 * i + n + 1];  // W -> L
+                shuffled[3 * i + n + 1] = match[3 * i + n];  // L -> W
+                shuffled[3 * i + n + 2] = -match[3 * i + n + 2];  //GDpS -> -GDpS
             }
             n = 30;
-            
+
             shuffled[n] = match[n + 1]; //1R
             shuffled[n + 1] = match[n]; //2R
 
             n = 32;
 
-            for (;n < 35; n++) //surface stays
-            shuffled[n] = match[n];
+            for (; n < 35; n++) //surface stays
+                shuffled[n] = match[n];
 
             n = 35;
 
@@ -564,11 +585,16 @@ namespace ATPDataMaker
 
             n = 37;
 
-            shuffled[match.Length - 1] = match[match.Length - 2]; //1
-            shuffled[match.Length - 2] = match[match.Length - 1]; //2
-
             n = 39;
+            shuffled[n - 1] = match[n - 2]; //1
+            shuffled[n - 2] = match[n - 1]; //2
 
+            if (match.Length > 39)
+            { 
+                // and bets
+            shuffled[n] = match[n + 1];
+            shuffled[n + 1] = match[n];
+            }
             return shuffled;
         }
     }

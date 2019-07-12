@@ -53,8 +53,7 @@
 			    % stylem AUTOR (ROK), resp. AUTOR [ČÍSLO]
 \usepackage[nottoc]{tocbibind} % zajistí přidání seznamu literatury,
                             % obrázků a tabulek do obsahu
-\usepackage{icomma}         % inteligetní čárka v matematickém módu
-\usepackage{dcolumn}        % lepší zarovnání sloupců v tabulkách
+\usepackage{icomma}         % inteligetní čárka v matematickém módu+\usepackage{dcolumn}        % lepší zarovnání sloupců v tabulkách
 \usepackage{booktabs}       % lepší vodorovné linky v tabulkách
 \usepackage{paralist}       % lepší enumerate a itemize
 
@@ -104,15 +103,11 @@
 Poděkování.
 }
 
-\iffalse
-
-Stávkové kancelárie každoročne zarábajú milióny eur na~hazarde zvanom stávkovanie. Často na~to používajú veľké množstvá špecifických informácií a~pre významnejšie udalosti dokonca špeciálnych ľudí, bookmakerov, ktorí osobne sledujú podobné udalosti, či~už ide o~známe futbalové ligy, veľké cyklistické podujatia alebo tradičné odhalenie mena novorodeného nasledovníka v~kráľovskom rode. Táto práca sa zameriava na~otázku, či~dokážeme pomocou neurónových sietí dlhodobo zarábať stávkovaním na~výsledky športových zápasov. Stávky sú realizované na~známych futbalových ligách. Taktiež sú v~tejto práci prezentované dva druhy neurónových sietí, a~to klasická a rekurentná neurónová sieť, tieto dva druhy medzi sebou porovnáme z~viacerých uhlov.
-
-\fi
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Futbal a~tenis patria k~najpopulárnejším športom na~tejto planéte. Platí to hlavne vďaka jednoduchosti pravidiel a~nenáročnosti na~vybavenie. Obe športy môže hrať prakticky ktokoľvek. Sú ale~ľudia, ktorým tieto športy idú lepšie ako~ostatným, takzvaní profesionáli. Títo profesionáli potom chodia po~rôznych turnajoch, resp. ligách, kde hrajú zápasy, aby~sa ukázalo, kto je najlepší. Ľudská chamtivosť na~jednej strane a závislosť na~hazarde na~druhej podporujú vznik rôznych spoločností, stávkových kancelárií, ktoré umožňujú tipovať výsledky týchto zápasov za~peniaze. Táto práca sa zameriava na~predpovedanie takýchto výsledkov futbalových líg a~tenisových turnajov pomocou dvoch mierne odlišných druhov neurónových~sietí, porovnanie jednotlivých predpovedných modelov a~taktiež porovnanie predvídateľnosti futbalu a~tenisu.
+Práca sa zameriava na vytvorenie modelov dvoch odlišných druhov neurónových sietí slúžiacich na predpovedanie výsledkov vybraných futbalových a tenisových zápasov a porovnanie týchto modelov z hľadiska percentuálnej úspešnosti a potenciálneho zisku, ak by sme na dané zápasy stávkovali v priemernej medzinárodnej stávkovej kancelárii.
+Porovnávané druhy neurónových sietí sú dopredná neurónová sieť a rekurentná neurónová sieť. Predikované futbalové zápasy tvoria ligové zápasyv troch európskych ligách, špecifikom je sledovanie úspešnosti na zápasoch, v ktorých ani jeden z tímov nie je jasným favoritom podľa stávkových kancelárií.
 }
 
 \def\AbstraktEN{%
@@ -160,15 +155,15 @@ Abstract.
 
 %%% Obrázky v bakalářské práci
 %%% (pokud jich je malé množství, obvykle není třeba seznam uvádět)
-\listoffigures
+% \listoffigures
 
 %%% Tabulky v bakalářské práci (opět nemusí být nutné uvádět)
 %%% U matematických prací může být lepší přemístit seznam tabulek na začátek práce.
-\listoftables
+% \listoftables
 
 %%% Použité zkratky v bakalářské práci (opět nemusí být nutné uvádět)
 %%% U matematických prací může být lepší přemístit seznam zkratek na začátek práce.
-\chapwithtoc{Seznam použitých zkratek}
+% \chapwithtoc{Seznam použitých zkratek}
 
 %%% Přílohy k bakalářské práci, existují-li. Každá příloha musí být alespoň jednou
 %%% odkazována z vlastního textu práce. Přílohy se číslují.

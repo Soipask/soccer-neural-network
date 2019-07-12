@@ -17,9 +17,9 @@ namespace ATPDataMaker
             {
                 TextReader reader = new StreamReader(args[0]);
                 TextReader ranks = new StreamReader("atprankings.csv");
-                TextWriter writer = new StreamWriter("atp.csv");
-                TextWriter resWriter = new StreamWriter("atpres.csv");
-                TextWriter testWriter = new StreamWriter("atpres_final.csv");
+                TextWriter writer = new StreamWriter("atp2.csv");
+                TextWriter resWriter = new StreamWriter("atpres2.csv");
+                TextWriter testWriter = new StreamWriter("atpres_final2.csv");
 
                 var ig = new InputGetter(reader, ranks, writer, resWriter, testWriter);
                 ig.MakeData();

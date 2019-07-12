@@ -1,4 +1,4 @@
-\chapter{Stavba siete}
+\chapter{Stavba siete} \label{stavba}
 
 Všetky siete boli napísané v programovacom jazyku \textit{Python} s použitím knižníc \textit{numpy} a \textit{tensorflow}.
 Na začiatku bola sieť skonštruovaná so všetkými 44 príznakmi, ktoré sme dostali z transformačnej časti práce (Príloha \ref{in:foot}).
@@ -13,6 +13,18 @@ V prípade tenisu prišli data už priamo z transformačnej časti v troch súbo
 Každá sieť mala svoje nedostatky v celkovej úspešnosti, ale doposiaľ neexistuje efektívne nastavenia neurónových sietí pre každú situáciu \citep{gitgud}, takže každá sieť sa musela vylepšovať osobitne a manuálne vzhľadom na rozdiely v prístupoch.
 Cieľom práce nie je porovnať rovnakú architektúru a viac typov neurónových sietí, ale pokúsiť sa získať, čo možno najlepšie výsledky a porovnať potenciály doprednej a rekurentnej neurónovej siete.
 
+\section{Selekcia príznakov}
+Kliatba dimenzionality nám hovorí, že čím viac vstupných príznakov zadáme neurónovej sieti, tým sú data redšie a teda je ich potreba získať viac, aby sa sieť správne učila. Viac dat získať nevieme, takže sa pokúsime znížiť počet dimenzií a pozrieť sa na to, ako sa to prejaví na trénovacích datach.
+Na začiatok spravíme korelačný test všetkých príznakov testovacích a trénovacích dat (obrázok \ref{corr}).
+Teória hovorí, že by nám mohla napovedať, aké hodnoty sú dôležité.
+Obrázok hovorí, že najvyššiu koreláciu s výsledkom zápasu majú príznaky 41 a 42 určujúce dlhodobú silu tímu. Skóre dosahuje tiež celkom vysokú koreláciu (okolo 0,2) s finálnym výsledkom.
+...
+
+\noindent
+\begin{figure} \label{corr}
+\includegraphics[scale=0.9]{../img/correng.png}
+\caption{Korelačná tabuľka všetkých príznakov pre anglickú Premier League, žltá predstavuje kladnú koreláciu, modrá zápornú. Nás hlavne zaujímajú posledné 3 riadku určujúce koreláciu príznaku s výsledkom zápasu (príznaky sú v poradí ako v Prílohe \ref{in:foot}).}
+\end{figure}
 
 \iffalse
 Pokus 1: bez formy (1-20, 31-44) (ešte práca s dropoutom) 

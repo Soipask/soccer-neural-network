@@ -1,6 +1,6 @@
 @misc{rnn:colah,
 	author = {Christopher Olah},
-	title = {Understanding {LSTM Networks},
+	title = {Understanding {LSTM} {Networks}},
 	year = 	{2015},
 	url = {https://colah.github.io/posts/2015-08-Understanding-LSTMs/},
 	month = {August},
@@ -10,7 +10,7 @@
 
 @misc{rnn:karp,
 	author = {Andrej Karpathy},
-	title = {The Unreasonable Effectiveness of Recurrent Neural Networks},
+	title = {The {Unreasonable} {Effectiveness} of {Recurrent} {Neural} {Networks}},
 	year = 	{2015},
 	url = {http://karpathy.github.io/2015/05/21/rnn-effectiveness/},
 	month = {May},
@@ -205,3 +205,23 @@
 	publisher = {HNOnline.sk}
 }
 
+@article{curse,
+  title={A few useful things to know about machine learning.},
+  author={Domingos, Pedro M},
+  journal={Commun. acm},
+  volume={55},
+  number={10},
+  pages={78--87},
+  year={2012}
+}
+
+@article{multi,
+  title={A logical calculus of the ideas immanent in nervous activity},
+  author={McCulloch, Warren S and Pitts, Walter},
+  journal={The bulletin of mathematical biophysics},
+  volume={5},
+  number={4},
+  pages={115--133},
+  year={1943},
+  publisher={Springer}
+}

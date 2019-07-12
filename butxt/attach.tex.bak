@@ -45,11 +45,12 @@ Výstupný súbor z transformačnej časti predikcie pre futbal je tabuľka form
  \item MhGA - mutual home goals against - priemerný počet inkasovaných gólov domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu hraných na domácom ihrisku,
  \item htLTS - home team long-time strength - dlhodobá sila domáceho mužstva (počítaná ako priemerný počet získaných bodov vo všetkých doterajších sezónach od prvej sezóny v datasete),
  \item atLTS - away team long-time strength - dlhodobá sila hosťujúceho mužstva,
+ \label{dFS}
  \item dFS - difference form score - rozdiel v skóre formy medzi domácim a hosťujúcim tímom,
  \item dFCS - difference form current score - rozdiel v momentálnom skóre formy medzi domácim a hosťujúcim tímom,
- \item W - win - hodnota určujúca konečný výsledok zápasu; 1, ak skončil víťazstvom domáceho tímu, 0 inak,
+ \item H - home - hodnota určujúca konečný výsledok zápasu; 1, ak skončil víťazstvom domáceho tímu, 0 inak,
  \item D - draw - hodnota určujúca konečný výsledok zápasu; 1, ak skončil remízou, 0 inak, 
- \item L - lose - hodnota určujúca konečný výsledok zápasu; 1, ak skončil prehrou domáceho tímu, 0 inak.
+ \item A - away - hodnota určujúca konečný výsledok zápasu; 1, ak skončil prehrou domáceho tímu, 0 inak.
 \end{enumerate}
 
 Skóre formy oboch tímov je vypočítané ako súčet cez posledných 5 zápasov počet bodov súpera tímu v momente ukončenia zápasu vynásobený počtom bodov získaných z daného zápasu.
