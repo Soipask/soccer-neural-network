@@ -10,21 +10,21 @@
 \contentsline {chapter}{\numberline {2}Neur\IeC {\'o}nov\IeC {\'e} siete}{9}{chapter.2}% 
 \contentsline {section}{\numberline {2.1}Dopredn\IeC {\'e} neur\IeC {\'o}nov\IeC {\'e} siete}{9}{section.2.1}% 
 \contentsline {subsection}{\numberline {2.1.1}Jednovrstvov\IeC {\'e} siete}{10}{subsection.2.1.1}% 
-\contentsline {subsection}{\numberline {2.1.2}Viacvrstvov\IeC {\'e} siete}{10}{subsection.2.1.2}% 
+\contentsline {subsection}{\numberline {2.1.2}Viacvrstvov\IeC {\'e} siete}{11}{subsection.2.1.2}% 
 \contentsline {section}{\numberline {2.2}Rekurentn\IeC {\'e} neur\IeC {\'o}nov\IeC {\'e} siete}{11}{section.2.2}% 
 \contentsline {section}{\numberline {2.3}U\IeC {\v c}enie}{12}{section.2.3}% 
-\contentsline {chapter}{\numberline {3}Datasety}{13}{chapter.3}% 
-\contentsline {section}{\numberline {3.1}Futbal}{13}{section.3.1}% 
-\contentsline {subsection}{\numberline {3.1.1}Motiv\IeC {\'a}cia pre v\IeC {\'y}ber dan\IeC {\'y}ch pr\IeC {\'\i }znakov}{14}{subsection.3.1.1}% 
-\contentsline {section}{\numberline {3.2}Tenis}{15}{section.3.2}% 
-\contentsline {subsection}{\numberline {3.2.1}Motiv\IeC {\'a}cia pre v\IeC {\'y}ber dan\IeC {\'y}ch pr\IeC {\'\i }znakov}{17}{subsection.3.2.1}% 
-\contentsline {chapter}{\numberline {4}Stavba siete}{20}{chapter.4}% 
-\contentsline {section}{\numberline {4.1}Selekcia pr\IeC {\'\i }znakov}{20}{section.4.1}% 
-\contentsline {chapter}{\numberline {5}Dokument\IeC {\'a}cia}{22}{chapter.5}% 
-\contentsline {section}{\numberline {5.1}Futbal}{22}{section.5.1}% 
-\contentsline {section}{\numberline {5.2}Tenis}{23}{section.5.2}% 
-\contentsline {chapter}{Z\IeC {\'a}ver}{25}{chapter*.5}% 
-\contentsline {chapter}{Zoznam pou\IeC {\v z}itej literat\IeC {\'u}ry}{26}{chapter*.6}% 
-\contentsline {chapter}{\numberline {A}Pr\IeC {\'\i }lohy}{28}{appendix.A}% 
-\contentsline {section}{\numberline {A.1}Vstup neur\IeC {\'o}novej siete pre futbal}{28}{section.A.1}% 
-\contentsline {section}{\numberline {A.2}Vstup neur\IeC {\'o}novej siete pre tenis}{31}{section.A.2}% 
+\contentsline {chapter}{\numberline {3}Datasety}{16}{chapter.3}% 
+\contentsline {section}{\numberline {3.1}Futbal}{16}{section.3.1}% 
+\contentsline {subsection}{\numberline {3.1.1}Motiv\IeC {\'a}cia pre v\IeC {\'y}ber dan\IeC {\'y}ch pr\IeC {\'\i }znakov}{17}{subsection.3.1.1}% 
+\contentsline {section}{\numberline {3.2}Tenis}{18}{section.3.2}% 
+\contentsline {subsection}{\numberline {3.2.1}Motiv\IeC {\'a}cia pre v\IeC {\'y}ber dan\IeC {\'y}ch pr\IeC {\'\i }znakov}{20}{subsection.3.2.1}% 
+\contentsline {chapter}{\numberline {4}Stavba siete}{23}{chapter.4}% 
+\contentsline {section}{\numberline {4.1}Selekcia pr\IeC {\'\i }znakov}{23}{section.4.1}% 
+\contentsline {chapter}{\numberline {5}Dokument\IeC {\'a}cia}{25}{chapter.5}% 
+\contentsline {section}{\numberline {5.1}Futbal}{25}{section.5.1}% 
+\contentsline {section}{\numberline {5.2}Tenis}{26}{section.5.2}% 
+\contentsline {chapter}{Z\IeC {\'a}ver}{28}{chapter*.5}% 
+\contentsline {chapter}{Zoznam pou\IeC {\v z}itej literat\IeC {\'u}ry}{29}{chapter*.6}% 
+\contentsline {chapter}{\numberline {A}Pr\IeC {\'\i }lohy}{31}{appendix.A}% 
+\contentsline {section}{\numberline {A.1}Vstup neur\IeC {\'o}novej siete pre futbal}{31}{section.A.1}% 
+\contentsline {section}{\numberline {A.2}Vstup neur\IeC {\'o}novej siete pre tenis}{34}{section.A.2}% 

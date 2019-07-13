@@ -1,4 +1,4 @@
-\begin{thebibliography}{20}
+\begin{thebibliography}{24}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -27,6 +27,18 @@
 \newblock URL
   \url{https://plus7dni.pluska.sk/domov/stavkovanie-volby-bookmakeri-najviac-veria-sefcovicovi-caputovej}.
 \newblock [cit. 2019-07-09].
+
+\bibitem[Bottou(2010)]{nn:gd}
+{\sc Bottou, L.} (2010).
+\newblock Large-scale machine learning with stochastic gradient descent.
+\newblock In \emph{Proceedings of COMPSTAT'2010}, pages 177--186. Springer.
+
+\bibitem[Brownlee(2018)]{overfit}
+{\sc Brownlee, J.} (2018).
+\newblock How to avoid overfitting in deep learning neural networks.
+\newblock URL
+  \url{https://machinelearningmastery.com/introduction-to-regularization-to-reduce-overfitting-and-improve-generalization-error/}.
+\newblock [cit. 2019-07-13].
 
 \bibitem[Domingos(2012)]{curse}
 {\sc Domingos, P.~M.} (2012).
@@ -58,6 +70,11 @@
   learning techniques.
 \newblock \emph{Knowledge-Based Systems}, {\bf 19}\penalty0 (7), \penalty0
   544--553.
+
+\bibitem[Kingma a Ba(2014)]{adam}
+{\sc Kingma, D.~P. {\rm a} Ba, J.} (2014).
+\newblock Adam: A method for stochastic optimization.
+\newblock \emph{arXiv preprint arXiv:1412.6980}.
 
 \bibitem[Koromh{\'a}zov{\'a}(2008)]{tenis:kor}
 {\sc Koromh{\'a}zov{\'a}, V.} (2008).
@@ -113,6 +130,13 @@ Ligue 1.com (2017).
 \newblock Predicting football match results with logistic regression.
 \newblock In \emph{2016 International Conference On Advanced Informatics:
   Concepts, Theory And Application (ICAICTA)}, pages 1--5. IEEE.
+
+\bibitem[Rosasco a~kol.(2004)Rosasco, Vito, Caponnetto, Piana a Verri]{loss}
+{\sc Rosasco, L., Vito, E.~D., Caponnetto, A., Piana, M. {\rm a} Verri, A.}
+  (2004).
+\newblock Are loss functions all the same?
+\newblock \emph{Neural Computation}, {\bf 16}\penalty0 (5), \penalty0
+  1063--1076.
 
 \bibitem[Russell a Norvig(2016)]{aima}
 {\sc Russell, S.~J. {\rm a} Norvig, P.} (2016).

@@ -43,20 +43,16 @@ Bonus predstavujú vstupy označené ako skóre, tieto boli vytvorené mnou ako 
 Ak bude mať teda jeden z týchto neurónov (alebo obe spoločne) úspech, tak bude možné skrátiť počet vstupných neurónov o 10.
 Pre upresnenie, výstupom súboru sú opäť tabuľky formátu csv, názov je zložený zo skratky pre názov danej ligy a slova \textit{input} pre trénovacie data, pre testovacie je to skratka danej ligy a slovo \textit{resinput}.
 
-Tento súbor je potom predaný programu v0.py (TODO!), ktorý data pripraví, vytvorí neurónovú sieť s danými parametrami (bližšie o presných parametroch v kapitole Stavba siete (kapitola \ref{stavba})) a naučí ju dané data, ktoré nakoniec vyhodnotí podľa rôznych kritérií ako dôvera v daný tip alebo vyrovnané zápasy, teda zápasy, ktoré nemajú jasného favorita. Tieto zápasy sa v práci ukazujú ako zápasy, kde kurz na domácich a hostí je podobný (konkrétne menší ako 1).
-
-Cestu na dané súbory potom ako prvé dva parametre (v poradí, v akom sú uvedené v úvode kapitoly) predáme programu \textit{ffnnfootball.py} alebo \textit{rnnfootball.py} podľa toho, či chceme, aby dané údaje vyhodnocovala popredná rekurentná neurónová sieť.
-Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorý pozostáva z typu siete, názvu ligy a časovej známky vo formáte \textit{txt}.
+Cestu na dané súbory potom ako prvé dva parametre (v poradí, v akom sú uvedené v úvode kapitoly) predáme programu \textit{ffnnfootball.py} alebo \textit{rnnfootball.py} podľa toho, či chceme, aby dané údaje vyhodnocovala dopredná rekurentná neurónová sieť.
+Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorého názov pozostáva z typu siete, názvu ligy a časovej známky vo formáte \textit{txt}.
 
 \section{Tenis}
 
 Údaje o tenisových zápasoch sú predpripravené v súbore atpresults.csv.
 
-ID hráčov sa nachádzajú v ďalšom súbore (\textit{atpranking.csv}), ktorý sa predáva programu v transformačnej časti.
-
-Tento súbor obsahuje ID jednotlivých hráčov, ich mená a ich poradie v koncoročných rebríčkoch hodnotenia ATP za roky 1999--2018.
+Súbor \textit{atpranking.csv} je tiež predpripravený a obsahuje ID jednotlivých hráčov, ich mená a ich poradie v koncoročných rebríčkoch hodnotenia ATP za roky 1999--2018.
 Poradie berieme len ak sa hráč umiestnil na miestach 1--100.
-Predzápasové kurzy môžu byť prázdne (vyplnené kurzom 0.0), ale len, ak nás na daný zápas nezaujímajú kurzy (zaujímajú nás len pre posledné dva sezóny, prvá je testovacia a druhá vyhodnocovacia sezóna).Zápasy obsiahnuté v súbore \textit{atpresults.csv} sú len zápasy, v ktorých aspoň jeden hráč bol aspoň raz v daných rokoch na miestach 1--100 v koncoročnom hodnotení ATP.
+Predzápasové kurzy môžu byť prázdne (vyplnené kurzom 0.0), ale len, ak nás na daný zápas nezaujímajú kurzy (zaujímajú nás len pre posledné dva roky, prvý je na testovanie a druhý vyhodnocovacia). Zápasy obsiahnuté v súbore \textit{atpresults.csv} sú len zápasy, v ktorých aspoň jeden hráč bol aspoň raz v daných rokoch na miestach 1--100 v koncoročnom hodnotení ATP.
 Predikovať sa budú len zápasy medzi takýmito hráčmi, ale kvôli rôznym výpočtom je potrebné mať všetky data o takýchto hráčoch z turnajov, ktoré sú obsiahnuté v súbore.
 
 Tieto datasety sa potom predajú súboru \textit{ATPDataMaker.exe}, ktorý ich pretransformuje na data pre vstupné neuróny neurónových sietí. Všetkých vstupných neurónov je 37, súbor ku každému vstupnému neurónu vydá aj očakávaný výstup (1?, 2?) a pre predikovanú časť dodá aj kurzy stávkových kancelárií na daný výsledok (1B, 2B).

@@ -225,3 +225,37 @@
   year={1943},
   publisher={Springer}
 }
+
+@incollection{nn:gd,
+  title={Large-scale machine learning with stochastic gradient descent},
+  author={Bottou, L{\'e}on},
+  booktitle={Proceedings of COMPSTAT'2010},
+  pages={177--186},
+  year={2010},
+  publisher={Springer}
+}
+@article{adam,
+  title={Adam: A method for stochastic optimization},
+  author={Kingma, Diederik P and Ba, Jimmy},
+  journal={arXiv preprint arXiv:1412.6980},
+  year={2014}
+}
+
+@misc{overfit,
+	author = {Jason Brownlee},
+	title = {How to Avoid Overfitting in Deep Learning Neural Networks},
+	year = {2018},
+	month = {Dec},
+	url = {https://machinelearningmastery.com/introduction-to-regularization-to-reduce-overfitting-and-improve-generalization-error/},
+	note = {[cit. 2019-07-13]}
+}
+@article{loss,
+  title={Are loss functions all the same?},
+  author={Rosasco, Lorenzo and Vito, Ernesto De and Caponnetto, Andrea and Piana, Michele and Verri, Alessandro},
+  journal={Neural Computation},
+  volume={16},
+  number={5},
+  pages={1063--1076},
+  year={2004},
+  publisher={MIT Press}
+}
