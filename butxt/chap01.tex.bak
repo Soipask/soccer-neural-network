@@ -8,10 +8,11 @@ Víťazom sa stáva tím, ktorý strelí viac gólov ako súper.
 Ak je počet vstrelených gólov pre obe zúčastnené strany rovnaký, nastáva remíza 
 \citep{hry1}.
 \noindent
-\begin{figure} \label{pitch}
+\begin{figure}
 \centering
 \includegraphics[scale=0.3]{../img/pitch.png}
-\caption{Vzhľad futbalového ihriska, pre medzinárodné zápasy musí mať dlhšia strana 115 -- 120\,m, kratšia 64 -- 95\,m}
+\caption{Vzhľad futbalového ihriska, pre medzinárodné zápasy musí mať dlhšia strana 115 -- 120\,m, kratšia 64 -- 95\,m} 
+\label{pitch}
 \end{figure}
 
 \subsection{Futbalové ligy}
@@ -20,7 +21,7 @@ To znamená, že každý tím odohrá zápas proti každému tímu v lige.
 Každá sezóna týchto líg sa najprv delí na kolá a až potom na zápasy.
 V každom kole odohrá jeden zápas každý tím (s výnimkou jedného tímu, ak liga obsahuje nepárny počet tímov, ten má v danom kole voľno).
 Za výhru v každom zápase sú 3 body, za remízu 1 bod a za prehru nedostane tím žiaden bod.
-Sledované ligy fungujú na barážovom systéme, teda najnižšie umiestnené tímy zostupujú do nižšej ligy v hierarchii líg v danej krajine a najvyššie umiestnené ligy postupujú do vyššej ligy v hierarchii.
+Sledované ligy fungujú na barážovom systéme, teda najnižšie umiestnené tímy zostupujú do nižšej ligy v hierarchii líg v danej krajine a najvyššie umiestnené tímy postupujú do vyššej ligy v hierarchii.
 
 \section{Tenis}
 Tenis je šport tímov súperiacich proti sebe, skladajúcich sa z jedného alebo dvoch ľudí, hrajúcich proti sebe na tenisovom kurte.
@@ -34,10 +35,11 @@ V tejto práci nás budú hlavne zaujímať dvojhry, teda zápasy jeden proti je
 \citep{hry2}.
 
 \noindent
-\begin{figure} \label{court}
+\begin{figure} 
 \centering
 \includegraphics[scale=0.7]{../img/court.png}
 \caption{Vzhľad tenisového kurtu, kurt je dlhý 23,77\,m, široký 10,97\,m, dodatočný prázdny priestor okolo kurtu je vyhradený, aby hráči mali možnosť dosiahnuť na loptičky, ktoré sú v hre, ale nachádzajú sa mimo kurtu. Sieť je vysoká 1.07\,m na krajoch kurtu, 0,91\,m v strede.}
+\label{court}
 \end{figure}
 
 \subsection{Turnaje ATP Tour}
@@ -64,9 +66,10 @@ V tenise môže zápas vďaka pravidlám trvať od desiatok minút do niekoľko 
 \section{Kurzy stávkových na kancelárií}
 Kurzové stávky sú stávky na akýkoľvek jav, na ktorý vypíše daná stávková kancelária kurz. 
 Kurzy stanovuje bookmaker podľa toho, aká je pravdepodobnosť, že daný jav nastane, kde platí, že čím nižší kurz, tým je vyššia pravdepodobnosť nastania daného javu. 
-Väčšinou sa tieto javy týkajú nejakej športovej udalosti, napríklad nejaké futbalové zápasy alebo automobilové preteky, ale stávkové kancelárie vypisujú kurzy aj na nešportové udalosti, kde medzi tie známejšie patria prezidentské voľby \citep{bet:pres} alebo ohlásenie mena novorodeného princa v kráľovskej rodine, kde zvyknú byť vypísané kurzy napríklad na pohlavie, meno novorodenca alebo presný dátum narodenia \citep{bet:prince}.
+Väčšinou sa tieto javy týkajú nejakej športovej udalosti, napríklad futbalových zápasov alebo automobilových pretekov. 
+Stávkové kancelárie ale vypisujú kurzy aj na nešportové udalosti, kde medzi tie známejšie patria prezidentské voľby \citep{bet:pres} alebo ohlásenie mena novorodeného dieťaťa v kráľovskej rodine, kde zvyknú byť vypísané kurzy napríklad na pohlavie, meno novorodenca alebo presný dátum narodenia \citep{bet:prince}.
 
-Na javy, na ktoré sú vypísané kurzy môže potom zákazník staviť istú sumu peňazí , vklad, obvykle tak, že vloží tento vklad do stávkovej kancelárie. 
+Na javy, na ktoré sú vypísané kurzy, môže potom zákazník staviť istú sumu peňazí, vklad, obvykle tak, že vloží tento vklad do stávkovej kancelárie. 
 Ak daný jav nastane, zákazník dostane od tejto stávkovej kancelárie výhru, ktorá predstavuje výsledok vynásobenia daného kurzu vkladom.
 Ak daný jav nenastane, vklad prepadá v prospech stávkovej kancelárie.
 Pre príklad si vezmime tipovanie výsledku futbalového zápasu Slovensko - Česká republika, ktorý sa odohral dňa 13.10.2018. 

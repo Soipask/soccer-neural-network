@@ -62,11 +62,12 @@
 \usepackage{color}
 
 \usepackage{multicol}
+\usepackage{multirow}
 
 %%% Údaje o práci
 
 % Název práce v jazyce práce (přesně podle zadání)
-\def\NazevPrace{Predikce sportovních utkání pomocí neuronových sítí}
+\def\NazevPrace{Predikcia športových zápasov pomocou neurónových sietí}
 
 % Název práce v angličtině
 \def\NazevPraceEN{Prediction of sports results using neural networks}
@@ -79,7 +80,7 @@
 
 % Název katedry nebo ústavu, kde byla práce oficiálně zadána
 % (dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF)
-\def\Katedra{Katedra softvéru a výuky informatiky}
+\def\Katedra{Katedra softwaru a výuky informatiky}
 \def\KatedraEN{Department of Software and Computer Science Education}
 
 % Jedná se o katedru (department) nebo o ústav (institute)?
@@ -90,7 +91,7 @@
 \def\Vedouci{Mgr. David Kuboň}
 
 % Pracoviště vedoucího (opět dle Organizační struktury MFF)
-\def\KatedraVedouciho{Katedra softvéru a výuky informatiky}
+\def\KatedraVedouciho{Katedra softwaru a výuky informatiky}
 \def\KatedraVedoucihoEN{Department of Software and Computer Science Education}
 
 % Studijní program a obor
@@ -106,8 +107,8 @@ Poděkování.
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Práca sa zameriava na vytvorenie modelov dvoch odlišných druhov neurónových sietí slúžiacich na predpovedanie výsledkov vybraných futbalových a tenisových zápasov a porovnanie týchto modelov z hľadiska percentuálnej úspešnosti a potenciálneho zisku, ak by sme na dané zápasy stávkovali v priemernej medzinárodnej stávkovej kancelárii.
-Porovnávané druhy neurónových sietí sú dopredná neurónová sieť a rekurentná neurónová sieť. Predikované futbalové zápasy tvoria ligové zápasyv troch európskych ligách, špecifikom je sledovanie úspešnosti na zápasoch, v ktorých ani jeden z tímov nie je jasným favoritom podľa stávkových kancelárií.
+Práca sa zameriava na vytvorenie modelov dvoch odlišných druhov neurónových sietí slúžiacich na predpovedanie výsledkov vybraných futbalových a tenisových zápasov a porovnanie týchto modelov z hľadiska percentuálnej úspešnosti a potenciálneho zisku, ak by sme na dané zápasy uzatvárali stávku v priemernej medzinárodnej stávkovej kancelárii.
+Porovnávané druhy neurónových sietí sú dopredná neurónová sieť a rekurentná neurónová sieť. Predikované futbalové zápasy tvoria ligové zápasy v troch európskych ligách, špecifikom je sledovanie úspešnosti na zápasoch, v ktorých ani jeden z tímov nie je jasným favoritom podľa stávkových kancelárií.
 }
 
 \def\AbstraktEN{%
@@ -116,10 +117,10 @@ Abstract.
 
 % 3 až 5 klíčových slov (doporučeno), každé uzavřeno ve složených závorkách
 \def\KlicovaSlova{%
-{neurónová sieť} {rekurentná neurónová sieť} {športové stávkovanie} {športové kurzy} {futbal} {tenis}
+{neurónová sieť}, {športové stávky}, {futbal}, {tenis}
 }
 \def\KlicovaSlovaEN{%
-{neural network} {recurrent neural network} {football} {tenis} {sport betting} {sport odds} 
+{neural network}, {sport betting},  {football}, {tenis}
 }
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,

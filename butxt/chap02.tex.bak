@@ -3,7 +3,7 @@
 Data, s ktorými budeme pracovať, sú výhradne len výsledky a konečné stavy jednotlivých zápasov. 
 
 \section{Futbal} \label{foot}
-Pre futbal je získame všetky zápasy sezóny pre danú ligu. 
+Pre futbal získame všetky zápasy sezóny pre danú ligu. 
 Musia byť všetky, pretože v ďalšej časti sa počíta na základe už odohraných zápasov a jeden zápas by mohol skresliť výsledky. 
 Jednotlivé ligy boli teda vyberané nielen na základe kvality, ale aj na základe toho, že v pár posledných sezónach sa ani raz nestalo, že zápas musel byť z nejakého hľadiska udelený kontumačne jednému z tímov (ako sa napríklad stalo vo francúzskej lige v roku 2007 pre problémy s divákmi \citep{awarded}) alebo celá sezóna bola poznačená korupčným škandálom ako v prípade talianskej ligy v sezóne 2006 \citep{scandal}.
 Takéto výsledky by nemuseli skresliť stavbu neurónovej siete, ale všeobecne je lepšie, ak sa takýmto situáciám vyhneme.
@@ -117,9 +117,9 @@ Postavenia hráčov v rebríčku ATP sú získané z pomocného súboru (ukážk
 
 \noindent
 \begin{figure}
-\label{rank}
 \includegraphics[width=\textwidth]{../img/rank.png}
 \caption{Ukážka prvých 10 riadkov spolu aj s hlavičkou z pomocného súboru udržiavajúceho postavenie hráčov v rebríčku ATP. Hodnota \textit{NULL} znamená, že sa hráč na konci daného roku neumiestnil v prvej 100 rebríčka.}
+\label{rank}
 \end{figure}
 
 \subsection{Motivácia pre výber daných príznakov}

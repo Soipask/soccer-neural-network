@@ -6,17 +6,17 @@ Na austrálsky futbal použil data zo zápasov zo 100 sezón odohraných pred ro
 Dokázal získať presnosť 66.7\%.
 
 V roku 2006 Joseph, Fenton a Neil vyskúšali viaceré druhy strojového učenia na predikciu výsledkov zápasov tímu Tottenham Hotspur F.C. v najvyššej anglickej futbalovej lige, Premier League, v sezónach 1995/1996 a 1996/1997 \citep{related:joseph}.
-To znamená, že pracovali s datasetom o veľkosti 76 zápasov, z ktorej časť delili na trénovacie a časť na testovacie data. 
+To znamená, že pracovali s datasetom o veľkosti 76 zápasov, z ktorého časť delili na trénovacie a časť na testovacie data. 
 Použité metódy zahŕňali expertmi konštruované bayesovské siete, naivný bayesovký klasifikátor, rozhodovacie stromy a k-NN (k nearest neighbours clustering). 
 Použili pri tom 30 príznakov, ale 28 sa viazalo iba na to, či daný hráč nastúpil od začiatku na daný zápas alebo nie, zvyšné dva predstavovali silu súpera a miesto zápasu (či hral predikovaný tím na domácom štadióne alebo nie).
-V tomto prípade dosiahli bayesovské siete úspešnosť niečo vyše 59\%, zvyšné metódy sa pohybovali medzi 30 -- 38\% pri disjunktných testovacích a trénovacích datach  .
+V tomto prípade dosiahli bayesovské siete úspešnosť niečo vyše 59\%, zvyšné metódy sa pohybovali v rozmedzí 30 -- 38\% pri disjunktných testovacích a trénovacích datach.
 
 V roku 2011 sa dvojica Hucaljuk a Rakipovi{\'c} zameriavala na výber príznakov pri predikcii výsledkov futbalovej Ligy majstrov \citep{related:hucaljuk}. 
 Pracovali s datami z 96 zápasov, ktoré manuálne ohodnotili podľa 30 príznakov.
 Vybrané príznaky predstavovali formu oboch tímov v posledných 6 zápasoch, výsledok posledného vzájomného zápasu týchto dvoch tímov, postavenie v rebríčku, počet zranených hráčov a priemerný počet strelených a inkasovaných gólov.
-Neskôr zúžili počet príznakov na 20 a na novovzniknutý dataset bolo aplikovaných 6 rôznych metód strojového učenia, naivný bayesovský klasifikátor, bayesovské siete, LogitBoost, k-NN, random forest a neurónové siete. Najvyššia dosiahnutá úspešnosť bola 68\%, dosiahli ju neurónové siete.
+Neskôr zúžili počet príznakov na 20 a na novovzniknutý dataset bolo aplikovaných 6 rôznych metód strojového učenia, menovite: naivný bayesovský klasifikátor, bayesovské siete, LogitBoost, k-NN, random forest a neurónové siete. Najvyššia dosiahnutá úspešnosť bola 68\%, ktorú dosiahli použitím neurónových sietí.
 
-V roku 2014 použili Igiri a Nwachukwu nástroj, ktorý zvaný Rapid Miner \citep{related:igiri}. 
+V roku 2014 použili Igiri a Nwachukwu nástroj zvaný Rapid Miner \citep{related:igiri}. 
 Jeho úlohou bolo predikovať výsledky anglickej Premier League. 
 Použité techniky boli popredná neurónová sieť a lineárna regresia. 
 Neurónová sieť dosiahla úspešnosti 85\%, lineárna regresia 93\%. 
@@ -25,10 +25,10 @@ Autori dodali, že ak sa predpokladá, že zápas môže skončiť aj remízou, 
 K predikcii použili rôzne príznaky vrátane kurzov, priemerný počet striel, striel na bránu, rohových kopov, ale aj abstraktnejšie príznaky ako ofenzívna/defenzívna sila mužstva a ohodnotenie sily jednotlivých hráčov a kvality manažéra.
 
 V tom istom roku sa Shin a Gasparyan pokúsili nájsť nové metódy predikcie \citep{related:shin}. 
-Navrhli použiť data z videohry FIFA 2015 na predikciu španielskej La Ligy.
+Navrhli použiť data z videohry FIFA 2015 na pre\-dik\-ciu španielskej La Ligy.
 Použitie tohto návrhu odôvodnili tým, že vydavatelia videohier v dnešnej dobe pracujú na tom, aby boli ich hry čo možno najreálnejšie.
-To sa hlavne týka športových hier, kde je dôležité, aby bol každý hráč ohodnotený čo možno najpresnejšie, aby sa to podobalo realite.
-FIFA 2015 používa rôzne atribúty na ohodnotenie hráča ako napríklad zrýchlenie, strely z diaľky alebo reflexy pre post brankára.
+To sa hlavne týka športových hier, kde je dôležité, aby sa hodnotenie hráča čo najviac približovalo realite.
+FIFA 2015 používa rôzne atribúty na ohodnotenie hráča, ako napríklad zrýchlenie, strely z diaľky alebo reflexy pre post brankára.
 Tieto data sa získavajú oveľa jednoduchšie ako z iných zdrojov.
 Autori vytvorili dva typy modelov: učenie s učiteľom a bez učiteľa.
 Pri učení s učiteľom vytvorili 2 prístupy, reálny prediktor, ktorý využíval reálne data a virtuálny prediktor, ktorý využíval práve data z popísanej videohry.
@@ -38,11 +38,12 @@ Učenie bez učiteľa analyzovalo stratégie tímov podľa typov hráčov, ktor�
 
 Taktiež v roku 2014 sa v Iráne skupina výskumníkov pokúsila predpovedať výsledky posledného kola najvyššej iránskej futbalovej ligy IPL zo sezóny 2013/2014 \citep{related:iran}.
 Pred posledným kolom nebolo nič rozhodnuté a väčšina z 16 tímov v lige bojovala o lepšie umiestnenie, 5 tímov bojovalo dokonca o titul.
-Pri vyrovnanosti bodov záleží vo futbale aj na rozdiele v počte strelených a inkasovaných gólov a kvôli vyrovnanosti ligy sa títo výskumníci pokúsili predikovať presné výsledky, teda presný počet gólov strelených domácim i hosťujúcim mužstvom vo všetkých 8 zápasoch.
-Získali informácie z viac ako 1800 predchádzajúcich zápasov ligy a k predikcii použili rôzne príznaky vrátane počtu získaných bodov v sezóny, počtu získaných bodov v posledných 4 zápasoch a kvality súpera počas posledných 4 zápasov, spolu aj s identifikačnými kódmi jednotlivých tímov a kolom, v ktorom sa daný zápas odohral.
+Pri rovnosti bodov záleží vo futbale aj na rozdiele v počte strelených a inkasovaných gólov. 
+Kvôli vyrovnanosti ligy sa títo výskumníci pokúsili predikovať presné výsledky, teda presný počet gólov strelených domácim i hosťujúcim mužstvom vo všetkých 8 zápasoch.
+Získali informácie z viac ako 1800 predchádzajúcich zápasov ligy a k predikcii použili rôzne príznaky vrátane počtu získaných bodov počas sezóny, počtu získaných bodov v posledných 4 zápasoch a kvality súpera počas posledných 4 zápasov, spolu aj s identifikačnými kódmi jednotlivých tímov a kolom, v ktorom sa daný zápas odohral.
 Celkovo použili 10 príznakov, na predikciu použili neurónovú sieť.
 Vo výsledku správne predpovedali víťaza ligy, vzájomné poradie medzi štyrmi z 5 tímov, ktoré bojovali o víťazstvo v lige a presné poradie posledných 5 tímov v tabuľke.
 
-V roku 2016 vyskúšali logistickú regresiu na predikciu výsledkov futbalovej Premier League výskumníci okolo Prasetia \citep{related:prasetio}. 
+V roku 2016 vyskúšali logistickú regresiu na predikciu výsledkov futbalovej Premier League výskumníci z tímu Prasetia \citep{related:prasetio}. 
 Stavali na výsledkoch svojich predchodcov a vybrali 4 príznaky, ktoré hrali v predchádzajúcich prácach najväčšiu rolu, konkrétne ohodnotenia pre obranu a útok, pre domácich aj hostí.
 Dosiahli úspešnosti v najlepšom prípade 69,5\%.
