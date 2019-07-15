@@ -1,30 +1,28 @@
 \chapter{Stavba siete} \label{stavba}
 
 Všetky siete boli napísané v programovacom jazyku \textit{Python} s použitím knižníc \textit{numpy} a \textit{tensorflow}.
-V prípade futbalu bola na začiatku sieť skonštruovaná so všetkými 44 príznakmi, ktoré sme dostali z transformačnej časti práce (Príloha \ref{in:foot}).
-Sieť teda obsahovala vstup o veľkosti 44 príznakov, 2 skryté vrstvy neurónov (s 25, resp. 15 neurónmi) a troj-neurónový výstup typu softmax, ktorý vyberie najpravdepodobnejšiu možnosť, nastaví daný výstup neurónu na 1 a zvyšné nastaví na 0.
-V prípade tenisu bola sieť skonštruovaná so všetkými 37 príznakmi (ich popis je Príloha \ref{in:ten}) a taktiež obsahovala 2 skryté vrstvy neurónov s rovnakým počtom neurónov na nich ako v prípade futbalu. Výstup predstavoval dva neuróny, na ktoré bol opäť použitý softmax, ktorý vyberie najvyššiu hodnotu.
-Na vylepšovanie siete sme, ako je napísané v jednej z predošlých kapitol (\ref{docu}), použili údaje, ktoré sa napokon budú pri vyhodnocovaní nachádzať medzi testovacími datami. 
+Na vylepšovanie siete sme, ako je napísané v kapitole \ref{docu}, použili údaje, ktoré sa napokon budú pri vyhodnocovaní nachádzať medzi trénovacími dátami. 
 
-Konkrétne, pre futbal data predstavovali 7 celých sezón a prvú polovicu ďalšej sezóny (ako popísané v \ref{foot}), vyhodnocovacie data predstavujú teda druhú polovicu tejto sezóny. 
-Takže sme trénovacie data rozdelili na tri časti, 6 celých sezón a polovicu ďalšej (trénovacie data), druhú polovicu siedmej sezóny (testovacie data) a zvyšnú prvú polovicu ôsmej sezóny (nepoužité data).
-V prípade tenisu prišli data už priamo z transformačnej časti v troch súboroch, trénovacie, testovacie a vyhodnocovacie data.
+Konkrétne, pre futbal dáta predstavovali 7 celých sezón a prvú polovicu ďalšej sezóny (ako popísané v \ref{foot}), vyhodnocovacie dáta predstavujú druhú polovicu tejto sezóny. 
+Takže sme trénovacie dáta rozdelili na tri časti, 6 celých sezón a polovicu ďalšej (trénovacie dáta), druhú polovicu siedmej sezóny (testovacie dáta) a zvyšnú prvú polovicu ôsmej sezóny (nepoužité dáta).
+
+V prípade tenisu prišli dáta už priamo z transformačnej časti v troch súboroch, trénovacie, testovacie a vyhodnocovacie dáta.
 
 Každá sieť mala svoje nedostatky v celkovej úspešnosti, ale doposiaľ neexistuje efektívne nastavenie neurónových sietí pre každú situáciu \citep{gitgud}, takže každá sieť sa musela vylepšovať osobitne a manuálne vzhľadom na rozdiely v prístupoch.
-Cieľom práce nie je porovnať rovnakú architektúru a viac typov neurónových sietí, ale pokúsiť sa získať, čo možno najlepšie výsledky a porovnať potenciály doprednej a rekurentnej neurónovej siete.
 
 \section{Selekcia príznakov}
-Kliatba dimenzionality nám hovorí, že čím viac vstupných príznakov zadáme neurónovej sieti, tým sú data redšie a teda je ich potreba získať viac, aby sa sieť správne učila. Viac dat získať nevieme, takže sa pokúsime znížiť počet dimenzií a pozrieť sa na to, ako sa to prejaví na trénovacích datach.
-Na začiatok spravíme korelačný test všetkých príznakov testovacích a trénovacích dat (obrázky \ref{corr} a \ref{corr_atp}).
+Kliatba dimenzionality nám hovorí, že čím viac vstupných príznakov zadáme neurónovej sieti, tým sú dáta redšie a teda je ich potreba získať viac, aby sa sieť správne učila. Viac dát získať nevieme, takže sa pokúsime znížiť počet dimenzií a pozrieť sa na to, ako sa to prejaví na trénovacích dátach.
+Na začiatok spravíme korelačný test všetkých príznakov testovacích a trénovacích dát (obrázky \ref{corr} a \ref{corr_atp}).
 Teória hovorí, že by nám mohla napovedať, aké hodnoty sú dôležité.
-Obrázok hovorí, že najvyššiu koreláciu s výsledkom zápasu majú príznaky 41 a 42 určujúce dlhodobú silu tímu. Skóre dosahuje tiež celkom vysokú koreláciu (okolo 0,2) s finálnym výsledkom.
-V prípade tenisu obrázok naznačuje najvyššiu koreláciu medzi výsledkom a oboma druhmi skóre, veľkú rolu zohráva postavenie v rebríčku ATP a vzájomné zápasy (konkrétne priemerný rozdiel v počte vyhraných gemov za set).
-
+Obrázok \ref{corr} hovorí, že najvyššiu koreláciu s výsledkom zápasu majú príznaky 41 a 42 určujúce dlhodobú silu tímu. Skóre dosahuje tiež celkom vysokú koreláciu (okolo 0,2) s finálnym výsledkom.
 \noindent
 \begin{figure} \label{corr}
 \includegraphics[scale=0.9]{../img/correng.png}
 \caption{Korelačná tabuľka všetkých príznakov pre anglickú Premier League, žltá predstavuje kladnú koreláciu, modrá zápornú. Nás hlavne zaujímajú posledné 3 riadky určujúce koreláciu príznaku s výsledkom zápasu (príznaky sú v poradí ako v Prílohe \ref{in:foot}).}
 \end{figure}
+
+V prípade tenisu obrázok \ref{corr_atp} naznačuje najvyššiu koreláciu medzi výsledkom a oboma druhmi skóre, veľkú rolu zohráva postavenie v rebríčku ATP a vzájomné zápasy (konkrétne priemerný rozdiel v počte vyhraných gemov za set).
+
 \begin{figure} \label{corr_atp}
 \includegraphics[scale=0.9]{../img/corratp.png}
 \caption{Korelačná tabuľka všetkých príznakov pre tenisové zápasy, žltá predstavuje kladnú koreláciu, modrá zápornú. Nás hlavne zaujímajú posledné 2 riadky určujúce koreláciu príznaku s výsledkom zápasu (príznaky sú v poradí ako v Prílohe \ref{in:foot}).}
@@ -33,43 +31,100 @@ V prípade tenisu obrázok naznačuje najvyššiu koreláciu medzi výsledkom a 
 Tieto tabuľky boli pre nás viac-menej informačné. 
 Selekcia príznakov, s ktorými dosahovala sieť najlepšie trénovacie výsledky a ktoré budú použité na získanie výsledkov v kapitole \ref{res}, bol uskutočnený spôsobom pokus-omyl, keďže nič lepšie nevieme, ako už bolo spomínané na začiatku kapitoly.
 
-\section{Výsledky tréningu}
-Pri trénovaní siete boli pre každú množinu príznakov prenastavované aj iné parametre siete, pri snahe získať čo najlepšie výsledky.
-Iba pre tréning doprednej neurónovej siete na predikciu futbalu predstavoval viac ako 100 rôznych vyskúšaných modelov siete, celkový počet vyskúšaných modelov bol okolo 250.
-Tabuľky \ref{ff_train_res} a \ref{rnn_train_res} predstavujú nastavenia jednotlivých parametrov siete, pri ktorých dosahovali dopredné, resp. rekurentné neurónové siete najlepšie výsledky.
+\section{Proces tréningu}
+Proces tréningu siete začínal základným nastavením siete, ktorý je presnejšie popísaný v nasledujúcich kapitolách, pretože pre každú sieť bol unikátny.
+Po trénovaní siete v základnom nastavení nasledovalo spustenie siete na testovacích dátach.
+Nasledoval pokus nastaviť parametre (tie budú tiež popísané v nasledujúcich sekciách, líšili sa pre jednotlivé druhy neurónovej siete) jednotlivých sietí pre každý šport a ligu tak, aby dosahovali, čo najvyššie sledované hodnoty.
+Tieto hodnoty predstavovali referenčnú hodnotu, ktorú sme chceli selektovaním jednotlivých parametrov vylepšiť.
+Následne sme vybrali jednu z podmnožín príznakov (napríklad odstránili údaje o forme) a opakovali proces vylaďovania parametrov.
+Na konci pre každú sieť ostala jedna podmnožina príznakov a nastavenie parametrov siete, ktoré s ňou vydávalo najlepšie výsledky v sledovaných oblastiach.
 
-\begin{table}[h]
+Sledované oblasti zo začiatku predstavovali trénovaciu a testovaciu úspešnosť, úspešnosť v zápasoch bez favorita a eventuálny zisk, ktorý by sme dosiahli, ak by sme v týchto zápasoch uzatvárali stávky podľa nápovedy danej siete. 
+Všetky modely ale ukazovali veľmi podobnú úspešnosť v tipovaní víťazov zápasov bez favorita (napríklad pri vytváraní siete pre tipovanie anglickej futbalovej Premier League vydávali všetky siete trénovaciu úspešnosť 36--39\%).
+Eventuálny zisk osciloval bez ohľadu na túto úspešnosť.
+Neobjavil som žiadnu koreláciu medzi nastavenými parametrami, selektovanými príznakmi a týmto ziskom, takže predpokladám, že na hodnote tohto údaja pri trénovaní až tak nezáleží, pretože vo vyhodnocovacom procese môže dosiahnuť úplne iné výsledky.
+Nakoniec teda som sledované oblasti zúžil na trénovaciu a testovaciu úspešnosť, kde som sa pokúšal maximalizovať testovaciu úspešnosť a trénovacia slúžila hlavne ako referenčný údaj pre pretrénovanie siete (vysvetlené v sekcii \citep{overfit}), aby som vedel, kedy už netreba pridávať ďalšie trénovacie iterácie vybranej podmnožiny trénovacích dát (\textit{epoch}), pretože úspešnosť sa už ďalej bude len znižovať.
+
+\section{Dopredné neurónové siete}
+V prípade futbalu bola na začiatku sieť skonštruovaná so všetkými 44 príznakmi, ktoré sme dostali z transformačnej časti práce (príloha \ref{in:foot}).
+Sieť teda obsahovala vstup o veľkosti 44 príznakov, vrstva regularizačnej techniky zvanej dropout (s jeho nastavením na 50\%), 2 skryté vrstvy neurónov (s 25, resp. 15 neurónmi) a troj-neurónový výstup typu softmax, ktorý vyberie najpravdepodobnejšiu možnosť, nastaví daný výstup neurónu na 1 a zvyšné nastaví na 0.
+
+V prípade tenisu bola sieť skonštruovaná so všetkými 37 príznakmi (ich popis je príloha \ref{in:ten}) a taktiež obsahovala vrstvu \textit{dropout} regularizácie, 2 skryté vrstvy neurónov s rovnakým počtom neurónov na nich ako v prípade futbalu. 
+Výstup predstavoval dva neuróny, na ktoré bol opäť použitý softmax, ktorý vyberie najvyššiu hodnotu.
+
+Parametre siete, ktoré boli počas tréningu prenastavované a vylaďované sú:
+\begin{enumerate}
+  \item Spôsob, ktorým sa vylaďujú jednotlivé váhy siete (\textit{optimizer}),
+  \item Počet iterácií trénovacieho procesu (\textit{počet trénovacích epoch}),
+  \item Veľkosť jedného kroku trénovania (\textit{batch size}),
+  \item Veľkosť modifikácie pri učení (\textit{learning rate}),
+  \item Hodnota náhodne vypustených spojení po prvej vrstve (\textit{dropout}),
+  \item Počet neurónov v prvej skrytej vrstve,
+  \item Počet neurónov v druhej skrytej vrstve.
+\end{enumerate}
+
+Nastavenia jednotlivých parametrov, ktoré prinášali najlepšie výsledky pre každú sieť, sa nachádzajú v tabuľke \ref{rnn_train_res}.
+
+\begin{table}[h!]
 \begin{center}
-\begin{tabular}{ p{7em}|c|c|c|c|c|c|c|c|c|c| } 
- Predpovedaný šport (liga) & \multicolumn{6}{|c|}{Parametre siete} & \multicolumn{4}{|c|}{Trénovacie výsledky}  \\ 
+\begin{tabular}{ p{7em}|c|c|c|c|c|c|c|c|c| } 
+ Predpovedaný šport (liga) & \multicolumn{7}{|c|}{Parametre siete} & \multicolumn{2}{|p{5em}|}{Trénovacie výsledky}  \\ 
  \hline
-  & O & B & LR & E & $H_1$ & $H_2$ & TrA\% & TeA\% & CG\% & CGP \\
+  & O & E & B & LR & D & $H_1$ & $H_2$ & TrA\% & TeA\% \\
  \hline \hline
- 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
- 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
- 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
- 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+ Futbal (ENG) & GD & 100 & 64 & 0,005 & 0,5 & 15 & 10 & 52,9 & 50,9  \\ 
+ Futbal (GER) & GD & 75 & 16 & 0,005 & 0,5 & 15 & 10 &  & 50,68  \\ 
+ Futbal (SPA) & GD & 100 & 64 & 0,005 & 0,5 & 15 & 10 &  & 52,78  \\ 
+ Tenis & A & 30 & 256 & 0,01 & 0,5 & 15 & 10 & 73,98 & 65,8  \\ 
  \hline
 \end{tabular}
-\caption{Tabuľka funkcie XOR}
+\caption{Tabuľka nastavenia parametrov doprednej neurónovej siete, pri ktorých dávala sieť najlepšie trénovacie výsledky a aj hodnoty, ktoré dosiahli v sledovaných oblastiach. Skratky v hlavičke tabuľky pod parametrami siete sú skratky sledovaných parametrov zo zoznamu (v tom istom poradí, v akom sú v zozname uvedené), trénovacie výsledky sú trénovacia úspešnosť a testovacia úspešnosť v tomto poradí. V stĺpci O (\textit{optimizer}) skratka GD znamená metódu \textit{Gradient Descent} a skratka A metódu \textit{Adam}.}
 \label{ff_train_res}
 \end{center}
 \end{table}
 
-\begin{table}[h]
+Selektované príznaky...
+ENG a SPA - form, GER - draw, Tenis - formt
+form -> N - Form - GPG - dFCS
+draw -> N - Draws - GPG - dFCS
+formt -> N – S – F – dSFS
+
+
+\section{Rekurentné neurónové siete}
+Tréning rekurentnej neurónovej siete (\textit{RNN}) je všeobecen časovo náročnejší ako trénovanie doprednej neurónovej siete, nakoľko sa do procesu tréningu zapojí aj stav siete. Sieť sa musí naučiť, ktoré údaje sú dôležité na uchovávanie v stave siete.
+Z tohto dôvodu som pri tréningu RNN vychádzal aj z údajov získaných v predošlej sekcii, pričom som ale celý proces tréningu (tak, ako je popísaný v minulej sekcii) zachoval.
+Základné nastavenie siete používalo všetky príznaky z príloh. 
+Pre futbal ich bolo 44, pre tenis 37 (Prílohy \ref{in:foot} a \ref{in:ten} v poradí).
+Tieto príznaky boli napojené do vrstvy 25 LSTM neurónov, potom nasledoval \textit{dropout} a výstupná vrstva.
+Pár vyskúšaných nastavení siete obsahovalo pred výstupnou vrstvou ešte skrytú vrstvu neurónov.
+
+\begin{enumerate}
+  \item Spôsob, ktorým sa vylaďujú jednotlivé váhy siete (\textit{optimizer}),
+  \item Počet iterácií trénovacieho procesu (\textit{počet trénovacích epoch}),
+  \item Veľkosť jedného kroku trénovania (\textit{batch size}),
+  \item Veľkosť modifikácie pri učení (\textit{learning rate}),
+  \item Hodnota náhodne vypustených spojení po prvej vrstve (\textit{dropout}),
+  \item Počet LSTM neurónov,
+  \item Počet zápasov, ktoré si pri trénovaní sieť pamätá všetky údaje (\textit{LSTM Timestamp}),
+  \item Počet neurónov v skrytej vrstve (ak 0, tak model siete neobsahuje túto vrstvu).
+\end{enumerate}
+
+Nastavenia jednotlivých parametrov, ktoré prinášali najlepšie výsledky pre každú sieť, sa nachádzajú v tabuľke \ref{rnn_train_res}.
+
+\begin{table}[h!]
 \begin{center}
-\begin{tabular}{ p{7em}|c|c|c|c|c|c|c|c|c|c|c|c| } 
- Predpovedaný šport (liga) & \multicolumn{8}{|c|}{Parametre siete} & \multicolumn{4}{|c|}{Trénovacie výsledky}  \\ 
+\begin{tabular}{ p{7em}|c|c|c|c|c|c|c|c|c|c| } 
+ Predpovedaný šport (liga) & \multicolumn{8}{|c|}{Parametre siete} & \multicolumn{2}{|p{5em}|}{Trénovacie výsledky}  \\ 
  \hline
-  & O & B & LR & E & $H_1$ & $H_2$ & N & T & TrA\% & TeA\% & CG\% & CGP \\
+  & O & E & B & LR & D & N & T & H & TrA\% & TeA\% \\
  \hline \hline
- 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
- 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
- 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
- 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  \\ 
+ 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  \\ 
+ 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  \\ 
+ 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  \\ 
  \hline
 \end{tabular}
-\caption{Tabuľka funkcie XOR}
+\caption{Tabuľka nastavenia parametrov RNN, pri ktorých dávala sieť najlepšie trénovacie výsledky a hodnoty, ktoré dosiahli v sledovaných oblastiach. Skratky v hlavičke tabuľky pod parametrami siete sú skratky sledovaných parametrov zo zoznamu (v tom istom poradí, v akom sú v zozname uvedené), trénovacie výsledky sú trénovacia úspešnosť a testovacia úspešnosť v tomto poradí. V stĺpci O (\textit{optimizer}) skratka GD znamená metódu \textit{Gradient Descent} a skratka A metódu \textit{Adam}.}
 \label{rnn_train_res}
 \end{center}
 \end{table}

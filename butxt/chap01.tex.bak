@@ -79,9 +79,9 @@ Ak by sme boli stavili 100\,\rm korún na výhru domácich alebo na remízu, tak
 
 Stávkovanie je hazardná hra, obľúbená práve preto, že každý hráč môže vyhrať a vie aj ovplyvniť svoju pravdepodobnosť úspechu tým, že danú udalosť pozná \citep{odds}.
 
-
-
-
-
-
-
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../img/odds.png}
+\caption{Takto vyzerá stránka OddsPortal.com, z ktorej som získaval dáta pre potreby tejto práce. Znázornené je posledné kolo predikovanej časti anglickej \textit{Premier League}.} 
+\label{odds}
+\end{figure}

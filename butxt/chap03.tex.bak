@@ -193,7 +193,7 @@ $\epsilon$-necitlivá strata ($L(x,y,f) = \frac{1}{m}\sum_{i=1}^m \left(\left|f(
 logistická strata ($L(x,y,f) = \frac{1}{m} \sum_{i=1}^m  \left((ln(2))^{-1}\cdot ln(1+e^{-f(x)_iy_i})\right) $).
 \citep{loss}.
 
-Jedným zo spôsobov, ktoré sa používajú na úpravu jednotlivých váh je tzv. \textit{Gradient descent}.
+Jedným zo spôsobov, ktoré sa používajú na úpravu jednotlivých váh (\textit{optimizer}) je tzv. \textit{Gradient descent}.
 Matematická analýza nám umožňuje získať smer stúpania každej diferencovateľnej funkcie.
 Prirodzene, hodnoty stratovej funkcie sa snažíme znížiť, teda posunúť váhy v smere klesania, teda proti smeru stúpania stratovej funkcie.
 Na to potrebujeme diferencovateľnú stratovú funkciu, z čoho vyplýva, že aj neurónová sieť a aktivačné funkcie vo vnútri, musia byť diferencovateľné.
@@ -226,3 +226,8 @@ Tomuto fenoménu sa hovorí pretrénovanie (\textit{overfitting}) \citep{overfit
 \caption{Ukážka troch stavov, v ktorých sa môže sieť nachádzať: môže byť podtrénovaná (underfitted), správne natrénovaná (good fit) a pretrénovaná (overfitted) \citep{gitgud}.} 
 \label{overf}
 \end{figure}
+
+Jedným zo spôsobov bojovania proti pretrénovaniu siete je použitie nejakej regularizačnej techniky. 
+Regularizácia pomáha kontrolovať pretrénovanie siete \citep{overfit}.
+Jednou z takýchto techník je napríklad technika zvaná \textit{dropout}.
+\textit{Dropout} dostane spojenia od všetkých neurónov a náhodne zvolí, ktoré neuróny nedostanú svoje spojenie ďalej (ktorým neurónom nastaví váhy spojení na 0). Pre každú trénovaciu podmnožinu dát (\textit{batch}) to volí náhodne, takže na konci je veľmi veľká pravdepodobnosť, že každý neurón sa dostane ďalej a bude môcť byť jeho prísun evaluovaný a váha jeho spojenia pozmenená.

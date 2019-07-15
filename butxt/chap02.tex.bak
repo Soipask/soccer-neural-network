@@ -30,14 +30,14 @@ Stĺpce sú v poradí:
   \item Kurz na výhru hostí.
 \end{enumerate}
 
-Posledné 3 stĺpce teda predstavujú kurzy na dané výsledky. Tieto ale nie sú pri trénovaní siete využívané, a teda pre data, ktoré sú vždy použité len pre trénovanie ani nie sú vyžadujúce.
+Posledné 3 stĺpce teda predstavujú kurzy na dané výsledky. Tieto ale nie sú pri trénovaní siete využívané, a teda pre dáta, ktoré sú vždy použité len pre trénovanie ani nie sú vyžadujúce.
 
 \noindent
 \begin{figure}[b]
 \includegraphics[width=\textwidth]{../img/eng.png}
 \caption{Ukážka prvých 10 riadkov z tabuľky všetkých zápasov anglickej Premier League ilustrujúcich členenie tabuľky}
 \end{figure}
-Data v trénovacom súbore obsahuje prvú polovicu sezóny 2018/2019 a 7 jej celých predchádzajúcich sezón. Prvá polovica sezóny predstavuje všetky odohrané zápasy od začiatku sezóny až po odohratie posledného zápasu pred začiatkom kola, ktoré je numericky už v druhej polovici sezóny. 
+dáta v trénovacom súbore obsahuje prvú polovicu sezóny 2018/2019 a 7 jej celých predchádzajúcich sezón. Prvá polovica sezóny predstavuje všetky odohrané zápasy od začiatku sezóny až po odohratie posledného zápasu pred začiatkom kola, ktoré je numericky už v druhej polovici sezóny. 
 Napríklad najvyššia anglická futbalová liga, Premier League, má 38 kôl každú sezónu, do úvahy sa bude brať posledných 7 sezón pred sezónou 2018/2019 a všetky zápasy odohrané pred prvým zápasom 20. kola sezóny 2018/2019 (s výnimkou predohrávok, teda zápasov, ktoré boli preložené na dátum pred dátumom, v ktorom daný zápas figuroval v predsezónnom rozpise zápasov).
 
 
@@ -46,9 +46,9 @@ Vybrané príznaky presne popísané v sekcii Prílohy (Príloha \ref{in:foot}) 
 Medzi danými príznakmi sa ešte budú selektovať tie najdôležitejšie v jednej z nasledujúcich sekcii (konkrétne sekcia \ref{stavba}).
 
 Prvým spôsobom je rozdeliť tieto príznaky tak, ako za sebou nasledujú do skupiny po desiatich. To nám vytvorí 5 skupín, môžeme ich po poradí nazvať príznaky sezóny, roly, formy, vzájomných zápasov a doplnkové.
-Skupina príznakov sezóny obsahuje data o celom doterajšom priebehu sezóny pre obe tímy. Tieto data sú z môjho pohľadu dôležité. Mohlo by byť dôležité vedieť, ako daný tím vystupuje v celej sezóne.
+Skupina príznakov sezóny obsahuje dáta o celom doterajšom priebehu sezóny pre obe tímy. Tieto dáta sú z môjho pohľadu dôležité. Mohlo by byť dôležité vedieť, ako daný tím vystupuje v celej sezóne.
 
-Príznaky roly obsahujú data o výsledkoch daných tímov v role, v akej sa predstavia v predikovanom zápase (domáci alebo hostia) počas celej sezóny. To by mohlo byť dôležité, pretože je rozdiel v zápasoch, kde tímy hrajú doma a v zápasoch, kde hrajú vonku. Tento rozdiel je individuálny. Tím môže vyhrávať napríklad len na domácom ihrisku a mimo neho sa im nemusí až tak dariť, v tom prípade by v role hostí nemuseli byť favoritom na víťazstvo, aj keď by to mohla predchádzajú skupina očakávať.
+Príznaky roly obsahujú dáta o výsledkoch daných tímov v role, v akej sa predstavia v predikovanom zápase (domáci alebo hostia) počas celej sezóny. To by mohlo byť dôležité, pretože je rozdiel v zápasoch, kde tímy hrajú doma a v zápasoch, kde hrajú vonku. Tento rozdiel je individuálny. Tím môže vyhrávať napríklad len na domácom ihrisku a mimo neho sa im nemusí až tak dariť, v tom prípade by v role hostí nemuseli byť favoritom na víťazstvo, aj keď by to mohla predchádzajú skupina očakávať.
 
 Tretia skupina je forma, hodnotených je posledných 5 zápasov, tradične to v predikovaných ligách predstavuje obdobie 4 -- 5 týždňov, viac už by nemuselo toľko hovoriť o forme daného tímu, je dosť času stratiť, respektíve znovu získať psychickú pohodu. Forma by mala byť dôležitá, pretože určuje, ako sa tímu darilo v lige v posledných zápasoch, teda niečo ako psychickú pohodu tímu, s ktorou vstupuje do zápasu.
 
@@ -57,17 +57,17 @@ Príznaky vzájomných zápasov určujú posledných 5 vzájomných zápasov, kt
 Poslednou skupinou sú zvyšné príznaky určené na trénovanie, a to je dlhodobá sila domáceho a hosťujúceho mužstva a skóre. 
 Niekedy sa môže stať, že tím mal ťažký úvod do sezóny, ale z minulých sezón vieme, že sa im v lige darí obvykle oveľa lepšie a môžeme očakávať, že v nasledujúcich zápasoch začnú uhrávať lepšie výsledky. 
 To je dôvodom výberu dlhodobej sily mužstva do skupiny príznakov.
-Je to najbližšie ako sa môžeme dostať ku abstraktnému ohodnoteniu kvality mužstva, ktoré používali moji predchodcovia (ako napríklad Shin a Gasparyan v \citep{related:shin}) z reálnych dat.
+Je to najbližšie ako sa môžeme dostať ku abstraktnému ohodnoteniu kvality mužstva, ktoré používali moji predchodcovia (ako napríklad Shin a Gasparyan v \citep{related:shin}) z reálnych dát.
 
 Skóre je pokus ohodnotiť formu tímu jedným údajom čo najlepšie.
 Čím väčší počet vstupných neurónov, tým viac dimenzií dodávame neurónovej sieti.
-S väčším počtom dimenzií rastie objem celkového priestoru, a to znamená, že sa jednotlivé body dat od seba oddeľujú a samotné data sa stávajú redšie.
+S väčším počtom dimenzií rastie objem celkového priestoru, a to znamená, že sa jednotlivé body dát od seba oddeľujú a samotné dáta sa stávajú redšie.
 Tomuto fenoménu hovoria vedci kliatba dimenzionality (\citep{curse}).
 Práve kvôli tomu som sa pokúsil vytvoriť umelé príznaky, ktoré by mohli ohodnotiť rozdiel formy oboch tímov v jednom údaji, na rozdiel od desiatich (popísané sú v Prílohe \ref{in:foot} 44 a 45, detailnejšie pod zoznamom).
 
 Každá z prvých 4 skupín obsahuje dvakrát 5 rôznych údajov, z ktorých môžeme opäť spraviť päť skupín príznakov, a to víťazstvá, remízy, prehry, priemerný počet strelených gólov a priemerný počet inkasovaných gólov.
 
-Prvé tri tieto skupiny hovoria samé za seba, snažíme sa predikovať výsledok zápasu, ktorý je buď výhra, remíza alebo prehra z hľadiska oboch tímov. Zvyšné dve skupiny sa snažia z daných dat simulovať niečo ako ofenzívnu a defenzívnu silu mužstva, podobne ako robili moji predchodcovia (napríklad \citep{related:igiri}).
+Prvé tri tieto skupiny hovoria samé za seba, snažíme sa predikovať výsledok zápasu, ktorý je buď výhra, remíza alebo prehra z hľadiska oboch tímov. Zvyšné dve skupiny sa snažia z daných dát simulovať niečo ako ofenzívnu a defenzívnu silu mužstva, podobne ako robili moji predchodcovia (napríklad \citep{related:igiri}).
 
 \section{Tenis} \label{ten}
 Pre tenis získame všetky zápasy každého turnaja ATP typu 500, 1000 a Grand Slam, kde hraje aspoň jeden hráč z Top 100 rebríčka ATP pre danú sezónu.
@@ -77,7 +77,7 @@ Fakt, že množstvo hráčov z Top 100 sa pravidelne zúčastňuje turnajov typu
 V tenise sa nemôžeme vyhnúť zápasom, ktoré boli nejakým spôsobom udelené jednému z hráčov, či už bez boja alebo po skreči súpera v priebehu zápasu, pretože zranenia sú súčasťou profesionálneho športu.
 Vo futbale sa to obvykle rieši prestriedaním zraneného hráča, v tenise to, prirodzene, nie je možné.
 Pre potreby tejto práce máme dve možnosti, buď môžeme tieto zápasy úplne ignorovať alebo ich môžeme započítavať do niektorých oblastí vstupu (ako napríklad forma alebo vzájomné zápasy) a ignorovať inde (predpovedať takéto výsledky je možno nápad pre inú prácu). 
-Pre potreby tejto práce budeme tieto zápasy úplne ignorovať, čo znamená, že sa nevyskytnú v trénovacích ani testovacích datach.
+Pre potreby tejto práce budeme tieto zápasy úplne ignorovať, čo znamená, že sa nevyskytnú v trénovacích ani testovacích dátach.
 Samozrejme, má to svoje výhody aj nevýhody.
 Výhodou je, že výsledky budú reálne odzrkadľovať presnosť siete na zápasoch, ktoré sa odohrali a skončili.
 Predpovedať zranenie totiž nepatrí medzi ciele tejto práce.

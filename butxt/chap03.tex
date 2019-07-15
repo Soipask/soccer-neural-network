@@ -163,19 +163,19 @@ V predchádzajúcich sekciách sme hovorili o nastavení váh jednotlivých spoj
 V praxi si ale tieto hodnoty obvykle nenastavujeme manuálne, ale nastavuje si ich sieť sama procesom zvaným učenie. Neurónová sieť je učená iteratívnym spôsobom. 
 V každej iterácii dostane sieť množinu vstupov.
 Pre každý vstup vypočíta hodnotu odhadovaného výstupu, potom sa sieť pozrie na očakávaný výstup a zapamätá si rozdiel týchto hondôt.
-Po skončení iterácie sa sieť pozrie na hodnoty týchto rozdielov a upraví si svoje váhy tak, aby nabudúce pri rovnakých datach vydala výstup bližší k očakávanému výstupu.
-Proces by mal naučiť sieť ohodnotiť celý dataset čo najpresnejšie.
-Ak data dobre reprezentujú celý problém a nie len nejakú jeho časť, tak sa môže naučiť generalizovať, teda vydať správny výstup aj na data, ktoré predtým nikde nevidela.
+Po skončení iterácie sa sieť pozrie na hodnoty týchto rozdielov a upraví si svoje váhy tak, aby nabudúce pri rovnakých dátach vydala výstup bližší k očakávanému výstupu.
+Proces by mal naučiť sieť ohodnotiť celý dátaset čo najpresnejšie.
+Ak dáta dobre reprezentujú celý problém a nie len nejakú jeho časť, tak sa môže naučiť generalizovať, teda vydať správny výstup aj na dáta, ktoré predtým nikde nevidela.
 
 Konkrétnejšie, začneme v procese učenia inicializáciou váh. Tie sa obvykle inicializujú náhodne.
 Po inicializácii začne už spomínaný iteratívny proces.
-V každom kroku zvolíme príslušnú podmnožinu trénovacích dat (\textit{batch}) a vyhodnotíme vypočítané výstupy porovnaním s očakávanými a pozmeníme jednotlivé váhy podľa toho.
+V každom kroku zvolíme príslušnú podmnožinu trénovacích dát (\textit{batch}) a vyhodnotíme vypočítané výstupy porovnaním s očakávanými a pozmeníme jednotlivé váhy podľa toho.
 Vypočítané výstupy sa vyhodnocujú pomocou stratovej funkcie.
 Našou úlohou je hodnoty stratovej funkcie minimalizovať.
 Jednou z najpoužívanejších stratových funkcií je stredná štvorcová chyba (\textit{Mean Squared Error}). Táto funkcia je definovaná ako funkcia $$MSE(x,y,f) = \frac{1}{m} \cdot \sum_{i=1}^m (f(x)_i - y_i)^2$$
 kde
 $f: \mathbb{R}^n \to \mathbb{R}^m$ je funkcia, ktorú simuluje neurónová sieť, $x \in \mathbb{R}^n$ vstupný vektor a $y \in \mathbb{R}^m$ očakávaná hodnota výstupu.
-To je hodnota MSE pre jeden vstup, ale my trénujeme v podmnožinách vstupných dat veľkosti $k$ a až potom vyhodnocujeme. 
+To je hodnota MSE pre jeden vstup, ale my trénujeme v podmnožinách vstupných dát veľkosti $k$ a až potom vyhodnocujeme. 
 Pre tento prístup je MSE definovaná $$MSE(X,Y,f) = \frac{1}{k} \cdot \sum_{j=1}^k (MSE(X_j,Y_j,f)) = \frac{1}{k} \cdot \sum_{j=1}^k (\frac{1}{m} \cdot \sum_{i=1}^m  (f(X_j)_i - Y_{j_i})^2)) $$
 kde $X \in \mathbb{R}^k \times \mathbb{R}^n$ je množina vstupných vektorov a $Y \in \mathbb{R}^k \times \mathbb{R}^m$ je množina očakávaných výstupov.
 
@@ -193,7 +193,7 @@ $\epsilon$-necitlivá strata ($L(x,y,f) = \frac{1}{m}\sum_{i=1}^m \left(\left|f(
 logistická strata ($L(x,y,f) = \frac{1}{m} \sum_{i=1}^m  \left((ln(2))^{-1}\cdot ln(1+e^{-f(x)_iy_i})\right) $).
 \citep{loss}.
 
-Jedným zo spôsobov, ktoré sa používajú na úpravu jednotlivých váh je tzv. \textit{Gradient descent}.
+Jedným zo spôsobov, ktoré sa používajú na úpravu jednotlivých váh (\textit{optimizer}) je tzv. \textit{Gradient descent}.
 Matematická analýza nám umožňuje získať smer stúpania každej diferencovateľnej funkcie.
 Prirodzene, hodnoty stratovej funkcie sa snažíme znížiť, teda posunúť váhy v smere klesania, teda proti smeru stúpania stratovej funkcie.
 Na to potrebujeme diferencovateľnú stratovú funkciu, z čoho vyplýva, že aj neurónová sieť a aktivačné funkcie vo vnútri, musia byť diferencovateľné.
@@ -216,8 +216,8 @@ V situácii, kde \textit{Gradient Descent} narazí za lokálne minimum, algoritm
 \end{figure}
 
 Jedným z problémov neurónových sietí je to, že dosiahnuť ani len lokálne minimum nemusí byť požadujúce.
-Ideálne požadujeme, aby sieť správne generalizovala, a teda aby jej výstup bol správny aj pre data, na ktorých sa neučila.
-Aj keď trénovacia vzorka reprezentatuje realitu, môže sa stať, že sieť bude mať nízku hodnotu trénovacej chyby (stratovej funkcie), ale relatívne vysokú hodnotu testovacej chyby (príklad možno vidieť na obrázku \ref{overf}). Testovacia chyba sa vypočítava ako hodnota používanej stratovej funkcie na datach, ktoré neboli obsiahnuté v trénovacej vzorke.
+Ideálne požadujeme, aby sieť správne generalizovala, a teda aby jej výstup bol správny aj pre dáta, na ktorých sa neučila.
+Aj keď trénovacia vzorka reprezentatuje realitu, môže sa stať, že sieť bude mať nízku hodnotu trénovacej chyby (stratovej funkcie), ale relatívne vysokú hodnotu testovacej chyby (príklad možno vidieť na obrázku \ref{overf}). Testovacia chyba sa vypočítava ako hodnota používanej stratovej funkcie na dátach, ktoré neboli obsiahnuté v trénovacej vzorke.
 Tomuto fenoménu sa hovorí pretrénovanie (\textit{overfitting}) \citep{overfit}.
 
 \noindent
@@ -226,3 +226,8 @@ Tomuto fenoménu sa hovorí pretrénovanie (\textit{overfitting}) \citep{overfit
 \caption{Ukážka troch stavov, v ktorých sa môže sieť nachádzať: môže byť podtrénovaná (underfitted), správne natrénovaná (good fit) a pretrénovaná (overfitted) \citep{gitgud}.} 
 \label{overf}
 \end{figure}
+
+Jedným zo spôsobov bojovania proti pretrénovaniu siete je použitie nejakej regularizačnej techniky. 
+Regularizácia pomáha kontrolovať pretrénovanie siete \citep{overfit}.
+Jednou z takýchto techník je napríklad technika zvaná \textit{dropout}.
+\textit{Dropout} dostane spojenia od všetkých neurónov a náhodne zvolí, ktoré neuróny nedostanú svoje spojenie ďalej (ktorým neurónom nastaví váhy spojení na 0). Pre každú trénovaciu podmnožinu dát (\textit{batch}) to volí náhodne, takže na konci je veľmi veľká pravdepodobnosť, že každý neurón sa dostane ďalej a bude môcť byť jeho prísun evaluovaný a váha jeho spojenia pozmenená.
