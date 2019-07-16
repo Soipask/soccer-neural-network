@@ -17,6 +17,8 @@ def pre_scrape(link):
 	inn = html.fromstring(innerHTML)
 	innerHTML += "</body></html>"
 	
+	
+	
 	try:
 		innerHTML = "<html><body>"
 		innerHTML += "<table>"
@@ -88,8 +90,11 @@ def scrape(html):
 			
 		odds_table.append([event[0],year,teams[0],teams[1],odds[0],odds[1]])
 
+def change(str):
+	s = str.lower().strip().split("-")
+	return " ".join(s)
 	
-SCROLL_PAUSE_TIME = 2
+SCROLL_PAUSE_TIME = 4
 
 URL_START = "https://www.oddsportal.com" 
 URL_SITE = "/tennis/results/"
@@ -105,6 +110,9 @@ games = {}
 browser = webdriver.Chrome()
 
 try:
+	new_game_results = open("atpresults4.csv","w", encoding='utf-8')
+	
+	
 	url = URL_START + URL_SITE
 	browser.get(url)
 	
@@ -128,6 +136,7 @@ try:
 		this_season = inn.xpath('.//span[@class="active"]')
 		data = [this_season[i].text_content() for i in range(len(this_season))]
 		
+		
 		year = data[1]
 		if ("2018" in data):
 			scrape(season)
@@ -137,7 +146,8 @@ try:
 			link = link_maker(event[2],year)
 			(inn,season) = pre_scrape(link)
 			scrape(season)
-		
+		else:
+			scrape(season)
 		year = "2017"
 		time.sleep(SCROLL_PAUSE_TIME)
 		link = link_maker(event[2],year)
@@ -145,14 +155,24 @@ try:
 		scrape(season)
 	gr_df = pd.DataFrame(game_results)
 	gr_df.head()
-	
 	# years = ["2017", "2018"]
 	# points = ["500","1000","2000"]
 	# table = gr_df.loc[(~gr_df[2].isin(years) & ~gr_df[1].isin(points))]
 	for row in odds_table:
 		# game = table.loc[(table[2] == row[1]) & (table[0] == row[0]) & (table[5].str.contains(row[3]))]
 		# print(game)
-		game = gr_df.loc[(gr_df[2] == row[1]) & (gr_df[0] == row[0]) & (gr_df[4].str.lower().str.contains(" ".join(row[2].lower().strip().split("-")))) & (gr_df[5].str.lower().str.contains(" ".join(row[3].lower().strip().split("-"))))]
+		# " ".join(gr_df[5].str.lower().str.strip().split("-")).str.contains(" ".join(row[3].lower().strip().split("-")))
+		'''
+		game = gr_df.loc[(gr_df[2] == row[1]) & \
+		(gr_df[0] == row[0]) & \
+		((" ".join(gr_df[4].str.lower().str.strip().str.split("-"))).str.contains(" ".join(row[2].lower().strip().split("-")))) & \
+		(" ".join(gr_df[5].str.lower().str.strip().str.split("-")).str.contains(" ".join(row[3].lower().strip().split("-"))))]
+		'''
+		game = gr_df.loc[(gr_df[2] == row[1]) & \
+		(gr_df[0] == row[0]) & \
+		(gr_df[4].map(change).str.contains(" ".join(row[2].lower().strip().split("-")))) & \
+		(gr_df[5].map(change).str.contains(" ".join(row[3].lower().strip().split("-"))))]
+		
 		if game.empty:
 			continue
 		if len(game.index) > 1:
@@ -165,6 +185,7 @@ try:
 		# print(game)
 		id = game[7]
 		games[id] = game
+
 	
 	for game in game_results:
 		if game[7] in games:
@@ -174,7 +195,15 @@ try:
 			game.append("0")
 			game.append("0")
 	
-	new_game_results = open("atpresults3.csv","w", encoding='utf-8')
+	# hardcoded mistake fix
+	games = [49251,51644,51650,51653,51649,51648,55161,55181]
+	bets = [[1.87,1.87],[3.11,1.36],[1.4,2.89],[1.83,1.98],[4.47,1.20],[1.36,3.18],[1.99,1.83],[2.4,1.55]]
+	for num in range(len(games)):
+		game_results[games[num]][-2] = str(bets[num][0])
+		game_results[games[num]][-1] = str(bets[num][1])		
+		print(game_results[games[num]])
+	#...
+	
 	for row in game_results:
 		new_game_results.write(";".join(row))
 		new_game_results.write('\n')

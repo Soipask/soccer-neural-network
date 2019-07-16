@@ -50,22 +50,8 @@ namespace DataMaker
             path = args[0] + ".csv";
             league = args[0];
 
-
-             /*/
-             resource = Properties.Resources.neweng;
-             league = "eng";
-             /**/
-             /*/
-             resource = Properties.Resources.fra;
-             league = "fra";
-             /**/
-             /*/
-             resource = Properties.Resources.ger;
-             league = "ger";
-             /**/
-
-             // var data = new CsvReader(new StringReader(resource), false, ';');
-             var data = new CsvReader(new StreamReader(path), false, ';');
+            
+            var data = new CsvReader(new StreamReader(path), false, ';');
             
 
             var writer = new StreamWriter(league + 
