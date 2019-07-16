@@ -2,19 +2,19 @@
 
 V minulosti boli použité rôzne metódy na predikciu športových výsledkov.
 V~roku 2005 sa o predpoveď 6 rôznych udalostí týkajúcich sa austrálskej kriketovej ligy a AFL, ligy v austrálskom futbale, pokúsil Bailey \citep{related:bailey}. 
-Na austrálsky futbal použil data zo zápasov zo 100 sezón odohraných pred rokom 1997 a testoval to na zápasoch od sezóny 1997 do 2003 použitím rôznych modelov lineárnej regresie. 
+Na austrálsky futbal použil dáta zo zápasov zo 100 sezón odohraných pred rokom 1997 a testoval to na zápasoch od sezóny 1997 do 2003 použitím rôznych modelov lineárnej regresie. 
 Dokázal získať presnosť 66.7\%.
 
 V roku 2006 Joseph, Fenton a Neil vyskúšali viaceré druhy strojového učenia na predikciu výsledkov zápasov tímu Tottenham Hotspur F.C. v najvyššej anglickej futbalovej lige, Premier League, v sezónach 1995/1996 a 1996/1997 \citep{related:joseph}.
-To znamená, že pracovali s datasetom o veľkosti 76 zápasov, z ktorého časť delili na trénovacie a časť na testovacie data. 
+To znamená, že pracovali s dátasetom o veľkosti 76 zápasov, z ktorého časť delili na trénovacie a časť na testovacie dáta. 
 Použité metódy zahŕňali expertmi konštruované bayesovské siete, naivný bayesovký klasifikátor, rozhodovacie stromy a k-NN (k nearest neighbours clustering). 
 Použili pri tom 30 príznakov, ale 28 sa viazalo iba na to, či daný hráč nastúpil od začiatku na daný zápas alebo nie, zvyšné dva predstavovali silu súpera a miesto zápasu (či hral predikovaný tím na domácom štadióne alebo nie).
-V tomto prípade dosiahli bayesovské siete úspešnosť niečo vyše 59\%, zvyšné metódy sa pohybovali v rozmedzí 30 -- 38\% pri disjunktných testovacích a trénovacích datach.
+V tomto prípade dosiahli bayesovské siete úspešnosť niečo vyše 59\%, zvyšné metódy sa pohybovali v rozmedzí 30 -- 38\% pri disjunktných testovacích a trénovacích dátach.
 
 V roku 2011 sa dvojica Hucaljuk a Rakipovi{\'c} zameriavala na výber príznakov pri predikcii výsledkov futbalovej Ligy majstrov \citep{related:hucaljuk}. 
-Pracovali s datami z 96 zápasov, ktoré manuálne ohodnotili podľa 30 príznakov.
+Pracovali s dátami z 96 zápasov, ktoré manuálne ohodnotili podľa 30 príznakov.
 Vybrané príznaky predstavovali formu oboch tímov v posledných 6 zápasoch, výsledok posledného vzájomného zápasu týchto dvoch tímov, postavenie v rebríčku, počet zranených hráčov a priemerný počet strelených a inkasovaných gólov.
-Neskôr zúžili počet príznakov na 20 a na novovzniknutý dataset bolo aplikovaných 6 rôznych metód strojového učenia, naivný bayesovský klasifikátor, bayesovské siete, LogitBoost, k-NN, random forest a neurónové siete. Najvyššia dosiahnutá úspešnosť bola 68\%, ktorú dosiahli použitím neurónových sietí.
+Neskôr zúžili počet príznakov na 20 a na novovzniknutý dátaset bolo aplikovaných 6 rôznych metód strojového učenia, menovite: naivný bayesovský klasifikátor, bayesovské siete, LogitBoost, k-NN, random forest a neurónové siete. Najvyššia dosiahnutá úspešnosť bola 68\%, ktorú dosiahli použitím neurónových sietí.
 
 V roku 2014 použili Igiri a Nwachukwu nástroj zvaný Rapid Miner \citep{related:igiri}. 
 Jeho úlohou bolo predikovať výsledky anglickej Premier League. 
@@ -25,15 +25,15 @@ Autori dodali, že ak sa predpokladá, že zápas môže skončiť aj remízou, 
 K predikcii použili rôzne príznaky vrátane kurzov, priemerný počet striel, striel na bránu, rohových kopov, ale aj abstraktnejšie príznaky ako ofenzívna/defenzívna sila mužstva a ohodnotenie sily jednotlivých hráčov a kvality manažéra.
 
 V tom istom roku sa Shin a Gasparyan pokúsili nájsť nové metódy predikcie \citep{related:shin}. 
-Navrhli použiť data z videohry FIFA 2015 na pre\-dik\-ciu španielskej La Ligy.
+Navrhli použiť dáta z videohry FIFA 2015 na pre\-dik\-ciu španielskej La Ligy.
 Použitie tohto návrhu odôvodnili tým, že vydavatelia videohier v dnešnej dobe pracujú na tom, aby boli ich hry čo možno najreálnejšie.
 To sa hlavne týka športových hier, kde je dôležité, aby sa hodnotenie hráča čo najviac približovalo realite.
 FIFA 2015 používa rôzne atribúty na ohodnotenie hráča, ako napríklad zrýchlenie, strely z diaľky alebo reflexy pre post brankára.
-Tieto data sa získavajú oveľa jednoduchšie ako z iných zdrojov.
+Tieto dáta sa získavajú oveľa jednoduchšie ako z iných zdrojov.
 Autori vytvorili dva typy modelov: učenie s učiteľom a bez učiteľa.
-Pri učení s učiteľom vytvorili 2 prístupy, reálny prediktor, ktorý využíval reálne data a virtuálny prediktor, ktorý využíval práve data z popísanej videohry.
+Pri učení s učiteľom vytvorili 2 prístupy, reálny prediktor, ktorý využíval reálne dáta a virtuálny prediktor, ktorý využíval práve dáta z popísanej videohry.
 Obe využívali logistickú regresiu a metódu podporných vektorov.
-Reálny prediktor dosiahol úspešnosť 75\%, virtuálny 80\%, čo podľa autorov dokazuje, že data získané z videohier sa dajú používať aj v reálnom svete.
+Reálny prediktor dosiahol úspešnosť 75\%, virtuálny 80\%, čo podľa autorov dokazuje, že dáta získané z videohier sa dajú používať aj v reálnom svete.
 Učenie bez učiteľa analyzovalo stratégie tímov podľa typov hráčov, ktorí sú v danom tíme pomocou k-means clusteringu. Zistili, že lepšie tímy zvyknú mať útočnejšie stratégie a slabšie tímy dokážu uhrať lepšie výsledky proti silnejším tímom, ak majú defenzívnejšiu stratégiu.
 
 Taktiež v roku 2014 sa v Iráne skupina výskumníkov pokúsila predpovedať výsledky posledného kola najvyššej iránskej futbalovej ligy IPL zo sezóny 2013/2014 \citep{related:iran}.

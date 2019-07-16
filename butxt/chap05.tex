@@ -1,22 +1,15 @@
-
-
 \chapter{Dokumentácia} \label{docu}
 
 Z programátorského hľadiska je práca rozdelená na tri časti. 
 Prvú časť predstavuje získavanie výsledkov a kurzov jednotlivých zápasov. 
-Druhú časť práce predstavuje transformácia dat na údaje priamo použiteľné pri konštrukcii neurónových sietí.
+Druhú časť práce predstavuje transformácia dát na údaje priamo použiteľné pri konštrukcii neurónových sietí.
 Poslednú časť tvorí stavba daného typu neurónovej siete pre daný šport.
 
-Transformačná časť v prípade tenisu rozdelí data na 3 časti, trénovacie data, testovacie data (pre optimalizovanie siete) a vyhodnocovacie data.
-V prípade futbalu data rozdelí na 2 časti, trénovacie a vyhodnocovacie data.
-Pre optimalizáciu som použil program podobný programu v poslednej časti, ktorý si trénovacie data rozdelíl podľa potreby (konkrétne na prvých 6 celých sezón a prvú polovicu ďalšej a druhú časť tvorí druhá polovicu tejto sezóny, až následne prebiehalo učenie siete).
-Je teda zaručené, že žiadna sieť neuvidí vyhodnocovacie data vopred pred finálnym vyhodnocovaním.
-Vyhodnocovacie data sú použité až pre získavanie výsledkov použitých v tejto práci, a teda použili sa až v poslednej fáze.
-
-
-Údaje, ktoré sa objavia vo výstupe sú celková úspešnosť a celkový zisk, úspešnosť a zisk siete pri vyrovnaných zápasoch (a vyrovnaný zápas považujem zápas, kde kurzy na výhru jedného alebo druhého tímu sa líšia najviac o 1) a úspešnosť a zisk siete pri výhradnom tipovaní zápasov, na ktoré máme istú dôveru (od hodnoty, ktorá je počítaná ako rozdiel dvoch najvyšších čísel, ktoré sieť vydá na výstup, jednoducho povedané, rozdiel najpravdepodobnejšej a druhej najpravdepodobnejšej možnosti výsledku zápasu z hľadiska siete).
-Táto hodnota dôvery bola tiež vyoptimalizovaná pre každú sieť/program osobitne.
-
+Transformačná časť v prípade tenisu rozdelí dáta na 3 časti, trénovacie dáta, testovacie dáta (pre optimalizovanie siete) a vyhodnocovacie dáta.
+V prípade futbalu dáta rozdelí na 2 časti, trénovacie a vyhodnocovacie dáta.
+Pre optimalizáciu som použil program podobný programu v poslednej časti, ktorý si trénovacie dáta rozdelíl podľa potreby (konkrétne na prvých 6 celých sezón a prvú polovicu ďalšej a druhú časť tvorí druhá polovicu tejto sezóny, až následne prebiehalo učenie siete).
+Je teda zaručené, že žiadna sieť neuvidí vyhodnocovacie dáta vopred pred finálnym vyhodnocovaním.
+Vyhodnocovacie dáta sú použité až pre získavanie výsledkov použitých v tejto práci, a teda použili sa až v poslednej fáze.
 
 \section{Futbal}
 
@@ -29,38 +22,63 @@ Skratky sú:
 \end{enumerate}
 Program stiahne všetky výsledky a kurzy pre všetky zápasy všetkých kompletných sezón tej-ktorej ligy zo stránky www.oddsportal.com.
 
-Tento dataset potom predáme programu \textit{DataMaker.exe} (TODO!) písanom v jazyku C\#, ktorý pretransformuje tieto data na vstupné neuróny pre neurónovú sieť. Všetkých vstupných neurónov je 44, ich význam a poradie je popísané v sekcii Prílohy (\ref{in:foot}). Program taktiež vydá ako posledné tri stĺpce aj výsledok zápasu ako kategorické hodnoty v poradí domáci, remíza, hostia, kde výsledok, ktorý nastal je ohodnotený 1, zvyšné sú 0. (tiež popísané v Prílohe \ref{in:foot}).
-
-Program tiež vytvorí ďalší súbor, ktorý obsahuje testovacie data, teda data, ktoré sa nevyužívajú pri trénovaní siete, ale len pri vyhodnocovaní výsledkov. 
-Tieto data sú v rovnakom poradí a musia obsahovať kurzy na dané výsledky a aj výsledok zápasu vo forme troch stĺpcov 
-Je to potrebné pre vyhodnocovanie, pretože neurónová sieť bude mať 3 výstupné neuróny v rovnakom poradí a predikovaný výsledok ohodnotí na 1.
-
-Výstup tohto programu predáme programu \textit{DataMaker.exe} (teda ako prvý parameter programu DataMaker.exe je potrebné predať cestu k súboru, ktorý je výstupom súboru oddscraper.py, tento súbor sa volá rovnako ako skratka danej ligy s príponou \textit{.csv}), ktorý je písaný v jazyku C\# a pretransformuje tieto data na vstupné neuróny pre neurónovú sieť. 
+Súbor, ktorý vznikne z činnosti tohto programu predáme programu \textit{DataMaker.exe}. 
+To znamená, že ako prvý parameter programu \textit{DataMaker.exe} (relatívna cesta tohto programu vzhľadom na prvú zložku \textit{DataMaker} je \textit{DataMaker/bin/Debug}), je potrebné predať názov súboru bez prípony aj s jeho relatívnou cestou, ktorý je výstupom súboru oddscraper.py, (tento súbor sa volá rovnako ako skratka danej ligy s príponou \textit{.csv}), ktorý je písaný v jazyku C\# a pretransformuje tieto dáta na vstupné neuróny pre neurónovú sieť. 
+Ak tento súbor neexistuje, je potrebné otvoriť súbor \textit{DataMaker.sln} v prvej zložke \textit{DataMaker} a zdrojové kódy skompilovať v režime \textit{Debug}, aby tento súbor vznikol.
+Pre prípad, že pracujeme priamo v zložke, ktorá je elektronickou prílohou k práci, tak relatívna cesta nie je žiadna a stačí ako parameter predať skratku danej ligy (napríklad \textit{DataMaker.exe SPA}).
 Všetkých vstupných neurónov je 44. 
 Presné poradie aj popis sa dá nájsť v sekcii Prílohy (Príloha \ref{in:foot}).
-Tieto údaje boli vybrané špecificky aj s pomocou súvisiacich prác ako údaje, ktoré popisujú stav oboch tímov, ktoré hrajú proti sebe zápas. 
-Bonus predstavujú vstupy označené ako skóre, tieto boli vytvorené mnou ako pokus o jednoduchý a presnejší popis formy pomocou jedného údaju namiesto 10.
-Ak bude mať teda jeden z týchto neurónov (alebo obe spoločne) úspech, tak bude možné skrátiť počet vstupných neurónov o 10.
-Pre upresnenie, výstupom súboru sú opäť tabuľky formátu csv, názov je zložený zo skratky pre názov danej ligy a slova \textit{input} pre trénovacie data, pre testovacie je to skratka danej ligy a slovo \textit{resinput}.
+Program taktiež vydá ako posledné tri stĺpce aj výsledok zápasu ako kategorické hodnoty v poradí domáci, remíza, hostia, kde výsledok, ktorý nastal je ohodnotený 1, zvyšné sú 0. (tiež popísané v Prílohe \ref{in:foot}).
+Tieto údaje boli vybrané špecificky aj s pomocou súvisiacich prác ako údaje, ktoré popisujú stav oboch tímov, ktoré hrajú proti sebe zápas (viac v sekcii \ref{foot}). 
+Program tiež vytvorí ďalší súbor, ktorý obsahuje testovacie dáta, teda dáta, ktoré sa nevyužívajú pri trénovaní siete, ale len pri vyhodnocovaní výsledkov. 
+Tieto dáta sú v rovnakom poradí a musia obsahovať kurzy na dané výsledky a aj výsledok zápasu vo forme troch stĺpcov 
+Je to potrebné pre vyhodnocovanie, pretože neurónová sieť bude mať 3 výstupné neuróny v rovnakom poradí a predikovaný výsledok ohodnotí na 1.
+
+Pre upresnenie, súbor vytvorí dva tabuľky opäť s formátom \textit{csv}, názov je zložený zo skratky pre názov danej ligy a slova \textit{input} pre trénovacie dáta, pre testovacie je to skratka danej ligy a slovo \textit{resinput}.
 
 Cestu na dané súbory potom ako prvé dva parametre (v poradí, v akom sú uvedené v úvode kapitoly) predáme programu \textit{ffnnfootball.py} alebo \textit{rnnfootball.py} podľa toho, či chceme, aby dané údaje vyhodnocovala dopredná rekurentná neurónová sieť.
-Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorého názov pozostáva z typu siete, názvu ligy a časovej známky vo formáte \textit{txt}.
+
+Výpis na štandardný výstup sa mi pre učenie siete nepodarilo potlačiť, takže štandardný výstup bude plný týchto vecí, ale po konci každého cyklu učenia a vyhodnocovania vypíše trénovaciu chybu a trénovaciu úspešnosť, rovnako ako testovaciu úspešnosť, úspešnosť v zápasoch bez favorita a zisk v týchto zápasoch.
+Na konci vypíše priemernú trénovaciu a testovaciu úspešnosť, spolu aj s priemernou úspešnosťou v zápasoch bez jasného favorita a zisk pri uzatváraní stávok na tieto zápasy. 
+Najdôležitejšie údaje pre nás sa zhrnú do záznamového súboru (\textit{logu}). 
+Log obsahuje rôzne údaje od názvu ligy, selektovaných príznakov, cez architektúru siete, až po trénovaciu chybu a trénovaciu a testovaciu úspešnosť, úspešnosť v zápasoch bez favorita a zisk v týchto zápasoch pre každý cyklus učenia a vyhodnocovania a na konci priemerné hodnoty týchto údajov.
+Log sa vytvorí v zložke \textit{Logs} a jeho meno bude obsahovať skratku pre ligu, na ktorej prebiehalo učenie, časovú známku vo formáte rok, mesiac, deň, hodina, minúta a sekunda zapnutia finálneho programu a aktivačnú funkciu vo výstupnej vrstve. Na začiatku názov obsahuje skratku \uv{RNN}, ak sa vytvárala rekurentná neurónová sieť. Tento súbor bude vo formáte \textit{txt}.
+Napríklad, ak sieť vytvorí textový súbor s názvom \textit{RNNger20190716212031softmax}. Znamená to, že 16.7.2019 o 21:20:31 bola vytvorená neurónová sieť na predikciu výsledkov nemeckej Bundesligy.
+Aktivačná funkcia tejto siete na výstupnej vrstve bola softmax.
 
 \section{Tenis}
 
-Údaje o tenisových zápasoch sú predpripravené v súbore atpresults.csv.
-Súbor \textit{atpranking.csv} je tiež predpripravený a obsahuje ID jednotlivých hráčov, ich mená a ich poradie v koncoročných rebríčkoch hodnotenia ATP za roky 1999--2018.
+Údaje o tenisových zápasoch sú predpripravené v súbore \textit{atpresults.csv}.
+Súbor \textit{atpranking.csv} je tiež predpripravený a obsahuje ID jednotlivých hráčov, ich mená a ich poradie v koncoročných rebríčkoch hodnotenia ATP za roky 1999--2018 (pár riadkov tejto tabuľky predstavuje obrázok \ref{rank}).
 Poradie berieme len ak sa hráč umiestnil na miestach 1--100.
-Predzápasové kurzy môžu byť prázdne (vyplnené kurzom 0.0), ale len, ak nás na daný zápas nezaujímajú kurzy (zaujímajú nás len pre posledné dva roky, prvý je na testovanie a druhý na vyhodnocovanie). 
-Zápasy obsiahnuté v súbore \textit{atpresults.csv} sú len zápasy, v ktorých aspoň jeden hráč bol aspoň raz v daných rokoch na miestach 1--100 v koncoročnom hodnotení ATP.
-Predikovať sa budú len zápasy medzi takýmito hráčmi, ale kvôli rôznym výpočtom je potrebné mať všetky data o takýchto hráčoch z turnajov, ktoré sú obsiahnuté v súbore.
+Poradie údajov v tabuľke \textit{atpresults.csv} je popísané v sekcii \ref{ten}.
+Na získanie kurzov do tejto tabuľky je ale potrebné spustiť program \textit{atpodds.py} a v zložke, v ktorej sa práve nachádza, je potrebné mať súbory \textit{atpresults.csv} a \textit{atpvenues.csv}, ktorý obshuje len rozličnosti v menách jednotlivých turnajov medzi \textit{atpresults.csv} a stránkou OddsPortal.com, z ktorej sa online sťahujú tieto kurzy.
+Mal by som upozorniť, že tento program nie vždy pracoval úplne bezchybne, dôležité je mať kvalitné pripojenie.
+Program v zložke, v ktorej sa akutálne nachádza prepíše súbor \textit{atpresults.csv} tak, že už obsahuje dáta v správnom formáte, aby sme ich mohli predať transformačnej vrstve.
 
-Tieto datasety sa potom predajú súboru \textit{ATPDataMaker.exe}, ktorý ich pretransformuje na data pre vstupné neuróny neurónových sietí. Všetkých vstupných neurónov je 37 (ich presné poradie a popis sa dá nájsť v sekcii Prílohy (Príloha \ref{in:ten})), súbor ku každému vstupnému neurónu vydá aj očakávaný výstup (1?, 2?) a pre predikovanú časť dodá aj kurzy stávkových kancelárií na daný výsledok (1B, 2B).
-Poradie a význam stĺpcov je popísaný v sekcii Prílohy (\ref{in:ten}).
+Predzápasové kurzy môžu byť prázdne (vyplnené kurzom 0.0), ale len, ak nás na daný zápas nezaujímajú kurzy (zaujímajú nás len pre posledné dva roky, prvý je na testovanie a druhý na vyhodnocovanie).
 
-Z popisu datasetu (v sekcii \ref{ten}) je vidieť, že hráči v zápasoch sú zoradení tak, že najprv je napísaný víťaz a po ňom porazený. To by nám očividne zamiešalo výsledkami a ak by to sieť zistila, tak by okamžite vypisovala úspešnosť 100\,\%.
+Dátasety \textit{atpresults.csv} a \textit{atpranking.csv} musia byť v zložke, kde sa nachádza aj prvá zložka \textit{ATPDataMaker}.
+Ak sú všetky súbory v zložke rovnako, ako v elektronickej prílohe, tak stačí priamo spustiť program \textit{ATPDataMaker.exe} (ktorého relatívna cesta je \textit{ATPDataMaker/ATPDataMaker/bin/Debug}), ktorý ich pretransformuje na dáta pre vstupné neuróny neurónových sietí. 
+Ak tento súbor neexistuje, je potrebné otvoriť súbor \textit{ATPDataMaker.sln} v prvej zložke \textit{ATPDataMaker} a zdrojové kódy skompilovať v režime \textit{Debug}, aby tento súbor vznikol.
+
+Tento súbor vytvorí to zložky, v ktorej sú súbory \textit{atpresults.csv} a 
+\textit{atpranking.csv}, tri nové súbory, 
+\textit{atp.csv}, 
+\textit{atpres.csv} a 
+\textit{atpres\_final.csv}. 
+Všetky tieto súbory majú údaje v presnom poradí, ako je popísané v prílohe \ref{in:ten}.
+
+Z popisu dátasetu (v sekcii \ref{ten}) je vidieť, že hráči v zápasoch sú zoradení tak, že najprv je napísaný víťaz a po ňom porazený. To by nám očividne zamiešalo výsledkami a ak by to sieť zistila, tak by okamžite vypisovala úspešnosť 100\,\%.
 Presne z tohto dôvodu robí program \textit{ATPDataMaker.exe} aj randomizovanú výmenu poradia hráčov a v ďalšom priebehu sú hráči rozlišovaní ako hráč 1 a hráč 2.
 
-Cestu na dané súbory potom ako prvé tri parametre (v poradí, v akom sú uvedené v úvode sekcie) predáme programu \textit{ffnnatp.py} alebo \textit{rnnatp.py} podľa toho, či chceme, aby dané údaje vyhodnocovala popredná rekurentná neurónová sieť.
-Výsledky vypíše na štandardný výstup a uloží ich aj do logu, ktorý je vo formáte \textit{txt} a ktorého názov pozostáva z typu siete, slova \textit{atp} a časovej známky.
+Potom môžeme konečne spustiť programy, ktoré vytvárajú neurónové siete.
+V zložke, v ktorej sa nachádzajú tieto programy sa musia nachádzať aj tri zložky vytvorené v transformačnej vrstve programom \textit{ATPDataMaker.exe}.
+Program textit{ffnnatp.py} vytvorí doprednú neurónovú sieť aj s najlepším modelom získaným pre tenis v sekcii \ref{ffnn:train}.
+Program \textit{rnnatp.py} naopak vytvorí rekurentnú neurónovú sieť aj s najlepším modelom získaným v sekcii \ref{rnn:train}.
 
+Výpis na štandardný výstup sa mi pre učenie sietí opäť nepodarilo potlačiť, takže štandardný výstup bude plný týchto výpisov z učenia, ale po konci každého cyklu učenia a vyhodnocovania vypíše trénovaciu chybu a trénovaciu úspešnosť, rovnako ako testovaciu úspešnosť, úspešnosť v zápasoch bez favorita a zisk v týchto zápasoch.
+Na konci vypíše priemernú trénovaciu a testovaciu úspešnosť, spolu aj s priemernou úspešnosťou v zápasoch bez jasného favorita a zisk pri uzatváraní stávok na tieto zápasy. 
+Najdôležitejšie údaje pre nás sa opäť zhrnú do logu. 
+Log obsahuje rôzne údaje od názvu ligy, selektovaných príznakov, cez architektúru siete, až po trénovaciu chybu a trénovaciu a testovaciu úspešnosť, úspešnosť v zápasoch bez favorita a zisk v týchto zápasoch pre každý cyklus učenia a vyhodnocovania a na konci priemerné hodnoty týchto údajov.
+Log sa vytvorí v zložke \textit{Logs} a jeho meno bude obsahovať skratku \uv{ATP},  a časovú známku vo formáte rok, mesiac, deň, hodina, minúta a sekunda zapnutia finálneho programu. Na začiatku názov obsahuje skratku \uv{RNN}, ak sa vytvárala rekurentná neurónová sieť podobne ako v minulom odseku.

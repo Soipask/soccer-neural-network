@@ -6,9 +6,9 @@ Vyhrať môže favorit udalosti alebo osoba/tím, od ktorej sa to vôbec neočak
 Môže začať pršať alebo na ihrisko vbehnúť exhibicionista s kontroverznou myšlienkou.
 
 Táto nepredvídateľnosť podnietila vznik stávkových kancelárií, ktoré na tieto a na rôzne ďalšie udalosti vypisujú kurzy, ktoré v prípade, že tieto udalosti nastanú, zaručia stávkujúcemu výhru.
-Ich ziskovosť je založená na vypisovaní kurzov tak,, aby boli lákavé pre bežných ľudí.
+Ich ziskovosť je založená na vypisovaní kurzov tak, aby boli lákavé pre bežných ľudí.
 V podstate sa snažia uhádnuť, s akou pravdepodobnosťou nastane daná udalosť, napríklad predikovať výsledok.
-Stávkové kancelárie používajú na tieto odhady nejaké data, ale pravdepodobnosti daných udalostí zvykne predpovedať odborník, bookmaker.
+Stávkové kancelárie používajú na tieto odhady nejaké dáta, ale pravdepodobnosti daných udalostí zvykne predpovedať odborník, bookmaker.
 Je možné nájsť nejakú množinu dát, na základe ktorej vieme naučiť počítač predikovať výsledky jednotlivých športových udalostí s určitou presnosťou?
 
 \input{related}
@@ -19,11 +19,11 @@ Futbal je síce predikovaný, ale ani raz štýlom, aký bude prezentovaný v te
 
 Väčšina prác má oveľa menšiu trénovaciu vzorku pre siete. 
 Pre túto prácu boli použité informácie z viac ako 5000 futbalových zápasov, z toho trénovacia množina tvorila viac ako 3000 vstupov pre každú ligu.
-Pre tenis obsahuje dataset viac ako 6200 riadkov a je vytvorený z informácií z viac ako 55000 zápasov.
+Pre tenis obsahuje dátaset viac ako 6200 riadkov a je vytvorený z informácií z viac ako 55000 zápasov.
 
-Ďalší atribut, ktorým sa táto práca odlišuje od ostatných predstavuje použité data. V tejto práci budú použité výhradne výsledky a prostredie zápasov, z ktorých sú následne kalkulované ostatné informácie.
-Nebudú použité abstraktné data ako sila hráčov alebo tímu ani ohodnotenia žiadnych hráčov ako ani data o počte rohových kopov, žltých kariet, es alebo nevynútených chýb. 
-V tomto ohľade je najpodobnejšia práca od iránskych výskumníkov \citep{related:iran}, ale aj tam sú značné rozdiely v použití dat.
+Ďalší atribut, ktorým sa táto práca odlišuje od ostatných predstavuje použité dáta. V tejto práci budú použité výhradne výsledky a prostredie zápasov, z ktorých sú následne kalkulované ostatné informácie.
+Nebudú použité abstraktné dáta ako sila hráčov alebo tímu ani ohodnotenia žiadnych hráčov ako ani dáta o počte rohových kopov, žltých kariet, es alebo nevynútených chýb. 
+V tomto ohľade je najpodobnejšia práca od iránskych výskumníkov \citep{related:iran}, ale aj tam sú značné rozdiely v použití dát.
 
 Žiadna z vyššie spomínaných prác nepoužíva ako jednu z metód vyhodnocovania sietí kurzy stávkových kancelárií.
 V tejto práci nás hlavne zaujímajú zápasy, v ktorých ani jeden z tímov nie je favoritom z hľadiska kurzov stávkových kancelárií.

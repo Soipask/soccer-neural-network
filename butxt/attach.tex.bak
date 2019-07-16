@@ -33,7 +33,7 @@ Výstupný súbor z transformačnej časti predikcie pre futbal je tabuľka form
  \item aFL - away form loses - počet prehier hosťujúceho tímu v posledných 5 zápasoch,
  \item aFGF - away form goals for - priemerný počet strelených gólov hosťujúceho tímu v posledných 5 zápasoch,
  \item aFGA - away form goals against - priemerný počet inkasovaných gólov hosťujúceho tímu v posledných 5 zápasoch,
- \item MW - mutual wins - počet výhier domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu (alebo všetkých vzájomných zápasoch od prvej sezóny v datasete),
+ \item MW - mutual wins - počet výhier domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu (alebo všetkých vzájomných zápasoch od prvej sezóny v dátasete),
  \item MD - mutual draws - počet remíz domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu,
  \item ML - mutual loses - počet prehier domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu,
  \item MGF - mutual goals for - priemerný počet strelených gólov domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu,
@@ -43,7 +43,7 @@ Výstupný súbor z transformačnej časti predikcie pre futbal je tabuľka form
  \item MhL - mutual home loses - počet prehier domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu hraných na domácom ihrisku,
  \item MhGF - mutual home goals for - priemerný počet strelených gólov domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu hraných na domácom ihrisku,
  \item MhGA - mutual home goals against - priemerný počet inkasovaných gólov domáceho tímu v posledných 5 vzájomných zápasoch proti hosťujúcemu tímu hraných na domácom ihrisku,
- \item htLTS - home team long-time strength - dlhodobá sila domáceho mužstva (počítaná ako priemerný počet získaných bodov vo všetkých doterajších sezónach od prvej sezóny v datasete),
+ \item htLTS - home team long-time strength - dlhodobá sila domáceho mužstva (počítaná ako priemerný počet získaných bodov vo všetkých doterajších sezónach od prvej sezóny v dátasete),
  \item atLTS - away team long-time strength - dlhodobá sila hosťujúceho mužstva,
  \label{dFS}
  \item dFS - difference form score - rozdiel v skóre formy medzi domácim a hosťujúcim tímom,
@@ -104,7 +104,7 @@ Výstupný súbor z transformačnej časti predikcie pre tenis je tabuľka vo fo
  \item 1? - did player 1 win - hodnota určujúca víťaza; 1, ak vyhral hráč 1, 0 inak
  \item 2? - did player 2 win - hodnota určujúca víťaza; 1, ak vyhral hráč 2, 0 inak
 \end{enumerate}
-* - vzájomné zápasy sú prepočítavané len pre sezóny, odkiaľ sú data; tie sú od sezóny 2003, najstaršie trénovacie data obsahujú sezónu 2012, takže to teoreticky môže ovplyvniť len zápasy medzi hráčmi, ktorí hrajú profesionálne viac ako 9 rokov a aspoň jeden z nich sa už vtedy umiestnil v Top 100 rebríčka ATP a v práve evaluovanej sezóne sa tam umiestnili obaja; to sa nestávalo často, efekt to malo na minimum vyhodnocovaní a teória hovorí, že posledné vzájomné zápasy sú aj ak dôležitejšie, takže teoreticky nevadí, že je konečná sezóna, ak je ďaleko od práve vyhodnocovanej.\\
+* - vzájomné zápasy sú prepočítavané len pre sezóny, odkiaľ sú dáta; tie sú od sezóny 2003, najstaršie trénovacie dáta obsahujú sezónu 2012, takže to teoreticky môže ovplyvniť len zápasy medzi hráčmi, ktorí hrajú profesionálne viac ako 9 rokov a aspoň jeden z nich sa už vtedy umiestnil v Top 100 rebríčka ATP a v práve evaluovanej sezóne sa tam umiestnili obaja; to sa nestávalo často, efekt to malo na minimum vyhodnocovaní a teória hovorí, že posledné vzájomné zápasy sú aj ak dôležitejšie, takže teoreticky nevadí, že je konečná sezóna, ak je ďaleko od práve vyhodnocovanej.\\
 ** - skóre je pokus ohodnotiť silu víťazstva, berie do úvahy formu, teda posledných 10 zápasov a počíta sa ako $(150 - rank)\cdot point$, kde rank je poradie súpera v poslednom koncoročnom rebríčku ATP a point je nastavené na 1, ak hráč vyhral, a na 0, ak prehral. 
 Ak súper nebol v Top 100 rebríčka ATP na konci predchádzajúceho roka, tak za jeho rank je dosadené číslo 130.
 To je len preto, lebo teoreticky má dané víťazstvo hodnotu, musí byť teda nejak ohodnotené lepšie ako ľubovoľná prehra, ktorá je ohodnotená hodnotou 0.
