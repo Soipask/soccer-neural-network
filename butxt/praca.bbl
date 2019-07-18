@@ -1,4 +1,4 @@
-\begin{thebibliography}{27}
+\begin{thebibliography}{28}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -43,7 +43,8 @@
 {\sc Brownlee, J.} (2018).
 \newblock How to avoid overfitting in deep learning neural networks.
 \newblock URL
-  \url{https://machinelearningmastery.com/introduction-to-regularization-to-reduce-overfitting-and-improve-generalization-error/}.
+  \url{https://machinelearningmastery.com/introduction-to-regularization-to-
+  reduce-overfitting-and-improve-generalization-error/}.
 \newblock [cit. 2019-07-13].
 
 \bibitem[Domingos(2012)]{curse}
@@ -104,8 +105,8 @@
   \url{http://ics.upjs.sk/~novotnyr/home/skola/neuronove_siete/nn_kvasnicka/Uvod%20do%20NS.pdf}.
 \newblock [cit. 2019-05-20].
 
-\bibitem[Ligue 1.com()]{awarded}
-Ligue 1.com (2017).
+\bibitem[Ligue 1.com, 2017()]{awarded}
+Ligue 1.com, 2017 (2017).
 \newblock Bastia forfeit abandoned {OL} clash.
 \newblock URL
   \url{https://www.ligue1.com/ligue1/article/bastia-forfeit-abandoned-ol-clash.htm}.
@@ -117,6 +118,13 @@ Ligue 1.com (2017).
 \newblock URL
   \url{https://hnonline.sk/sport/115486-korupcny-skandal-polozil-juventus-turin}.
 \newblock [cit. 2019-07-10].
+
+\bibitem[Madu(2018)]{ronaldo}
+{\sc Madu, Z.} (2018).
+\newblock The calculus of cristiano ronaldo.
+\newblock URL
+  \url{https://www.sbnation.com/soccer/2018/9/27/17861974/cristiano-ronaldo-juventus-real-madrid}.
+\newblock [cit. 2019-07-17].
 
 \bibitem[Mansaray(2019)]{bet:prince}
 {\sc Mansaray, J.} (2019).

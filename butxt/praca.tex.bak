@@ -63,6 +63,7 @@
 
 \usepackage{multicol}
 \usepackage{multirow}
+\usepackage{subcaption}
 
 %%% Údaje o práci
 
@@ -101,7 +102,16 @@
 % Nepovinné poděkování (vedoucímu práce, konzultantovi, tomu, kdo
 % zapůjčil software, literaturu apod.)
 \def\Podekovani{%
-Poděkování.
+% Táto práca by nevznikla nebyť nápadu vedúceho tejto práce, Mgr. Davida Kuboňa. On je rovnako aj jeden z hlavných dôvodov, prečo bola táto práca vypracovaná vtedy, kedy bola a že to netrvalo dlhšie. Chcel by som sa mu týmto poďakovať za jeho trpezlivosť a veľkú pomoc pri pochopení rôznych, hlavne matematických aspektov tejto práce.
+
+% Ďakujem aj vedeniu Univerzity Karlovej, ktorá dovoľuje písať práce aj v slovenskom jazyku. Neviem si predstaviť písať takúto prácu v angličtine a už vôbec nie v češtine.
+
+% Chcel by som sa poďakovať aj vedeniu portálu OddsPortal.com, ktoré mi poskytlo všetky kurzy použité v tejto práci.
+
+% Taktiež by som sa chcel poďakovať rodine a priateľom, ktorí mi pomáhali s prácou počas písania textu, či už mi pomohli vybrať správne slová, keď som sa zasekol, alebo sa postarali o gramatickú, syntaktickú a logickú kontrolu textu. Niektorí z nich (hlavne, čo sa týka rodiny) sa roky starali o to, aby ma vypracovanie takejto práce bavilo tým, že vo mne vypestovali lásku ku športu. Hovorí sa, že práca ide ľahšie, ak vás to baví a mňa ten športový aspekt bavil, zaujímal a nevedel som sa dočkať výsledkov.
+
+
+Ďakujem.
 }
 
 
@@ -114,7 +124,7 @@ Porovnávané druhy neurónových sietí sú dopredná neurónová sieť a rekur
 \def\AbstraktEN{
 This thesis focuses on creating models of two different types of neural network used for predicting results of selected football and tennis matches and comparing these two models in terms of their accuracy and potential profit, if we had bet on those games in an average betting agency.
 Compared types of neural networks are feed-forward and recurrent neural network. Predicted football matches consist of league matches of three European leagues.
-Specific feature of this thesis is tracking accuracy in predicting matches, where neither team is clear favourite to win according to the bookmakers.
+Specific feature of this thesis is tracking accuracy in predicting matches, where neither team is clear favorite to win according to the bookmakers.
 }
 
 % 3 až 5 klíčových slov (doporučeno), každé uzavřeno ve složených závorkách
